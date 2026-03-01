@@ -214,7 +214,7 @@ export class RangeSliderClass extends HTMLElement {
     if (this._entitytype == "time") {
       min = 0;
       max = 1440;
-      step = 1;
+      step = Math.round(step);
     }
     noUiSlider.create(this._sliderElement, {
       start: [minAtInit, maxAtInit],
@@ -254,13 +254,14 @@ export class RangeSliderClass extends HTMLElement {
     const { entity_min, entity_max } = this.config;
     const min = this._sliderToEntity(values[0]);
     const max = this._sliderToEntity(values[1]);
+    const key=(this._entitytype==='time'?'time':'value');
     this._hass.callService(this._mindomain, this._minservice, {
       entity_id: entity_min,
-      value: min
+      [key]: min
     });
     this._hass.callService(this._maxdomain, this._maxservice, {
       entity_id: entity_max,
-      value: max
+      [key]: max
     });
   }
 }
