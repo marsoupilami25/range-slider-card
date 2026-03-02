@@ -6,7 +6,12 @@ class RangeSliderCard extends RangeSliderClass {
     this.shadowRoot.innerHTML = `
       <style>
         ${nouiCss}
+        ha-card {
+          height: 100%;
+          box-sizing: border-box;
+        }
         .container {
+          height: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -20,10 +25,19 @@ class RangeSliderCard extends RangeSliderClass {
           transition: all 0.3s ease-out;
           box-sizing: border-box;
         }
+        .slider-container {
+          width: 100%;
+          height: 100%;
+          min-height: 0;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
         .slider {
           width: 90%;
           margin: 0px 10px;
-          height: 100%;
         }
         .values {
           display: flex;
@@ -32,6 +46,7 @@ class RangeSliderCard extends RangeSliderClass {
           font-size: 0.9rem;
         }
         .title {
+          justify-content: flex-start;
           font-size: 1.2rem;
           margin-top: 2%;
           margin-bottom: 1%;
@@ -45,6 +60,7 @@ class RangeSliderCard extends RangeSliderClass {
           width: 90%;
         }
         .noUi-target {
+          height: 16px;
           background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
           border-radius: 10px / 16px;
           border: none;
@@ -75,16 +91,26 @@ class RangeSliderCard extends RangeSliderClass {
       </style>
       <div class="container">
         <div class="title">${name}</div>
-        <div class="slider" id="slider"></div>
-        <div class="values">
-          <span id="min-value"></span>
-          <span id="max-value"></span>
+        <div class="slider-container">
+          <div class="slider" id="slider"></div>
+          <div class="values">
+            <span id="min-value"></span>
+            <span id="max-value"></span>
+          </div>
         </div>
       </div>
     `;
   }
   getCardSize() {
-    return 2;
+    return 1;
+  }
+
+  getGridOptions() {
+    return {
+      min_rows: 2,
+      min_columns: 6,
+      max_columns: 12
+    };
   }
 }
 
