@@ -32,16 +32,17 @@ class RangeSliderCard extends RangeSliderClass {
           font-size: 0.9rem;
         }
         .title {
-          /* font-size: 1rem; */
-          /* font-weight: bold; */
-          margin-bottom: 8px;
+          font-size: 1.2rem;
+          margin-top: 2%;
+          margin-bottom: 1%;
           color: var(--primary-text-color);
         }
-        #min-value {
+        .values {
           color: var(--primary-text-color);
-        }
-        #max-value {
-          color: var(--primary-text-color);
+          font-size: 1rem;
+          margin-top: 1%;
+          margin-bottom: 1%;
+          width: 90%;
         }
         .noUi-target {
           background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
