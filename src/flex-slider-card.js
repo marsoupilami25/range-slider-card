@@ -142,17 +142,19 @@ export class FlexSliderCard extends HTMLElement {
         throw new Error("Invalid format '"+format+"'");
     }
 
+    const hasTitle = (name ?? "").trim().length > 0;
+
     this.shadowRoot.innerHTML = `
       <style>
         ${css}
       </style>
 
-      <div class="container">
-        <div class="title">${name}</div>
-
-        <div class="slider-container">
-          <div class="slider" id="slider"></div>
-
+      <div class="container ${hasTitle ? "" : "no-title"}">
+        ${hasTitle ? `<div class="title">${name}</div>` : ""}
+        <div class="slider-with-values">
+          <div class="slider-container">
+            <div class="slider" id="slider"></div>
+          </div>
           <div class="values">
             <span id="min-value"></span>
             <span id="max-value"></span>
@@ -204,7 +206,7 @@ export class FlexSliderCard extends HTMLElement {
     const {
       entity_min,
       entity_max,
-      name = "Range Slider"
+      name = ''
     } = this.config;
     const stateMin = this._hass.states[entity_min];
     const stateMax = this._hass.states[entity_max];
@@ -344,6 +346,7 @@ export class FlexSliderCard extends HTMLElement {
     switch (format) {
       case "std":
         return {
+          rows: 2,
           min_rows: 2,
           min_columns: 6,
           max_columns: 12

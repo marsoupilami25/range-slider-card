@@ -13,7 +13,6 @@ export const compactFlexSliderCardCss = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
     background: var(--ha-card-background, var(--card-background-color));
     border-radius: var(--ha-card-border-radius, 12px);
     box-shadow: var(--ha-card-box-shadow, 0px 2px 4px rgba(0, 0, 0, 0.16));
@@ -24,6 +23,10 @@ export const compactFlexSliderCardCss = `
     box-sizing: border-box;
   }
   
+  .container.no-title {
+    padding-top: 10px;
+  }
+
   .slider-container {
     width: 100%;
     height: 100%;
@@ -58,8 +61,8 @@ export const compactFlexSliderCardCss = `
   .values {
     color: var(--primary-text-color);
     font-size: 0.8rem;
-    margin-top: 1%;
-    margin-bottom: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
     width: 90%;
   }
   
