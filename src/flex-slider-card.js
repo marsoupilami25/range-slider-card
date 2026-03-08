@@ -186,7 +186,17 @@ export class FlexSliderCard extends HTMLElement {
   
   _sliderToDisplay(value) {
     if (this._entitytype == "number") {
-      return Number(value).toFixed(1);
+      const { 
+        digits = 'auto',
+        step = 1 
+      } = this.config;
+      let nbDigits = 0;
+      if (digits === 'auto') {
+        nbDigits = step.toString().split(".")[1]?.length || 0;
+      } else {
+        nbDigits = Number(digits);
+      }
+      return Number(value).toFixed(nbDigits);
     }
     if (this._entitytype == "time") {
       return this._minutesToTime(value);

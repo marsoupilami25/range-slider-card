@@ -47,11 +47,12 @@ The compact format:
 ## Options  
 
 ### Display Options
-|Option       |Type    |Domain     |Mandatory|Default       | Description |
-|-------------|--------|-----------|---------|--------------|-|
-| `name`      | string |All        |No       |`Range Slider`| Title for the slider. If not configured or `''`, the title is not displayed. |
-| `format`    | string |All        |No       |`std`         | Format type. Is `std` or `compact`|
-| `unit`      | string |All        |No       |Empty         | Display unit (e.g., `%`, `°C`, etc.) |
+|Option       |Type           |Domain         |Mandatory|Default       | Description |
+|-------------|---------------|---------------|---------|--------------|-|
+| `name`      | string        |All            |No       |`Range Slider`| Title for the slider. If not configured or `''`, the title is not displayed. |
+| `format`    | string        |All            |No       |`std`         | Format type. Is `std` or `compact`|
+| `unit`      | string        |All            |No       |Empty         | Display unit (e.g., `%`, `°C`, etc.) |
+| `digits`    | string/number |Number only (*)|No       |`auto`        | Number of digits displayed in the bottom value bar. Is a number or `auto`. When `auto` the number of digits is automatically calculated from the step. |
 
 ### Behavioral Options
 | Option       | Type   |Domain         |Mandatory|Default       | Description |
