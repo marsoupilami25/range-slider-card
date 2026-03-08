@@ -3,9 +3,17 @@ import nouiCss from "nouislider/dist/nouislider.css?inline";
 export const compactFlexSliderCardCss = `
   ${nouiCss}
   
+  * {
+  box-sizing: border-box;
+  }
+  
+  :host {
+    display: block;
+    height: 100%;
+  }
+  
   ha-card {
     height: 100%;
-    box-sizing: border-box;
   }
   
   .container {
@@ -13,7 +21,6 @@ export const compactFlexSliderCardCss = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
     background: var(--ha-card-background, var(--card-background-color));
     border-radius: var(--ha-card-border-radius, 12px);
     box-shadow: var(--ha-card-box-shadow, 0px 2px 4px rgba(0, 0, 0, 0.16));
@@ -21,46 +28,54 @@ export const compactFlexSliderCardCss = `
     border-style: solid;
     border-color: var(--ha-card-border-color, var(--divider-color));
     transition: all 0.3s ease-out;
-    box-sizing: border-box;
   }
   
-  .slider-container {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    flex: 1;
+  .container.no-title {
+    padding-top: 2%;
+    padding-bottom: 1%;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 3;
+    font-size: 0.9rem;
+    color: var(--primary-text-color);
+  }
+ 
+  .slider-with-values {
+    width: 90%;
+    flex: 7;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    /* border: 1px solid red; /* Debugging border */
+  }
+
+  .slider-container {
+    width: 100%;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1px;
+    /* border: 1px solid green; /* Debugging border */
   }
   
   .slider {
-    width: 90%;
-    margin: 0px 10px;
+    width: 100%;
   }
   
   .values {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    font-size: 0.9rem;
-  }
-  
-  .title {
-    justify-content: flex-start;
-    font-size: 1rem;
-    margin-top: 2%;
-    margin-bottom: 1%;
-    color: var(--primary-text-color);
-  }
-  
-  .values {
+    align-items: flex-start;
     color: var(--primary-text-color);
     font-size: 0.8rem;
-    margin-top: 1%;
-    margin-bottom: 1%;
-    width: 90%;
+    width: 100%;
+    padding-bottom: 1px;
   }
   
   .noUi-target {
