@@ -1,6 +1,7 @@
 To release:
 ===========
 Checkout on main branch (git checkout main)
+Ne pas oublier le git pull
 npm version major/minor/patch
 git push
 git push --tags

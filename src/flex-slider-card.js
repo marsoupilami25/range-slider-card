@@ -1,10 +1,127 @@
 import noUiSlider from "nouislider";
 import { stdFlexSliderCardCss } from "./std-flex-slider-css.js"
 import { compactFlexSliderCardCss } from "./compact-flex-slider-css.js"
+import { FlexSliderCardConfig } from "./flex-slider-card-config.js";
+import { minutesToTime } from "./utils.js";
+import { debuglog } from "./utils.js";
+import { FlexSliderCardEntity } from "./flex-slider-card-entity.js";
 
 export class FlexSliderCard extends HTMLElement {
   
-  static State = Object.freeze({
+  /****************************************************/
+  /* Public methods                                   */
+  /****************************************************/
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._initPrivateConfig();
+    this._toDisconnectedState();
+    debuglog("constructor");
+  }
+  
+  setConfig(config) {
+    debuglog("setConfig");
+    try {
+      this._config = new FlexSliderCardConfig(config);
+    } catch (error) {
+      this._toErrorState(error);
+    }
+  }
+  
+  connectedCallback() {
+    debuglog("connectedCallback");
+    this._toConnectedState();
+  }
+  
+  disconnectedCallback() {
+    debuglog("disconnectedCallback");
+    this._toDisconnectedState();
+  }
+  
+  set hass(hass) {
+    debuglog("hass");
+    this._hass = hass;
+    if (this._state == FlexSliderCard._State.CONNECTED && this._config) {
+      this._config.update(hass);
+      this._init();
+    }
+    if (this._state == FlexSliderCard._State.OPER) {
+      this._config.update(hass);
+      this._updateValuesDisplay();
+    }
+  }
+
+  getCardSize() {
+    if (this._config.isStd()) {
+      return 2;
+    } else if (this._config.isCompact()) {
+      return 1;
+    } else {
+          throw new Error("Invalid format in getCardSize");
+    }
+  }
+
+  getGridOptions() {
+    if (this._config.isStd()) {
+      if (this._config.hasTitle() && this._config.hasValuesBar()) {
+        return {
+          rows: 2,
+          min_rows: 2,
+          min_columns: 6,
+          max_columns: 12
+        };
+      } else {
+        return {
+          rows: 1,
+          min_rows: 1,
+          min_columns: 6,
+          max_columns: 12
+        };
+      }
+    } else if (this._config.isCompact()) {
+      return {
+        min_rows: 1,
+        min_columns: 2,
+        max_columns: 9
+      };
+    } else {
+      throw new Error("Invalid format in getGridOptions");
+    }
+  }
+
+  /****************************************************/
+  /* Private parameters                               */
+  /****************************************************/
+
+  _initPrivateConfig() {        // parameters initialized by constructor
+    this._config = null;         // user configuration object
+  }
+  
+  _initPrivateDisplayData() {                           //parameters initialized by the constructor or when the card is disconnected
+    debuglog("DISCONNECTED");
+    this._userIsUpdating = false;                       //true when user is currently dragging the slider, false otherwise
+    this._slider = null;                                // reference to the noUiSlider instance
+    this._updateValuesDisplayInProgress = false;        // true when _updateValuesDisplay is currently running, false otherwise
+    this._updateValuesDisplayRequestPending = false;    // true if a call to _updateValuesDisplay was requested while it was already running, false otherwise
+    this._sliderElement = null;                         // reference to the DOM element in which the slider is created
+    this._lastmin = null;                               // last value of entity_min for which the slider was updated. Used to avoid updating the slider when not necessary
+    this._lastmax = null;                               // last value of entity_max for which the slider was updated. Used to avoid updating the slider when not necessary   
+  }
+
+  /****************************************************/
+  /* Utilities                                        */
+  /****************************************************/
+
+  _debuglog(text) {
+    if (this._activeDebug) console.log(text);
+  }
+
+  /****************************************************/
+  /* State Management                                 */
+  /****************************************************/
+
+  static _State = Object.freeze({
     DISCONNECTED: 0,
     CONNECTED: 1,
     INIT: 2,
@@ -12,148 +129,60 @@ export class FlexSliderCard extends HTMLElement {
     ERROR: 4
   });
   
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" });
-    this._initPrivateConfig();
-    this._initPrivateDisplayData();
-    this._debuglog("constructor");
-  }
-  
-  setConfig(config) {
-    this._debuglog("setConfig");
-    if (!config.entity_min || !config.entity_max) {
-      this._state = FlexSliderCard.State.ERROR;
-      throw new Error("You need to define 'entity_min' and 'entity_max'");
-    }
-    this._mindomain = config.entity_min.split(".")[0];
-    switch (this._mindomain) {
-      case "number":
-      case "input_number":
-        this._entitytype = "number";
-        this._minservice = "set_value";
-        break;
-      case "input_datetime":
-        this._entitytype = "time";
-        this._minservice = "set_datetime";
-        break;
-      default:
-        throw new Error("Unexpected 'entity_min' domain");
-    }
-    this._maxdomain = config.entity_max.split(".")[0];
-    switch (this._maxdomain) {
-      case "number":
-      case "input_number":
-        if (this._entitytype != "number") {
-          throw new Error("'entity_min' and 'entity_max' shall have compatible domains");
-        }
-        this._maxservice = "set_value";
-        break;
-      case "input_datetime":
-        if (this._entitytype != "time") {
-          throw new Error("'entity_min' and 'entity_max' shall have compatible domains");
-        }
-        this._maxservice = "set_datetime";
-        break;
-      default:
-        throw new Error("Unexpected 'entity_max' domain");
-    }
-    this.config = config;
-  }
-  
-  connectedCallback() {
-    this._debuglog("connectedCallback");
-    if (this._state == FlexSliderCard.State.DISCONNECTED) {
-      this._state = FlexSliderCard.State.CONNECTED;
-      this._debuglog("CONNECTED");
-    }
-  }
-  
-  disconnectedCallback() {
-    this._debuglog("disconnectedCallback");
+  _toDisconnectedState() {
     if (this._slider) {
       this._slider.destroy();
     }
     this._initPrivateDisplayData();
+    this._state = FlexSliderCard._State.DISCONNECTED;   // current state of the card is DISCONNECTED
   }
-  
-  set hass(hass) {
-    this._debuglog("hass");
-    this._hass = hass;
-    if (this._state == FlexSliderCard.State.CONNECTED && this.config) {
-      this._init();
+
+  _toConnectedState() {
+    if (this._state == FlexSliderCard._State.DISCONNECTED) {
+      this._state = FlexSliderCard._State.CONNECTED;
+      debuglog("CONNECTED");
+    } else {
+      debuglog("Unexpected state when connecting: "+this._state);
+      throw new Error("Unexpected state when connecting: "+this._state);
     }
-    if (this._state == FlexSliderCard.State.OPER) {
-      this._updateValuesDisplay();
-    }
   }
-  
-  _debuglog(text) {
-    if (this._activeDebug) console.log(text);
-  }
-  
-  _initPrivateConfig() {
-    this._mindomain = null;
-    this._minservice = null;
-    this._maxdomain = null;
-    this._maxservice = null;
-    this._entitytype = null;
-    this.config = null;
-  }
-  
-  _initPrivateDisplayData() {
-    this._activeDebug = false;
-    this._debuglog("DISCONNECTED");
-    this._state = FlexSliderCard.State.DISCONNECTED;
-    this._userIsUpdating = false;
-    this._slider = null;
-    this._updateValuesDisplayInProgress = false;
-    this._updateValuesDisplayRequestPending = false;
-    this._sliderElement = null;
-    this._lastmin = null;
-    this._lastmax = null;
-  }
-  
+
+  _toErrorState(error) {
+    this._state = FlexSliderCard._State.ERROR;
+    debuglog("ERROR");
+    throw new Error(error.message);
+  } 
+
+  /****************************************************/
+  /* State Management                                 */
+  /****************************************************/
+
   _init() {
-    this._state = FlexSliderCard.State.INIT;
-    this._debuglog("INIT");
+    this._state = FlexSliderCard._State.INIT;
+    debuglog("INIT");
     if (this._create()) {
       this._updateValuesDisplay();
     } else {
-      this._state = FlexSliderCard.State.ERROR;
-      this._debuglog("ERROR");
+      this._state = FlexSliderCard._State.ERROR;
+      debuglog("ERROR");
     }
   }
   
-  _hasValuesBar() {
-    const { valuesbar = false } = this.config;
-    if (!(typeof valuesbar === "boolean")) {
-      throw new Error("valuesbar shall be boolean");
-    }
-    return valuesbar;
-  }
-
-  _renderTemplate(name) {
-    const {
-      format = "std"
-    } = this.config;
+  _renderTemplate() {
     
-    const valuesbar = this._hasValuesBar();
+    const valuesbar = this._config.hasValuesBar();
+    const hasTitle = this._config.hasTitle();
+    const name = this._config.title;
 
     let css = '';
 
-    switch (format) {
-      case "std":
-        css = stdFlexSliderCardCss;
-        break;
-      case "compact":
-        css = compactFlexSliderCardCss;
-        break;
-      default:
-        throw new Error("Invalid format '"+format+"'");
+    if (this._config.isStd()) {
+      css = stdFlexSliderCardCss;
+    } else if (this._config.isCompact()) {
+      css = compactFlexSliderCardCss;
+    } else {
+      throw new Error("Invalid format in _renderTemplate method");
     }
-
-    const hasTitle = (name ?? "").trim().length > 0;
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -177,67 +206,21 @@ export class FlexSliderCard extends HTMLElement {
     `;
   }
   
-  _timeToMinutes(time) {
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes;
-  }
-  
-  _minutesToTime(minutes) {
-    const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
-    const mins = (minutes % 60).toString().padStart(2, "0");
-    return `${hours}:${mins}`;
-  }
-  
-  _entityToSlider(value) {
-    if (this._entitytype == "number") {
-      return Number(value);
-    }
-    if (this._entitytype == "time") {
-      return this._timeToMinutes(value);
-    }
-  }
-  
   _sliderToDisplay(value) {
-    if (this._entitytype == "number") {
-      const { 
-        digits = 'auto',
-        step = 1 
-      } = this.config;
-      let nbDigits = 0;
-      if (digits === 'auto') {
-        nbDigits = step.toString().split(".")[1]?.length || 0;
-      } else {
-        nbDigits = Number(digits);
-      }
-      return Number(value).toFixed(nbDigits);
+    if (this._config.entitytype == FlexSliderCardEntity.TYPE.NUMBER) {
+      return Number(value).toFixed(this._config.digits);
     }
-    if (this._entitytype == "time") {
-      return this._minutesToTime(value);
+    if (this._config.entitytype == FlexSliderCardEntity.TYPE.TIME) {
+      return minutesToTime(value);
     }
   }
-  
-  _sliderToEntity(value) {
-    if (this._entitytype == "number") {
-      return Number(value);
-    }
-    if (this._entitytype == "time") {
-      return this._minutesToTime(value);
-    }
-  }
-  
+   
   _create() {
-    const {
-      entity_min,
-      entity_max,
-      name = ''
-    } = this.config;
-    const stateMin = this._hass.states[entity_min];
-    const stateMax = this._hass.states[entity_max];
-    if (!stateMin || !stateMax) {
+    if (!this._config.entitiesExist()) {
       this.shadowRoot.innerHTML = `<p>Entities not found</p>`;
       return false;
     }
-    this._renderTemplate(name);
+    this._renderTemplate();
     this._sliderElement = this.shadowRoot.getElementById("slider");
     return true;
   }
@@ -252,21 +235,15 @@ export class FlexSliderCard extends HTMLElement {
       if (this._userIsUpdating) {
         return;
       }
-      const { entity_min, entity_max, unit = "" } = this.config;
-      const minState = this._hass.states[entity_min];
-      const maxState = this._hass.states[entity_max];
-      if (!minState || !maxState) return;
-      const minValue = this._entityToSlider(minState.state);
-      const maxValue = this._entityToSlider(maxState.state);
+      const minValue = this._config.entities.min.value;
+      const maxValue = this._config.entities.max.value;
       if (!this._slider) {
         this._initSlider(minValue, maxValue);
-        this._lastmin = minValue;
-        this._lastmax = maxValue;
+        this._config.entitiesSetBaseline();
       } else {
-        if (minValue != this._lastmin || maxValue != this._lastmax) {
+        if (this._config.entitiesIsUpdated()) {
           this._slider.set([minValue, maxValue], false);
-          this._lastmin = minValue;
-          this._lastmax = maxValue;
+          this._config.entitiesSetBaseline();
         }
       }
     } finally {
@@ -276,25 +253,18 @@ export class FlexSliderCard extends HTMLElement {
         queueMicrotask(() => this._updateValuesDisplay());
       }
     }
-    if (this._state != FlexSliderCard.State.OPER) {
-      this._state = FlexSliderCard.State.OPER;
-      this._debuglog("OPER");
+    if (this._state != FlexSliderCard._State.OPER) {
+      this._state = FlexSliderCard._State.OPER;
+      debuglog("OPER");
     }
     return;
   }
   
   _initSlider(minAtInit, maxAtInit) {
     if (this._slider) return;
-    let {
-      min = 0,
-      max = 100,
-      step = 1
-    } = this.config;
-    if (this._entitytype == "time") {
-      min = 0;
-      max = 1439;
-      step = Math.round(step);
-    }
+    let min = this._config.min;
+    let max = this._config.max;
+    let step = this._config.step;
     noUiSlider.create(this._sliderElement, {
       start: [minAtInit, maxAtInit],
       connect: true,
@@ -306,28 +276,20 @@ export class FlexSliderCard extends HTMLElement {
     });
     this._slider = this._sliderElement.noUiSlider;
     this._slider.on("start", () => {
-      this._debuglog("start");
+      debuglog("start");
       this._userIsUpdating = true;
     });
     this._slider.on("change", (values) => {
-      this._debuglog("change");
+      debuglog("change");
       this._userIsUpdating = false;
       this._setEntities(values);
     });
     this._slider.on("update", (values) => {
-      this._debuglog("update");
-      if (this._hasValuesBar()) {
-        let { 
-          mintext = '',
-          maxtext = ''
-        } = this.config;
-        if (mintext != '') {
-          mintext = mintext + ': ';
-        }
-        if (maxtext != '') {
-          maxtext = maxtext + ': ';
-        }
-        const { unit = "" } = this.config;
+      debuglog("update");
+      if (this._config.hasValuesBar()) {
+        const mintext = this._config.mintext;
+        const maxtext = this._config.maxtext;
+        const unit = this._config.unit;
         const minVal = this._sliderToDisplay(values[0]);
         const maxVal = this._sliderToDisplay(values[1]);
         const minElement = this.shadowRoot.getElementById("min-value");
@@ -337,78 +299,16 @@ export class FlexSliderCard extends HTMLElement {
      }
     });
     this._slider.on("end", () => {
-      this._debuglog("end");
+      debuglog("end");
       this._userIsUpdating = false;
     });
   }
   
   _setEntities(values) {
-    const { entity_min, entity_max } = this.config;
-    const min = this._sliderToEntity(values[0]);
-    const max = this._sliderToEntity(values[1]);
-    const key=(this._entitytype==='time'?'time':'value');
-    this._hass.callService(this._mindomain, this._minservice, {
-      entity_id: entity_min,
-      [key]: min
-    });
-    this._hass.callService(this._maxdomain, this._maxservice, {
-      entity_id: entity_max,
-      [key]: max
-    });
+    this._config.entities.min.value = values[0];
+    this._config.entities.max.value = values[1];
   }
-
-  getCardSize() {
-    const {
-      format = "std"
-    } = this.config;
-
-    switch (format) {
-      case "std":
-        return 2;
-      case "compact":
-        return 1;
-      default:
-        throw new Error("Invalid format '"+format+"'");
-    }
-    return 2;
-  }
-
-  getGridOptions() {
-    const {
-      format = "std",
-      name = ''
-    } = this.config;
-
-    const hasTitle = (name ?? "").trim().length > 0;
-    const hasValuesBar = this._hasValuesBar();
-
-    switch (format) {
-      case "std":
-        if (hasTitle && hasValuesBar) {
-          return {
-            rows: 2,
-            min_rows: 2,
-            min_columns: 6,
-            max_columns: 12
-          };
-        } else {
-          return {
-            rows: 1,
-            min_rows: 1,
-            min_columns: 6,
-            max_columns: 12
-          };
-        }
-      case "compact":
-        return {
-          min_rows: 1,
-          min_columns: 2,
-          max_columns: 9
-        };
-      default:
-        throw new Error("Invalid format '"+format+"'");
-    }
-  }
+  
 }
 
 customElements.define('flex-slider-card', FlexSliderCard);
