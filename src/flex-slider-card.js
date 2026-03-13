@@ -1,10 +1,10 @@
-import noUiSlider from "nouislider";
 import { stdFlexSliderCardCss } from "./std-flex-slider-css.js"
 import { compactFlexSliderCardCss } from "./compact-flex-slider-css.js"
 import { FlexSliderCardConfig } from "./flex-slider-card-config.js";
-import { minutesToTime } from "./utils.js";
-import { debuglog } from "./utils.js";
+import { minutesToTime, debuglog } from "./utils.js";
 import { FlexSliderCardEntity } from "./flex-slider-card-entity.js";
+import { FlexSliderCardSlider } from "./flex-slider-card-slider.js";
+import { FlexSliderCardValuesBar } from "./flex-slider-card-valuesbar.js";
 
 export class FlexSliderCard extends HTMLElement {
   
@@ -105,8 +105,6 @@ export class FlexSliderCard extends HTMLElement {
     this._updateValuesDisplayInProgress = false;        // true when _updateValuesDisplay is currently running, false otherwise
     this._updateValuesDisplayRequestPending = false;    // true if a call to _updateValuesDisplay was requested while it was already running, false otherwise
     this._sliderElement = null;                         // reference to the DOM element in which the slider is created
-    this._lastmin = null;                               // last value of entity_min for which the slider was updated. Used to avoid updating the slider when not necessary
-    this._lastmax = null;                               // last value of entity_max for which the slider was updated. Used to avoid updating the slider when not necessary   
   }
 
   /****************************************************/
@@ -170,7 +168,7 @@ export class FlexSliderCard extends HTMLElement {
   
   _renderTemplate() {
     
-    const valuesbar = this._config.hasValuesBar();
+    const hasvaluesbar = this._config.hasValuesBar();
     const hasTitle = this._config.hasTitle();
     const name = this._config.title;
 
@@ -195,7 +193,7 @@ export class FlexSliderCard extends HTMLElement {
           <div class="slider-container">
             <div class="slider" id="slider"></div>
           </div>
-          ${valuesbar ? `
+          ${hasvaluesbar ? `
             <div class="values">
               <span id="min-value"></span>
               <span id="max-value"></span>
@@ -204,17 +202,14 @@ export class FlexSliderCard extends HTMLElement {
         </div>
       </div>
     `;
-  }
-  
-  _sliderToDisplay(value) {
-    if (this._config.entitytype == FlexSliderCardEntity.TYPE.NUMBER) {
-      return Number(value).toFixed(this._config.digits);
+
+    if (hasvaluesbar) {
+      const valuesBar = new FlexSliderCardValuesBar(this._config, this.shadowRoot.querySelector(".values"));
+      this._config.valuesBar = valuesBar;
     }
-    if (this._config.entitytype == FlexSliderCardEntity.TYPE.TIME) {
-      return minutesToTime(value);
-    }
+
   }
-   
+ 
   _create() {
     if (!this._config.entitiesExist()) {
       this.shadowRoot.innerHTML = `<p>Entities not found</p>`;
@@ -232,7 +227,7 @@ export class FlexSliderCard extends HTMLElement {
     }
     this._updateValuesDisplayInProgress = true;
     try {
-      if (this._userIsUpdating) {
+      if (this._slider && this._slider.isUserUpdating()) {
         return;
       }
       const minValue = this._config.entities.min.value;
@@ -242,7 +237,7 @@ export class FlexSliderCard extends HTMLElement {
         this._config.entitiesSetBaseline();
       } else {
         if (this._config.entitiesIsUpdated()) {
-          this._slider.set([minValue, maxValue], false);
+          this._slider.update(minValue, maxValue);
           this._config.entitiesSetBaseline();
         }
       }
@@ -260,53 +255,9 @@ export class FlexSliderCard extends HTMLElement {
     return;
   }
   
-  _initSlider(minAtInit, maxAtInit) {
+  _initSlider(min, max) {
     if (this._slider) return;
-    let min = this._config.min;
-    let max = this._config.max;
-    let step = this._config.step;
-    noUiSlider.create(this._sliderElement, {
-      start: [minAtInit, maxAtInit],
-      connect: true,
-      range: {
-        min,
-        max
-      },
-      step
-    });
-    this._slider = this._sliderElement.noUiSlider;
-    this._slider.on("start", () => {
-      debuglog("start");
-      this._userIsUpdating = true;
-    });
-    this._slider.on("change", (values) => {
-      debuglog("change");
-      this._userIsUpdating = false;
-      this._setEntities(values);
-    });
-    this._slider.on("update", (values) => {
-      debuglog("update");
-      if (this._config.hasValuesBar()) {
-        const mintext = this._config.mintext;
-        const maxtext = this._config.maxtext;
-        const unit = this._config.unit;
-        const minVal = this._sliderToDisplay(values[0]);
-        const maxVal = this._sliderToDisplay(values[1]);
-        const minElement = this.shadowRoot.getElementById("min-value");
-        const maxElement = this.shadowRoot.getElementById("max-value");
-        minElement.textContent = `${mintext}${minVal}${unit}`;
-        maxElement.textContent = `${maxtext}${maxVal}${unit}`;
-     }
-    });
-    this._slider.on("end", () => {
-      debuglog("end");
-      this._userIsUpdating = false;
-    });
-  }
-  
-  _setEntities(values) {
-    this._config.entities.min.value = values[0];
-    this._config.entities.max.value = values[1];
+    this._slider = new FlexSliderCardSlider(this._config, min, max, this._sliderElement);
   }
   
 }

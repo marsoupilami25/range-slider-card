@@ -22,6 +22,14 @@ export class FlexSliderCardConfig  {
     this._updateValuesBar(hass);
   }
 
+  reset() {
+    this._resetFormat();
+    this._resetTitle();
+    this._resetEntities(); 
+    this._resetSlider(); 
+    this._resetValuesBar();
+  }
+
   /****************************************************/
   /* format                                           */
   /****************************************************/
@@ -36,6 +44,10 @@ export class FlexSliderCardConfig  {
   }
 
   _updateFormat(hass) {
+    return;
+  }
+
+  _resetFormat() {
     return;
   }
 
@@ -62,6 +74,10 @@ export class FlexSliderCardConfig  {
   }
 
   _updateTitle(hass) {
+    return;
+  }
+
+  _resetTitle() {
     return;
   }
 
@@ -121,9 +137,14 @@ export class FlexSliderCardConfig  {
       this._config.maxtext = this._config.maxtext + ": ";
     }
 
+    this._valuesBar = null; // reference to the values bar object, if it is created
   }
 
   _updateValuesBar(hass) {
+    return;
+  }
+
+  _resetValuesBar() {
     return;
   }
 
@@ -131,6 +152,14 @@ export class FlexSliderCardConfig  {
     return this._config.valuesbar === true;
   }
 
+  set valuesBar(valuesBar) {
+    this._valuesBar = valuesBar;
+  }
+
+  get valuesBar() {
+    return this._valuesBar;
+  }
+  
   get digits() {
     return this._config.digits;
   }
@@ -185,6 +214,10 @@ export class FlexSliderCardConfig  {
     return;
   }
 
+  _resetSlider() {
+    return;
+  }
+
   get min() {
     return this._config.min;
   }
@@ -236,8 +269,13 @@ export class FlexSliderCardConfig  {
   }
 
   _updateEntities(hass) {
-    this._entities.min.update(hass);
-    this._entities.max.update(hass);
+    Object.values(this._entities).forEach(entity => entity.update(hass));
+  }
+
+  _resetEntities() {
+    if (this.entitiesExist()) {
+      this.entitiesResetBaseline();
+    }
   }
 
   _getEntityConfig(suffix) {
