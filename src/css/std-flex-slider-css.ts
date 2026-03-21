@@ -1,6 +1,6 @@
 import nouiCss from "nouislider/dist/nouislider.css?inline";
 
-export const stdFlexSliderCardCss = `
+export const stdFlexSliderCardCss: string = `
   ${nouiCss}
   
   * {
