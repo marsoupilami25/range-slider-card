@@ -155,7 +155,7 @@ export class FlexSliderCardConfigMngr  {
   }
 
   public hasValuesBar(): boolean {
-    return this._config.valuesbar === true;
+    return (this._config.valuesbar === true);
   }
 
   public set valuesBar(valuesBar) {

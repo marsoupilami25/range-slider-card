@@ -16,7 +16,7 @@ export const stdFlexSliderCardCss: string = `
     height: 100%;
   }
   
-  .container {
+  .container.std {
     height: 100%;
     padding-bottom: 5px;
     display: flex;
@@ -31,13 +31,13 @@ export const stdFlexSliderCardCss: string = `
     transition: all 0.3s ease-out;
   }
   
-  .container.no-title {
+  .container.std.no-title {
     padding-top: 5px;
     padding-bottom: 5px;
     justify-content: center;
   }
 
-  .title {
+  .container.std .title {
     display: flex;
     height: 35px;
     align-items: center;
@@ -47,7 +47,7 @@ export const stdFlexSliderCardCss: string = `
     /* border: 1px solid blue; /* Debugging border */
   }
 
-  .slider-with-values {
+  .container.std .slider-with-values {
     width: 90%;
     height: 100%;
     display: flex;
@@ -57,7 +57,7 @@ export const stdFlexSliderCardCss: string = `
     /* border: 1px solid red; /* Debugging border */
   }
   
-  .slider-container {
+  .container.std .slider-container {
     width: 100%;
     height: 21px;
     display: flex;
@@ -66,11 +66,11 @@ export const stdFlexSliderCardCss: string = `
     /* border: 1px solid green; /* Debugging border */
   }
   
-  .slider {
+  .container.std .slider {
     width: 100%;
   }
 
-  .values {
+  .container.std .values {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -80,11 +80,13 @@ export const stdFlexSliderCardCss: string = `
     padding-bottom: 2px;
   }
   
-  .container.no-title .values {
+  .container.std.no-title .values {
     font-size: 0.9rem;
   }
 
-  .noUi-target {
+  /* noUiSlider overrides */
+
+  .container.std .noUi-target {
     height: 16px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
     border-radius: 10px / 16px;
@@ -92,16 +94,16 @@ export const stdFlexSliderCardCss: string = `
     box-shadow: none;
   }
   
-  .noUi-base {
+  .container.std .noUi-base {
     height: 16px;
   }
   
-  .noUi-connect {
+  .container.std .noUi-connect {
     height: 16px;
     background: color-mix(in srgb, var(--primary-color) 30%, transparent);
   }
   
-  .noUi-horizontal .noUi-handle {
+  .container.std .noUi-horizontal .noUi-handle {
     width: 18px;
     height: 18px;
     top: -1px;
@@ -114,7 +116,7 @@ export const stdFlexSliderCardCss: string = `
     box-shadow: none;
   }
   
-  .noUi-handle::before, .noUi-handle::after {
+  .container.std .noUi-handle::before, .container.std .noUi-handle::after {
     display: none;
   }
 `;

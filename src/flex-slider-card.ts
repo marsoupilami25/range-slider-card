@@ -1,20 +1,13 @@
+import { html, css, LitElement, unsafeCSS, nothing } from "lit";
+import { customElement, property, state, query } from "lit/decorators.js";
 import { stdFlexSliderCardCss } from "./css/std-flex-slider-css"
 import { compactFlexSliderCardCss } from "./css/compact-flex-slider-css"
 import { FlexSliderCardConfigMngr,  } from "./config/flex-slider-card-config";
 import { FlexSliderCardConfig } from "./config/flex-slider-card-config-type";
 import { debuglog } from "./utils/utils";
-import { FlexSliderCardSlider } from "./flex-slider-card-slider";
+import { FlexSliderCardSlider, NoUiSliderElement } from "./flex-slider-card-slider";
 import { FlexSliderCardValuesBar } from "./flex-slider-card-valuesbar";
 import { HomeAssistant, LovelaceCard } from "custom-card-helpers";
-import { NoUiSliderElement } from "./flex-slider-card-slider";
-
-enum FlexSliderCardState {
-  DISCONNECTED = 0,
-  CONNECTED = 1,
-  OPER = 2,
-  IDLE = 3,
-  ERROR = 4
-}
 
 type GridOptions =
   {
@@ -26,29 +19,37 @@ type GridOptions =
     max_columns?: number;
   };
 
-export class FlexSliderCard extends HTMLElement implements LovelaceCard  {
+@customElement("flex-slider-card")
+export class FlexSliderCard extends LitElement implements LovelaceCard  {
 
   /****************************************************/
   /* private parameters                               */
   /****************************************************/
 
-  private _state: FlexSliderCardState = FlexSliderCardState.DISCONNECTED;   // current state of the card
-  private _config: FlexSliderCardConfigMngr | undefined;        // reference to the card configuration
-  private _sliderHtmlElement: NoUiSliderElement | null | undefined;          // reference to the DOM element in which the slider is created
-  private _slider: FlexSliderCardSlider | undefined;            // reference to the noUiSlider instance
-  private _userIsUpdating: boolean = false;
-  private _updateHtmlElementInProgress: boolean = false;        // true when _updateValuesDisplay is currently running, false otherwise
-  private _updateHtmlElementRequestPending: boolean = false;    // true if a call to _updateValuesDisplay was requested while it was already running, false otherwise
+  @property({ attribute: false })
+  public hass!: HomeAssistant;
+  @state()
+  private _error?: string;
+  @query("#slider")
+  private _sliderHtmlElement?: NoUiSliderElement;          // reference to the DOM element in which the slider is created
+  @query("#values")
+  private _valuesHtmlElement?: HTMLDivElement;             // reference to the DOM element in which the values are displayed
+
+  private _slider?: FlexSliderCardSlider;            // reference to the noUiSlider instance
+  private _firstUpdate: boolean = true;           // flag to indicate if it is the first update of the card
+  private _config?: FlexSliderCardConfigMngr;        // reference to the card configuration
+
+  static override styles = css`
+    ${unsafeCSS(stdFlexSliderCardCss)}
+    ${unsafeCSS(compactFlexSliderCardCss)}
+  `;
 
   /****************************************************/
-  /* Public methods                                   */
+  /* Public methods - Home Assistant                  */
   /****************************************************/
 
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    this._initPrivateConfig();
-    this._toDisconnectedState();
     debuglog("constructor");
   }
   
@@ -56,32 +57,24 @@ export class FlexSliderCard extends HTMLElement implements LovelaceCard  {
     debuglog("setConfig");
     try {
       this._config = new FlexSliderCardConfigMngr(config);
+      this._error = undefined;
     } catch (error) {
-      this._toErrorState(error);
+      this._setError(error);
     }
   }
   
   public connectedCallback(): void {
+    super.connectedCallback();
     debuglog("connectedCallback");
-    this._toConnectedState();
   }
   
   public disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this._slider) {
+      // this._slider.destroy();
+    }
+    this._initPrivateDisplayData();
     debuglog("disconnectedCallback");
-    this._toDisconnectedState();
-  }
-  
-  public set hass(hass: HomeAssistant) {
-    debuglog("hass");
-    if (this._config) {
-      this._config.update(hass);
-      if (this._state == FlexSliderCardState.CONNECTED) {
-        this._toOperState();
-      }
-    }
-    if (this._state == FlexSliderCardState.OPER) {
-      this._Oper();
-    }
   }
 
   public getCardSize(): number | Promise<number> {
@@ -129,180 +122,89 @@ export class FlexSliderCard extends HTMLElement implements LovelaceCard  {
   }
 
   /****************************************************/
-  /* Private parameters                               */
+  /* Public methods - Lit Element                     */
   /****************************************************/
 
-  private _initPrivateConfig(): void {        // parameters initialized by constructor
-    this._config = undefined;         // user configuration object
-  }
-  
-  private _initPrivateDisplayData(): void {                           //parameters initialized by the constructor or when the card is disconnected
-    this._userIsUpdating = false;                       //true when user is currently dragging the slider, false otherwise
-    this._slider = undefined;                                // reference to the noUiSlider instance
-    this._updateHtmlElementInProgress = false;        // true when _updateValuesDisplay is currently running, false otherwise
-    this._updateHtmlElementRequestPending = false;    // true if a call to _updateValuesDisplay was requested while it was already running, false otherwise
-    this._sliderHtmlElement = undefined;                         // reference to the DOM element in which the slider is created
-  }
-
-  /****************************************************/
-  /* Utilities                                        */
-  /****************************************************/
-
-  /****************************************************/
-  /* State Management                                 */
-  /****************************************************/
-
-  private _toDisconnectedState(): void {
-    if (this._slider) {
-      this._slider.destroy();
+  protected override willUpdate(changedProps: Map<string, unknown>): void {
+    if (!this._config || !this.hass) {
+      return;
     }
-    this._initPrivateDisplayData();
-    this._state = FlexSliderCardState.DISCONNECTED;   // current state of the card is DISCONNECTED
-  }
-
-  private _toConnectedState(): void {
-    if (this._state == FlexSliderCardState.DISCONNECTED) {
-      this._state = FlexSliderCardState.CONNECTED;
-      debuglog("CONNECTED");
-    } else {
-      debuglog("Unexpected state when connecting: "+this._state);
-      throw new Error("Unexpected state when connecting: "+this._state);
+    if (this._firstUpdate) {
+      this._firstUpdate = false;
+      this._config.update(this.hass);
+    } else if (changedProps.has("hass")) {
+      this._config.update(this.hass);
     }
   }
 
-  private _toErrorState(error: unknown): never {
-    this._state = FlexSliderCardState.ERROR;
-    debuglog("ERROR");
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Unknown error "+String(error));
-    }
-  } 
-  private _toIdleState(): void {
-    this._state = FlexSliderCardState.IDLE;
-    debuglog("IDLE");
-  }
-
-  private _toOperState(): void {
-    debuglog("INIT");
-    try {
-      if (!this._createHtmlElement()) {
-        this._toIdleState();
-        return;
-      } 
-      this._initSlider();
-    } catch (error) {
-      this._toErrorState(error);
-    }
-    debuglog("OPER");
-    this._state = FlexSliderCardState.OPER;
-  }
-
-  private _Oper(): void {
-    this._updateHtmlElement();
-  }
-
-  /****************************************************/
-  /* HTML Management                                  */
-  /****************************************************/
-
-  private _createHtmlElement(): boolean {
+  protected override firstUpdated(): void {
     if (!this._config) {
       throw new Error("Config not initialized");
     }
-    if (!this.shadowRoot) {
-      throw new Error("Shadow root not initialized");
+    this._initValuesBar();
+    this._initSlider();
+  }
+
+  protected override updated(changedProps: Map<string, unknown>): void {
+    if (!this._config || !this._slider) {
+      return;
     }
+    if (changedProps.has("hass") && this._config?.entitiesIsUpdated() ) {
+      this._updateSlider();
+      this._updateValuesBar();
+    }
+  }
+
+  protected override render() {
+    if (this._error) {
+      return html`<ha-card><div class="card-content">${this._error}</div></ha-card>`;
+    }
+
+    if (!this._config) {
+      return nothing;
+    }
+
     if (!this._config.entitiesExist()) {
-      this.shadowRoot.innerHTML = `<p>Entities not found</p>`;
-      return false;
+      return html`<ha-card><div class="card-content">Entities not found</div></ha-card>`;
     }
-    
-    const hasvaluesbar = this._config.hasValuesBar();
+
+    const hasValuesBar = this._config.hasValuesBar();
     const hasTitle = this._config.hasTitle();
     const name = this._config.title;
+    const isStd = this._config.isStd();
+    const containerClass = `${isStd ? "std" : "compact"} ${hasTitle ? "" : "no-title"}`;
 
-    let css = '';
+    return html`
+      <div class="container ${containerClass}">
+        ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
 
-    if (this._config.isStd()) {
-      css = stdFlexSliderCardCss;
-    } else if (this._config.isCompact()) {
-      css = compactFlexSliderCardCss;
-    } else {
-      throw new Error("Invalid format in _renderTemplate method");
-    }
-
-    this.shadowRoot.innerHTML = `
-      <style>
-        ${css}
-      </style>
-
-      <div class="container ${hasTitle ? "" : "no-title"}">
-        ${hasTitle ? `<div class="title">${name}</div>` : ""}
         <div class="slider-with-values">
           <div class="slider-container">
             <div class="slider" id="slider"></div>
           </div>
-          ${hasvaluesbar ? `
-            <div class="values">
-              <span id="min-value"></span>
-              <span id="max-value"></span>
-            </div>
-          ` : ""}
+
+          ${hasValuesBar
+            ? html`
+                <div class="values" id="values">
+                  <span id="min-value"></span>
+                  <span id="max-value"></span>
+                </div>
+              `
+            : nothing}
         </div>
       </div>
     `;
+  }
 
-    if (hasvaluesbar) {
-      const valueElement: HTMLElement | null = this.shadowRoot.querySelector(".values");
-      if (!valueElement) {
-        throw new Error("Values bar element not found in DOM");
-      }
-      const valuesBar = new FlexSliderCardValuesBar(this._config, valueElement);
-      this._config.valuesBar = valuesBar;
-    }    
-    
-    const element = this.shadowRoot.getElementById("slider");
-    if (!element) {
-      throw new Error("Slider element not found in DOM");
-    }
-    this._sliderHtmlElement = element as NoUiSliderElement;
-    return true;
+  /****************************************************/
+  /* Private parameters                               */
+  /****************************************************/
+
+  private _initPrivateDisplayData(): void {                           //parameters initialized by the constructor or when the card is disconnected
+    // this._slider = undefined;                                // reference to the noUiSlider instance
+    this._firstUpdate = true;                                 // flag to indicate if it is the first update of the card
   }
-  
-  private _updateHtmlElement(): void {
-    if (!this._config || !this._slider) {
-      return;
-    }
-    
-    if (this._updateHtmlElementInProgress) {
-      this._updateHtmlElementRequestPending = true;
-      return;
-    }
-    this._updateHtmlElementInProgress = true;
-    
-    try {
-      if (this._slider.isUserUpdating()) {
-        return;
-      }
-      if (this._config.entitiesIsUpdated()) {
-        const min = this._config.entities.min.sliderValue;
-        const max = this._config.entities.max.sliderValue;
-        this._slider.update(min, max);
-        this._config.entitiesSetBaseline();
-      } else {
-      }
-    } finally {
-      this._updateHtmlElementInProgress = false;
-      if (this._updateHtmlElementRequestPending) {
-        this._updateHtmlElementRequestPending = false;
-        queueMicrotask(() => this._updateHtmlElement());
-      }
-    }
-    return;
-  }
-  
+
   /****************************************************/
   /* Slider Management                                */
   /****************************************************/
@@ -328,7 +230,68 @@ export class FlexSliderCard extends HTMLElement implements LovelaceCard  {
     );
     this._config.entitiesSetBaseline();
   }
-  
-}
 
-customElements.define('flex-slider-card', FlexSliderCard);
+    public _updateSlider(): void {
+    if (!this._config) {
+      throw new Error("Config not initialized");
+    }
+    if (!this._slider) {
+      throw new Error("Slider not initialized");
+    }
+    if (this._slider.isUserUpdating()) {
+      return;
+    }
+    if (this._config.entitiesIsUpdated()) {
+      const min = this._config.entities.min.sliderValue;
+      const max = this._config.entities.max.sliderValue;
+      this._slider.update(min, max);
+      this._config.entitiesSetBaseline();
+    }
+  }
+
+  /****************************************************/
+  /* ValuesBar Management                             */
+  /****************************************************/
+
+  public _initValuesBar(): void {
+    if (!this._config) {
+      throw new Error("Config not initialized");
+    }
+    if (!this._config.hasValuesBar()) {
+      return;
+    }
+    if (!this._valuesHtmlElement) {
+      throw new Error("Values HTML element not initialized");
+    }
+    if (this._config.valuesBar) {
+      return;
+    }
+    this._config.valuesBar = new FlexSliderCardValuesBar(this._config, this._valuesHtmlElement);
+  }
+
+  public _updateValuesBar(): void {
+    if (!this._config) {
+      throw new Error("Config not initialized");
+    }
+    if (!this._config.hasValuesBar()) {
+      return;
+    }
+  }
+
+  /****************************************************/
+  /* Error Management                                 */
+  /****************************************************/
+
+  private _setError(error: unknown): never {
+    debuglog("ERROR");
+
+    if (error instanceof Error) {
+      this._error = error.message;
+      throw error;
+    }
+
+    this._error = "Unknown error " + String(error);
+    throw new Error(this._error);
+  }
+
+}

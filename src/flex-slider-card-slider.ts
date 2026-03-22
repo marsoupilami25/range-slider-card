@@ -64,12 +64,12 @@ export class FlexSliderCardSlider {
   /****************************************************/
 
   private _onStart(): void {
-    debuglog("start");
+    debuglog("slider start");
     this._userIsUpdating = true;
   }
 
   private _onChange(values: (number | string)[]): void {
-    debuglog("change");
+    debuglog("slider change");
     this._userIsUpdating = false;
     
     // noUiSlider renvoie souvent des strings → conversion recommandée
@@ -81,7 +81,7 @@ export class FlexSliderCardSlider {
   }
 
   private _onUpdate(values: (number | string)[]): void {
-    debuglog("update");
+    debuglog("slider update");
     if (this._config.hasValuesBar()) {
       const numbers: number[] = values.map(Number);
       this._config.valuesBar!.update(numbers);
@@ -89,7 +89,7 @@ export class FlexSliderCardSlider {
   }
 
   private _onEnd(): void {
-    debuglog("end");
+    debuglog("slider end");
     this._userIsUpdating = false;
   }
 

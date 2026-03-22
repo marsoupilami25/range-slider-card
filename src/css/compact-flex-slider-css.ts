@@ -16,7 +16,7 @@ export const compactFlexSliderCardCss: string = `
     height: 100%;
   }
   
-  .container {
+  .container.compact {
     height: 100%;
     padding-bottom: 3px;
     display: flex;
@@ -31,13 +31,13 @@ export const compactFlexSliderCardCss: string = `
     transition: all 0.3s ease-out;
   }
   
-  .container.no-title {
+  .container.compact.no-title {
     padding-top: 5px;
     padding-bottom: 5px;
     justify-content: center;
   }
 
-  .title {
+  .container.compact .title {
     display: flex;
     height: 20px;
     align-items: center;
@@ -47,7 +47,7 @@ export const compactFlexSliderCardCss: string = `
     /* border: 1px solid blue; /* Debugging border */
   }
  
-  .slider-with-values {
+  .container.compact .slider-with-values {
     width: 90%;
     height: 100%;
     display: flex;
@@ -57,7 +57,7 @@ export const compactFlexSliderCardCss: string = `
     /* border: 1px solid red; /* Debugging border */
   }
 
-  .slider-container {
+  .container.compact .slider-container {
     width: 100%;
     height: 14px;
     display: flex;
@@ -66,11 +66,11 @@ export const compactFlexSliderCardCss: string = `
     /* border: 1px solid green; /* Debugging border */
   }
   
-  .slider {
+  .container.compact .slider {
     width: 100%;
   }
   
-  .values {
+  .container.compact .values {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -80,7 +80,9 @@ export const compactFlexSliderCardCss: string = `
     padding-bottom: 1px;
   }
   
-  .noUi-target {
+  /* noUiSlider overrides */
+
+  .container.compact .noUi-target {
     height: 6px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
     border-radius: 4px / 6px;
@@ -88,16 +90,16 @@ export const compactFlexSliderCardCss: string = `
     box-shadow: none;
   }
   
-  .noUi-base {
+  .container.compact .noUi-base {
     height: 6px;
   }
   
-  .noUi-connect {
+  .container.compact .noUi-connect {
     height: 6px;
     background: color-mix(in srgb, var(--primary-color) 30%, transparent);
   }
   
-  .noUi-horizontal .noUi-handle {
+  .container.compact .noUi-horizontal .noUi-handle {
     width: 12px;
     height: 12px;
     top: -3px;
@@ -108,7 +110,7 @@ export const compactFlexSliderCardCss: string = `
     box-shadow: none;
   }
   
-  .noUi-handle::before, .noUi-handle::after {
+  .container.compact .noUi-handle::before, .container.compact .noUi-handle::after {
     display: none;
   }
 `;
