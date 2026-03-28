@@ -7,6 +7,7 @@ import nouiCss from "nouislider/dist/nouislider.css?inline";
 import { stdFlexSliderSliderCardCss } from "./css/std-flex-slider-slider-css";
 import { compactFlexSliderSliderCardCss } from "./css/compact-flex-slider-slider-css";
 import { FlexSliderCardFormat } from "./config/flex-slider-card-config-type";
+import { FlexSliderCardValuesBarMode, FlexSliderCardValuesBarSetModeCallback, FlexSliderCardValuesBarSetValueCallback } from "./flex-slider-card-valuesbar";
 
 
 // Extension de HTMLElement pour typer noUiSlider
@@ -36,7 +37,9 @@ export class FlexSliderCardSlider extends LitElement {
   private _slider!: NoUiSliderAPI;                   // reference to the noUiSlider instance
   private _userIsUpdating: boolean = false;                 // true when user is currently dragging the slider, false otherwise
   private _isSyncing: boolean = false;                         // true when the slider is being updated programmatically, false otherwise
-
+  private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null; 
+  private _valuesBarSetValue: FlexSliderCardValuesBarSetValueCallback | null = null;
+  
   static override styles = css`
     ${unsafeCSS(nouiCss)}
     
@@ -83,8 +86,8 @@ export class FlexSliderCardSlider extends LitElement {
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
     
-    this._slider.on("start", () => {
-      this._onStart();
+    this._slider.on("start", (values: (number | string)[], handle: number) => {
+      this._onStart(handle);
     });
     
     this._slider.on("change", (values: (number | string)[]) => {
@@ -119,13 +122,20 @@ export class FlexSliderCardSlider extends LitElement {
     return this._userIsUpdating;
   }
 
+  public setCallbacks(setModeCallback: FlexSliderCardValuesBarSetModeCallback,
+    setValueCallback: FlexSliderCardValuesBarSetValueCallback) {
+    this._valuesBarSetMode = setModeCallback;
+    this._valuesBarSetValue = setValueCallback;
+  }
+
   /****************************************************/
   /* CallBacks                                        */
   /****************************************************/
 
-  private _onStart(): void {
-    debuglog("slider start");
+  private _onStart(handle: number): void {
+    debuglog(`slider start ${handle}`);
     this._userIsUpdating = true;
+    this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.USERUPDATE, handle);
   }
 
   private async _onChange(values: (number | string)[]): Promise<void> {
@@ -145,20 +155,22 @@ export class FlexSliderCardSlider extends LitElement {
       console.error("Error occurred while updating slider values:", error);
     } finally {
       this._isSyncing = false;
+      if (this._userIsUpdating) return;
+      this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
     }
   }
 
   private _onUpdate(values: (number | string)[]): void {
     debuglog("slider update");
-    if (this.config.hasValuesBar()) {
-      const numbers: number[] = values.map(Number);
-      // this._config.valuesBar!.updateValues(numbers);
-    }
+    const numbers: number[] = values.map(Number);
+    this._valuesBarSetValue?.(numbers);
   }
 
   private _onEnd(): void {
     debuglog("slider end");
     this._userIsUpdating = false;
+    if (this._isSyncing) return;
+    this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
   }
 
 }

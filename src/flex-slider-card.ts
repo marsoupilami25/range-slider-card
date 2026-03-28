@@ -1,5 +1,5 @@
-import { html, css, LitElement, unsafeCSS, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { html, css, LitElement, unsafeCSS, nothing, PropertyValues } from "lit";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { stdFlexSliderCardCss } from "./css/std-flex-slider-css"
 import { compactFlexSliderCardCss } from "./css/compact-flex-slider-css"
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
@@ -8,6 +8,8 @@ import { debuglog } from "./utils/utils";
 import { HomeAssistant, LovelaceCard } from "custom-card-helpers";
 import "./flex-slider-card-valuesbar";
 import "./flex-slider-card-slider";
+import { FlexSliderCardValuesBar } from "./flex-slider-card-valuesbar";
+import { FlexSliderCardSlider } from "./flex-slider-card-slider";
 
 type GridOptions =
   {
@@ -30,6 +32,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
   public hass!: HomeAssistant;
   @state()
   private _error?: string;
+  @query('flex-slider-card-slider')
+  private _slider!: FlexSliderCardSlider;
+  @query('flex-slider-card-valuesbar')
+  private _valuesBar?: FlexSliderCardValuesBar;
 
   private _firstUpdate: boolean = true;           // flag to indicate if it is the first update of the card
   private _config?: FlexSliderCardConfigMngr;        // reference to the card configuration
@@ -141,6 +147,15 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     if (this._firstUpdate || changedProps.has("hass")) {
       this._firstUpdate = false;
       this._config.update(this.hass);
+    }
+  }
+
+  protected override firstUpdated(_changedProperties: PropertyValues): void {
+    if (!this._config) {
+      return;
+    }
+    if (this._config.hasValuesBar()) {
+      this._slider.setCallbacks(this._valuesBar!.setMode, this._valuesBar!.setValue);
     }
   }
 
