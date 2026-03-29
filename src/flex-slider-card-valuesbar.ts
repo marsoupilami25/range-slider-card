@@ -1,8 +1,8 @@
 import { debuglog, minutesToTime } from "./utils/utils";
-import { FlexSliderCardEntityType } from "./flex-slider-card-entity";
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
+import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { FlexSliderCardEntityType } from "./utils/entity-management";
 
 export enum FlexSliderCardValuesBarMode {
   DEFAULT = "default",
@@ -144,7 +144,7 @@ export class FlexSliderCardValuesBar extends LitElement {
 
   private _sliderToDisplay(value: number): string {
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      return Number(value).toFixed(Number(this.config.digits));
+      return Number(value).toFixed(Number(this.config.nbdigits));
     }
     if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
       return minutesToTime(value);

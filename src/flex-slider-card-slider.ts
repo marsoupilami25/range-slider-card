@@ -1,6 +1,6 @@
 import noUiSlider, { API as NoUiSliderAPI } from "nouislider";
 import { debuglog } from "./utils/utils";
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
+import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, unsafeCSS } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import nouiCss from "nouislider/dist/nouislider.css?inline";

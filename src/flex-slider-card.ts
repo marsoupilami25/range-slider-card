@@ -2,14 +2,31 @@ import { html, css, LitElement, unsafeCSS, nothing, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { stdFlexSliderCardCss } from "./css/std-flex-slider-css"
 import { compactFlexSliderCardCss } from "./css/compact-flex-slider-css"
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
-import { FlexSliderCardConfig } from "./config/flex-slider-card-config-type";
+import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
+import { FlexSliderCardConfig, flexSliderCardConfigStruct } from "./config/flex-slider-card-config-type";
 import { debuglog } from "./utils/utils";
-import { HomeAssistant, LovelaceCard } from "custom-card-helpers";
+import { HomeAssistant, LovelaceCard, LovelaceCardEditor } from "custom-card-helpers";
 import "./flex-slider-card-valuesbar";
 import "./flex-slider-card-slider";
 import { FlexSliderCardValuesBar } from "./flex-slider-card-valuesbar";
 import { FlexSliderCardSlider } from "./flex-slider-card-slider";
+import { flexSliderCardConfigStub } from "./config/flex-slider-card-config-stub";
+import { assert } from "superstruct";
+
+// Registering with window.customCards makes your card appear in the Lovelace
+// "Add Card" UI picker with a name and description. This array is shared by all
+// custom cards on the page, so we guard with `|| []` before pushing.
+interface WindowWithCustomCards extends Window {
+  customCards: Array<{ type: string; name: string; description: string; preview?: boolean }>;
+}
+
+(window as unknown as WindowWithCustomCards).customCards =
+  (window as unknown as WindowWithCustomCards).customCards || [];
+(window as unknown as WindowWithCustomCards).customCards.push({
+  type: 'flex-slider-card',
+  name: 'Flex Slider Card',
+  description: 'Card to adjust entities with a single slider',
+});
 
 type GridOptions =
   {
@@ -52,16 +69,21 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
   `;
 
   /****************************************************/
-  /* Public methods - Home Assistant                  */
+  /* Public methods - Config Management               */
   /****************************************************/
 
-  constructor() {
-    super();
-    debuglog("constructor");
+  public static async getConfigElement(): Promise<LovelaceCardEditor> {
+    await import("./config/flex-slider-card-config-editor");
+    return document.createElement("flex-slider-card-config-editor") as LovelaceCardEditor;
   }
-  
+
+  public static getStubConfig(): FlexSliderCardConfig {
+    return flexSliderCardConfigStub;
+  }
+
   public setConfig(config: FlexSliderCardConfig): void {
     debuglog("setConfig");
+    assert(config, flexSliderCardConfigStruct);
     try {
       this._config = new FlexSliderCardConfigMngr(config);
       this._error = undefined;
@@ -77,6 +99,17 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     } catch (error) {
       this._setError(error);
     }
+  }
+  
+
+
+  /****************************************************/
+  /* Public methods - Home Assistant                  */
+  /****************************************************/
+
+  constructor() {
+    super();
+    debuglog("constructor");
   }
   
   public connectedCallback(): void {
