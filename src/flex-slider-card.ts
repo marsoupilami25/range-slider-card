@@ -2,7 +2,7 @@ import { html, css, LitElement, unsafeCSS, nothing, PropertyValues } from "lit";
 import { customElement, property, query, state } from "lit/decorators.js";
 import { stdFlexSliderCardCss } from "./css/std-flex-slider-css"
 import { compactFlexSliderCardCss } from "./css/compact-flex-slider-css"
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
+import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { FlexSliderCardConfig, flexSliderCardConfigStruct } from "./config/flex-slider-card-config-type";
 import { debuglog } from "./utils/utils";
 import { HomeAssistant, LovelaceCard, LovelaceCardEditor } from "custom-card-helpers";

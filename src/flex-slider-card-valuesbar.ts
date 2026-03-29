@@ -1,8 +1,8 @@
 import { debuglog, minutesToTime } from "./utils/utils";
-import { FlexSliderCardEntityType } from "./flex-slider-card-entity";
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
+import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { FlexSliderCardEntityType } from "./utils/entity-management";
 
 export enum FlexSliderCardValuesBarMode {
   DEFAULT = "default",

@@ -1,7 +1,7 @@
 import memoizeOne from "memoize-one";
 import { HaFormSchema } from "../type/ha";
 
-const baseSchema: HaFormSchema[] = [
+const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
   {
     name: "name",
     selector: { text: {} },
@@ -64,12 +64,14 @@ const baseSchema: HaFormSchema[] = [
             selector: {
               number: { mode: "box" },
             },
+            disabled: !isNumber,
           },
           {
             name: "max",
             selector: {
               number: { mode: "box" },
             },
+            disabled: !isNumber,
           },
           {
             name: "step",
@@ -80,12 +82,13 @@ const baseSchema: HaFormSchema[] = [
                 min: 0,
               },
             },
+            disabled: !isNumber,
           },
         ],
       },
     ],
   },
-];
+]);
 
 const valuesBarSchema = memoizeOne((digits: string): HaFormSchema[] => [
   {
@@ -113,16 +116,13 @@ const valuesBarSchema = memoizeOne((digits: string): HaFormSchema[] => [
               },
             },
           },
-          ...(digits === "manual"
-            ? [
-              {
-                name: "nbdigits",
-                selector: {
-                  number: { mode: "box", min: 0 },
-                },
-              },
-            ]
-            : []),
+          {
+            name: "nbdigits",
+            selector: {
+              number: { mode: "box", min: 0 },
+            },
+            disabled: digits !== "manual",
+          },
         ],
       },
       {
@@ -142,8 +142,8 @@ const valuesBarSchema = memoizeOne((digits: string): HaFormSchema[] => [
   }
 ]);
 
-export const computeSchema = memoizeOne((hasValuesBar: boolean, digits: string): HaFormSchema[] => {
+export const computeSchema = memoizeOne((hasValuesBar: boolean, digits: string, isNumber: boolean): HaFormSchema[] => {
   return hasValuesBar
-    ? [...baseSchema, ...valuesBarSchema(digits)]
-    : [...baseSchema];
+    ? [...baseSchema(isNumber), ...valuesBarSchema(digits)]
+    : [...baseSchema(isNumber)];
 });

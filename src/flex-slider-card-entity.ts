@@ -1,11 +1,7 @@
 import { timeToMinutes, minutesToTime } from "./utils/utils";
 import { HomeAssistant } from "custom-card-helpers";
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config";
-
-export enum FlexSliderCardEntityType {
-  NUMBER = "number",
-  TIME = "time"
-}
+import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
+import { FlexSliderCardEntityType, FlexSliderEntityDomain, getEntityDomain, getEntityType} from "./utils/entity-management";
 
 export enum FlexSliderCardDataType {
   VALUE = "value",
@@ -15,7 +11,6 @@ export enum FlexSliderCardDataType {
 export type FlexSliderCardValueType = number | string;
 
 type FlexSliderCardService = "set_value" | "set_datetime";
-type FlexSliderEntityDomain = "number" | "input_number" | "input_datetime";
 
 export class FlexSliderCardEntity {
   
@@ -32,16 +27,14 @@ export class FlexSliderCardEntity {
   constructor(config: FlexSliderCardConfigMngr, suffix: string) {
     this._suffix = suffix;
     this._entityid = config.getEntityConfig(suffix);
-    this._domain = this._entityid.split(".")[0] as FlexSliderEntityDomain;
-    switch (this._domain) {
-      case "number":
-      case "input_number":
-        this._entitytype = FlexSliderCardEntityType.NUMBER;
+    this._domain = getEntityDomain(this._entityid);
+    this._entitytype = getEntityType(this._entityid);
+    switch (this._entitytype) {
+      case FlexSliderCardEntityType.NUMBER:
         this._datatype = FlexSliderCardDataType.VALUE;
         this._service = "set_value";
         break;
-      case "input_datetime":
-        this._entitytype = FlexSliderCardEntityType.TIME;
+      case FlexSliderCardEntityType.TIME:
         this._datatype = FlexSliderCardDataType.TIME;
         this._service = "set_datetime";
         break;

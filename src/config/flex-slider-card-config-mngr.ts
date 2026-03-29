@@ -1,7 +1,6 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { FlexSliderCardEntity, FlexSliderCardEntityType } from "../flex-slider-card-entity";
+import { FlexSliderCardEntity } from "../flex-slider-card-entity";
 import {
-  FlexSliderCardDigits,
   FlexSliderCardConfig,
   assertFlexSliderCardFormat,
   assertFlexSliderCardDigits
@@ -11,6 +10,7 @@ import {
   assertOptionalNumber,
   assertOptionalBoolean
 } from "../utils/utils";
+import { FlexSliderCardEntityType } from "../utils/entity-management";
 
 export class FlexSliderCardConfigMngr {
 

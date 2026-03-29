@@ -5,6 +5,7 @@ import { FlexSliderCardConfig } from "./flex-slider-card-config-type";
 import { HaFormSchema } from "../type/ha";
 import { computeSchema } from "./flex-slider-card-config-form";
 import { flexSliderCardConfigLabels } from "./flex-slider-card-config-labels";
+import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
 
 @customElement("flex-slider-card-config-editor")
 export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCardEditor {
@@ -25,7 +26,8 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
 
     const schema: HaFormSchema[] = computeSchema(
       this._config.valuesbaractive === true,
-      this._config.valuesbar?.digits ?? ""
+      this._config.valuesbar?.digits ?? "",
+      getEntityType(this._config.entity_min) === FlexSliderCardEntityType.NUMBER,
     );
 
     return html`
