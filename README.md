@@ -26,6 +26,9 @@ The compact format with title and bottom values bar:
 - [X] Optional title
 - [X] Option bar with entity values
 
+## Note about 2.0 release
+The 2.0 release is a major update and is not backwards compatible with the previous version. The 2.0 add the visual editor feature and previous yaml configs are not compatible anymore.
+
 ## Installation  
 
 ### HACS

@@ -1,28 +1,29 @@
 To install:
 ===========
-npm ci
+`npm ci`
 
 To release:
 ===========
-Checkout on main branch (git checkout main)
-Ne pas oublier le git pull
-npm version major/minor/patch
-git push
-git push --tags
+Checkout on main branch `git checkout main`
+Do not forget `git pull`
+Preferably reinstall `npm ci`
+`npm version major/minor/patch`
+`git push`
+`git push --tags`
 
 For debug:
 ==========
-npm run typecheck
+`npm run typecheck`
 will tun the ts checker
 
-npm run build
+`npm run build`
 build the package with vite
 
-npm run deploy
+`npm run deploy`
 copy on home assistant
 warning: homeassistant server name is `ha` and shall be declared in your ssh config
 
-npm run all
+`npm run all`
 it will check, build and deplay.
 
 Prerequisites:
