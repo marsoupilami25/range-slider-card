@@ -13,6 +13,21 @@ import { FlexSliderCardSlider } from "./flex-slider-card-slider";
 import { flexSliderCardConfigStub } from "./config/flex-slider-card-config-stub";
 import { assert } from "superstruct";
 
+// Registering with window.customCards makes your card appear in the Lovelace
+// "Add Card" UI picker with a name and description. This array is shared by all
+// custom cards on the page, so we guard with `|| []` before pushing.
+interface WindowWithCustomCards extends Window {
+  customCards: Array<{ type: string; name: string; description: string }>;
+}
+
+(window as unknown as WindowWithCustomCards).customCards =
+  (window as unknown as WindowWithCustomCards).customCards || [];
+(window as unknown as WindowWithCustomCards).customCards.push({
+  type: 'flex-slider-card',
+  name: 'Flex Slider Card',
+  description: 'Card to adjust entities with a single slider',
+});
+
 type GridOptions =
   {
     rows?: number;
