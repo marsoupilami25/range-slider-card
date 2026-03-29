@@ -12,6 +12,15 @@ import { FlexSliderCardValuesBar } from "./flex-slider-card-valuesbar";
 import { FlexSliderCardSlider } from "./flex-slider-card-slider";
 import { flexSliderCardConfigStub } from "./config/flex-slider-card-config-stub";
 import { assert } from "superstruct";
+import { getVersion } from "./utils/version";
+
+// Styled console banner so your card is easy to spot in the browser console.
+// Stays visible in production — useful for version-mismatch debugging in HA.
+console.info(
+  `%c  FLEX-SLIDER-CARD %c  v${getVersion()}  `,
+  'color: black; font-weight: bold; background: violet',
+  'color: violet; font-weight: bold',
+);
 
 // Registering with window.customCards makes your card appear in the Lovelace
 // "Add Card" UI picker with a name and description. This array is shared by all
