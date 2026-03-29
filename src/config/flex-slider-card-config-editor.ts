@@ -24,10 +24,16 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       return nothing;
     }
 
+    let isNumber = undefined;
+    try {
+      isNumber = getEntityType(this._config.entity_min) === FlexSliderCardEntityType.NUMBER;
+    } catch (e) {
+      isNumber = true;
+    }
     const schema: HaFormSchema[] = computeSchema(
       this._config.valuesbaractive === true,
       this._config.valuesbar?.digits ?? "",
-      getEntityType(this._config.entity_min) === FlexSliderCardEntityType.NUMBER,
+      isNumber,
     );
 
     return html`
