@@ -1,5 +1,6 @@
 
 [![GitHub release](https://img.shields.io/github/v/release/marsoupilami25/flex-slider-card?display_name=tag)](https://github.com/marsoupilami25/flex-slider-card/releases)
+![HACS validation](https://github.com/marsoupilami25/flex-slider-card/actions/workflows/hacs.yaml/badge.svg)
 
 # Home Assistant Custom Card for Flex Slider
 
@@ -44,9 +45,9 @@ The 2.0 release is a major update and is not backwards compatible with the previ
 7.  Restart Home Assistant (if prompted).
 
 ### Manual Installation  
-- Download `range-slider-card.js` in the `dist` folder
+- Download `flex-slider-card.js` in the release page https://github.com/marsoupilami25/flex-slider-card/releases/tag/vx.y.z
 - Place it in your `www` folder in Home Assistant  
-- Installation instructions: go to Settings > Dashboards > (top right, the three dots) > Resources > Add resource > paste the following URL: `/local/range-slider-card.js` or `/local/range-small-slider-card.js` or `range-time-slider-card.js`
+- Installation instructions: go to Settings > Dashboards > (top right, the three dots) > Resources > Add resource > paste the following URL: `/local/flex-slider-card.js`
 - Restart Home Assistant
 
 ## Options  
