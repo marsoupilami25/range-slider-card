@@ -1,0 +1,282 @@
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: tile
+        entity: input_number.inputnumbertestmin
+        vertical: false
+        features_position: bottom
+        grid_options:
+          columns: 6
+          rows: 1
+      - type: heading
+        heading: Sans valuebar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        name: Sans grid
+        grid_options:
+          columns: null
+          rows: null
+      - type: heading
+        icon: ""
+        heading: Sans grid sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        grid_options:
+          columns: 12
+          rows: null
+      - type: heading
+        icon: ""
+        heading: Avec grid R1 sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        step: 10
+        name: Avec grid R1
+        grid_options:
+          columns: 9
+          rows: 1
+      - type: heading
+        icon: ""
+        heading: Avec valuesbar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        name: Sans grid
+        valuesbaractive: true
+        grid_options:
+          columns: null
+          rows: null
+        valuesbar:
+          unit: °C
+          mintext: Min
+          maxtext: Max
+      - type: heading
+        icon: ""
+        heading: Sans grid sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        valuesbaractive: true
+        grid_options:
+          columns: 12
+          rows: null
+        valuesbar:
+          digits: manual
+          nbdigits: 1
+          unit: °C
+      - type: heading
+        icon: ""
+        heading: Avec grid R1 sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        valuesbaractive: true
+        grid_options:
+          columns: 12
+          rows: 1
+        valuesbar:
+          digits: manual
+          nbdigits: 1
+          unit: °C
+      - type: custom:flex-slider-card
+        entity_min: input_datetime.inputheuretestmin
+        entity_max: input_datetime.inputheuretestmax
+        step: 10
+        name: Avec grid R2
+        valuesbaractive: true
+        grid_options:
+          columns: 9
+          rows: 1
+      - type: custom:flex-slider-card
+        entity_min: number.bureaucontrole_chauffagetempcftmin
+        entity_max: number.bureaucontrole_chauffagetempcftmax
+        min: 18
+        max: 30
+        step: 0.5
+        name: Avec Number
+        valuesbaractive: true
+        grid_options:
+          columns: null
+          rows: null
+        valuesbar:
+          unit: °C
+          mintext: Min
+          maxtext: Max
+  - type: grid
+    cards:
+      - type: heading
+        heading: Sans values bar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.25
+        name: Sans grid
+        format: compact
+        grid_options:
+          columns: null
+          rows: null
+      - type: heading
+        icon: ""
+        heading: Sans grid sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        format: compact
+        grid_options:
+          columns: null
+          rows: null
+      - type: heading
+        icon: ""
+        heading: Avec grid R1 sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        format: compact
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: custom:flex-slider-card
+        entity_min: input_datetime.inputheuretestmin
+        entity_max: input_datetime.inputheuretestmax
+        step: 10
+        name: Avec grid R1
+        format: compact
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: heading
+        icon: ""
+        heading: Avec values bar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        name: Sans grid
+        format: compact
+        valuesbaractive: true
+        grid_options:
+          columns: null
+          rows: null
+        valuesbar:
+          unit: °C
+      - type: heading
+        icon: ""
+        heading: Sans grid sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.25
+        format: compact
+        valuesbaractive: true
+        grid_options:
+          columns: null
+          rows: null
+        valuesbar:
+          unit: °C
+      - type: heading
+        icon: ""
+        heading: Avec grid R1 sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        format: compact
+        valuesbaractive: true
+        grid_options:
+          columns: 12
+          rows: 1
+        valuesbar:
+          digits: manual
+          nbdigits: 2
+          unit: °C
+      - type: custom:flex-slider-card
+        entity_min: input_datetime.inputheuretestmin
+        entity_max: input_datetime.inputheuretestmax
+        step: 10
+        name: Avec grid R1
+        format: compact
+        valuesbaractive: true
+        grid_options:
+          columns: 12
+          rows: 1
+max_columns: 4
+theme: Caule Black Coral
+cards: []
+title: Sections/basic

@@ -1,0 +1,111 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertestmin
+    show_header_toggle: true
+    state_color: false
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Standard avec titre
+    valuesbaractive: false
+    valuesbar:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Standard avec titre et valuesbar
+    valuesbaractive: true
+    valuesbar:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std sans titre
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std sans titre et valuesbar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        valuesbaractive: true
+        valuesbar:
+          unit: °C
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Compact avec titre
+    format: compact
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Compact avec titre et valuesbar
+    format: compact
+    valuesbaractive: true
+    valuesbar:
+      unit: °C
+      mintext: Min
+      maxtext: Max
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Compact sans titre
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 10
+        max: 40
+        step: 1
+        format: compact
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Compact sans titre et valuesbar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 10
+        max: 40
+        step: 1
+        format: compact
+        valuesbaractive: true
+        valuesbar:
+          unit: "%"
+theme: Caule Light Green
+title: Masonry/basic
