@@ -1,0 +1,26 @@
+type: masonry
+path: debug
+title: Debug
+cards:
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 15
+    max: 35
+    valuesbaractive: true
+    grid_options:
+      columns: 12
+      rows: null
+    format: std
+    name: Titre
+    valuesbar:
+      unit: °C
+      mintext: Min
+      maxtext: Max
+      nbdigits: 2
+      digits: manual
+    step: 0.5
+  - type: entity
+    entity: input_number.inputnumbertestmin
+  - type: entity
+    entity: input_number.inputnumbertestmax
