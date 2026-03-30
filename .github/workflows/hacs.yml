@@ -15,6 +15,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Validate
-        uses: hacs/action@v22
+        uses: hacs/action@22.5.0
         with:
           category: plugin
