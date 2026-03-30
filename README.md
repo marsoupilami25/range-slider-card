@@ -1,6 +1,6 @@
 
 [![GitHub release](https://img.shields.io/github/v/release/marsoupilami25/flex-slider-card?display_name=tag)](https://github.com/marsoupilami25/flex-slider-card/releases)
-![HACS validation](https://github.com/marsoupilami25/flex-slider-card/actions/workflows/hacs.yaml/badge.svg)
+[![HACS validation](https://github.com/marsoupilami25/flex-slider-card/actions/workflows/hacs.yml/badge.svg)](https://github.com/marsoupilami25/flex-slider-card/actions/workflows/hacs.yml)
 
 # Home Assistant Custom Card for a flexible Slider
 
