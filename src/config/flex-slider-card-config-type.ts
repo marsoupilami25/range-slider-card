@@ -45,6 +45,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   name?: string;
   format?: FlexSliderCardFormat;
   valuesbaractive?: boolean;
+  bubbles?: boolean;
   valuesbar?: FlexSliderCardValuesBarConfig;
 
  /* bahavioral */
@@ -61,6 +62,7 @@ export const flexSliderCardConfigStruct = assign(
     name: optional(string()),
     format: optional(flexSliderCardFormatStruct),
     valuesbaractive: optional(boolean()), 
+    bubbles: optional(boolean()),
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
 
     /* behavioral */

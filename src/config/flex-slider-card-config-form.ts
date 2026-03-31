@@ -21,9 +21,20 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
     required: false,
   },
   {
-    name: "valuesbaractive",
-    selector: { boolean: {} },
-    required: false,
+    type: "grid",
+    name: "",
+    schema: [
+      {
+        name: "valuesbaractive",
+        selector: { boolean: {} },
+        required: false,
+      },
+      {
+        name: "bubbles",
+        selector: { boolean: {} },
+        required: false,
+      },
+    ],
   },
   {
     type: "expandable",

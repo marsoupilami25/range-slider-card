@@ -206,6 +206,11 @@ export class FlexSliderCardConfigMngr {
     if (this._config.min > this._config.max) {
       throw new Error(`Invalid range: min (${this._config.min}) cannot be greater than max (${this._config.max})`);
     }
+
+    assertOptionalBoolean(this._config.bubbles, "bubbles");
+    if (this._config.bubbles == null) {
+      this._config.bubbles = false;
+    }
   }
 
   protected _updateSlider(hass: HomeAssistant): void { }
@@ -222,6 +227,10 @@ export class FlexSliderCardConfigMngr {
 
   public get step(): number {
     return this._config.step!;
+  }
+
+  public get hasBubbles(): boolean {
+    return this._config.bubbles!;
   }
 
   /****************************************************/
