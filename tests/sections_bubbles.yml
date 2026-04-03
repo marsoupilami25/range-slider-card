@@ -15,7 +15,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -33,7 +33,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -50,7 +50,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -60,7 +60,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         step: 10
         name: Avec grid R1
         grid_options:
@@ -73,7 +73,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -83,6 +83,10 @@ sections:
           columns: null
           rows: null
         valuesbar:
+          unit: °C
+          mintext: Min
+          maxtext: Max
+        buubles:
           unit: °C
           mintext: Min
           maxtext: Max
@@ -96,7 +100,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -105,6 +109,10 @@ sections:
           columns: 12
           rows: null
         valuesbar:
+          digits: manual
+          nbdigits: 1
+          unit: °C
+        bubbles:
           digits: manual
           nbdigits: 1
           unit: °C
@@ -118,7 +126,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -130,10 +138,14 @@ sections:
           digits: manual
           nbdigits: 1
           unit: °C
+        bubbles:
+          digits: manual
+          nbdigits: 1
+          unit: °C
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
-        bubbles: true
+        bubblesactive: true
         step: 10
         name: Avec grid R2
         valuesbaractive: true
@@ -143,7 +155,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: number.bureaucontrole_chauffagetempcftmin
         entity_max: number.bureaucontrole_chauffagetempcftmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -156,6 +168,10 @@ sections:
           unit: °C
           mintext: Min
           maxtext: Max
+        bubbles:
+          unit: °C
+          mintext: Min
+          maxtext: Max
   - type: grid
     cards:
       - type: heading
@@ -164,7 +180,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.25
@@ -183,7 +199,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -201,7 +217,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -212,7 +228,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
-        bubbles: true
+        bubblesactive: true
         step: 10
         name: Avec grid R1
         format: compact
@@ -226,7 +242,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -238,6 +254,8 @@ sections:
           rows: null
         valuesbar:
           unit: °C
+        bubbles:
+          unit: °C
       - type: heading
         icon: ""
         heading: Sans grid sans titre
@@ -248,7 +266,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.25
@@ -258,6 +276,8 @@ sections:
           columns: null
           rows: null
         valuesbar:
+          unit: °C
+        bubbles:
           unit: °C
       - type: heading
         icon: ""
@@ -269,7 +289,7 @@ sections:
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
-        bubbles: true
+        bubblesactive: true
         min: 18
         max: 30
         step: 0.5
@@ -282,10 +302,14 @@ sections:
           digits: manual
           nbdigits: 2
           unit: °C
+        bubbles:
+          digits: manual
+          nbdigits: 2
+          unit: °C
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
-        bubbles: true
+        bubblesactive: true
         step: 10
         name: Avec grid R1
         format: compact

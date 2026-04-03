@@ -1,5 +1,5 @@
 import noUiSlider, { API as NoUiSliderAPI } from "nouislider";
-import { debuglog } from "./utils/utils";
+import { debuglog, minutesToTime, timeToMinutes } from "./utils/utils";
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, unsafeCSS } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
@@ -8,6 +8,7 @@ import { stdFlexSliderSliderCardCss } from "./css/std-flex-slider-slider-css";
 import { compactFlexSliderSliderCardCss } from "./css/compact-flex-slider-slider-css";
 import { FlexSliderCardFormat } from "./config/flex-slider-card-config-type";
 import { FlexSliderCardValuesBarMode, FlexSliderCardValuesBarSetModeCallback, FlexSliderCardValuesBarSetValueCallback } from "./flex-slider-card-valuesbar";
+import { FlexSliderCardEntityType } from "./utils/entity-management";
 
 
 // Extension de HTMLElement pour typer noUiSlider
@@ -22,10 +23,10 @@ export class FlexSliderCardSlider extends LitElement {
   /* private parameters                               */
   /****************************************************/
 
-  @property({ attribute: false }) 
+  @property({ attribute: false })
   public config!: FlexSliderCardConfigMngr;          // reference to the card configuration
 
-  @property({ attribute: false }) 
+  @property({ attribute: false })
   public sliderClass: FlexSliderCardFormat = "std";          // reference to the card configuration
 
   @property({ type: Number })
@@ -37,9 +38,9 @@ export class FlexSliderCardSlider extends LitElement {
   private _slider!: NoUiSliderAPI;                   // reference to the noUiSlider instance
   private _userIsUpdating: boolean = false;                 // true when user is currently dragging the slider, false otherwise
   private _isSyncing: boolean = false;                         // true when the slider is being updated programmatically, false otherwise
-  private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null; 
+  private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null;
   private _valuesBarSetValue: FlexSliderCardValuesBarSetValueCallback | null = null;
-  
+
   static override styles = css`
     ${unsafeCSS(nouiCss)}
     
@@ -69,32 +70,35 @@ export class FlexSliderCardSlider extends LitElement {
   /****************************************************/
   /* Public methods - Lit Element                     */
   /****************************************************/
-  
+
   protected override firstUpdated(): void {
     if (!this.config) {
       throw new Error("Config not initialized");
     }
-    
+
     noUiSlider.create(this._sliderElement, {
       start: [this.minvalue, this.maxvalue],
-      tooltips: this.config.hasBubbles,
+      tooltips: [ 
+        this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMin(value) } : false,
+        this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMax(value) } : false,
+      ],
       connect: true,
       range: {
         'min': this.config.min,
         'max': this.config.max
       },
-      step: this.config.step
+      step: this.config.step,
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
-    
+
     this._slider.on("start", (values: (number | string)[], handle: number) => {
       this._onStart(handle);
     });
-    
+
     this._slider.on("change", (values: (number | string)[]) => {
       void this._onChange(values);
     });
-    
+
     this._slider.on("update", (values: (number | string)[]) => {
       this._onUpdate(values);
     });
@@ -141,7 +145,7 @@ export class FlexSliderCardSlider extends LitElement {
 
   private async _onChange(values: (number | string)[]): Promise<void> {
     debuglog("slider change");
-    
+
     // noUiSlider renvoie souvent des strings → conversion recommandée
     const min = Number(values[0]);
     const max = Number(values[1]);
@@ -174,4 +178,40 @@ export class FlexSliderCardSlider extends LitElement {
     this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
   }
 
+  /****************************************************/
+  /* CallBacks                                        */
+  /****************************************************/
+
+  private _sliderToDisplayMin(value: number): string {
+    let valueToDisplay: string = "";
+
+    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
+      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
+    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
+      valueToDisplay = minutesToTime(value);
+    } else {
+      throw new Error("Unsupported entity type");
+    }
+
+    valueToDisplay = this.config.mintextBubbles + valueToDisplay + this.config.unitBubbles;
+
+    return valueToDisplay;
+  }
+
+  private _sliderToDisplayMax(value: number): string {
+    let valueToDisplay: string = "";
+
+    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
+      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
+    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
+      valueToDisplay = minutesToTime(value);
+    } else {
+      throw new Error("Unsupported entity type");
+    }
+
+    valueToDisplay = this.config.maxtextBubbles + valueToDisplay + this.config.unitBubbles;
+
+    return valueToDisplay;
+  }
+  
 }

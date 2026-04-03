@@ -39,14 +39,30 @@ export const flexSliderCardValuesBarConfigStruct = object({
   unit: optional(string()),
 });
 
+export type FlexSliderCardBubblesConfig = {
+  mintext?: string;
+  maxtext?: string;
+  digits?: FlexSliderCardDigits;
+  nbdigits?: number;
+  unit?: string;
+};
+export const flexSliderCardBubblesConfigStruct = object({
+  mintext: optional(string()),
+  maxtext: optional(string()),
+  digits: optional(flexSliderCardDigitsStruct),
+  nbdigits: optional(number()),
+  unit: optional(string()),
+});
+
 export type FlexSliderCardConfig = LovelaceCardConfig &
 {
   /* display options */
   name?: string;
   format?: FlexSliderCardFormat;
   valuesbaractive?: boolean;
-  bubbles?: boolean;
+  bubblesactive?: boolean;
   valuesbar?: FlexSliderCardValuesBarConfig;
+  bubbles?: FlexSliderCardBubblesConfig;
 
  /* bahavioral */
   entity_min: string;
@@ -62,9 +78,10 @@ export const flexSliderCardConfigStruct = assign(
     name: optional(string()),
     format: optional(flexSliderCardFormatStruct),
     valuesbaractive: optional(boolean()), 
-    bubbles: optional(boolean()),
+    bubblesactive: optional(boolean()),
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
-
+    bubbles: optional(flexSliderCardBubblesConfigStruct),
+    
     /* behavioral */
     entity_min: string(),
     entity_max: string(),

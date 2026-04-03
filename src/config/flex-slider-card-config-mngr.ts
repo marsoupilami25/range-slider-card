@@ -28,6 +28,7 @@ export class FlexSliderCardConfigMngr {
     this._checkEntities(); //warning: need to be call before _checkSlider because it needs to know the entity type
     this._checkSlider(); //warning: need to be call before _checkValuesBar because it sets default values for min, max and step
     this._checkValuesBar();
+    this._checkBubbles();
   }
 
   public update(hass: HomeAssistant): void {
@@ -36,6 +37,7 @@ export class FlexSliderCardConfigMngr {
     this._updateEntities(hass);
     this._updateSlider(hass);
     this._updateValuesBar(hass);
+    this._updateBubbles(hass);
   }
 
   public reset(): void {
@@ -44,6 +46,7 @@ export class FlexSliderCardConfigMngr {
     this._resetEntities();
     this._resetSlider();
     this._resetValuesBar();
+    this._checkBubbles();
   }
 
   /****************************************************/
@@ -84,7 +87,7 @@ export class FlexSliderCardConfigMngr {
 
   protected _resetTitle(): void { }
 
-  public hasTitle(): boolean {
+  public get hasTitle(): boolean {
     return this._config.name !== undefined;
   }
 
@@ -147,36 +150,123 @@ export class FlexSliderCardConfigMngr {
 
   protected _resetValuesBar(): void { }
 
-  public hasValuesBar(): boolean {
+  public get hasValuesBar(): boolean {
     return (this._config.valuesbaractive === true);
   }
 
-  public get nbdigits(): number {
+  public get nbdigitsValuesBar(): number {
     if (this._config.valuesbar?.nbdigits == null) {
       throw new Error("Digits is not defined in config");
     }
     return this._config.valuesbar.nbdigits;
   }
 
-  public get unit(): string {
+  public get unitValuesBar(): string {
     if (this._config.valuesbar?.unit == null) {
       throw new Error("Unit is not defined in config");
     }
     return this._config.valuesbar.unit;
   }
 
-  public get mintext(): string {
+  public get mintextValuesBar(): string {
     if (this._config.valuesbar?.mintext == null) {
       throw new Error("Min text is not defined in config");
     }
     return this._config.valuesbar.mintext;
   }
 
-  public get maxtext(): string {
+  public get maxtextValuesBar(): string {
     if (this._config.valuesbar?.maxtext == null) {
       throw new Error("Max text is not defined in config");
     }
     return this._config.valuesbar.maxtext;
+  }
+
+  /****************************************************/
+  /* bubbles                                          */
+  /****************************************************/
+
+  protected _checkBubbles(): void {
+    assertOptionalBoolean(this._config.bubblesactive, "bubbles");
+    if (this._config.bubblesactive == null) {
+      this._config.bubblesactive = false;
+    }
+
+    if (this._config.bubbles == null) {
+      this._config.bubbles = {};
+    }
+
+    if (this._config.bubbles.digits == null) {
+      this._config.bubbles.digits = "auto";
+    }
+    assertFlexSliderCardDigits(this._config.bubbles.digits);
+
+    if (this._config.bubbles.digits === "auto") {
+      this._config.bubbles.nbdigits = this.step.toString().split(".")[1]?.length || 0; //_checkSlider should have been called before and set a default value for step if it was not defined by the user
+    }
+    if (this._config.bubbles.nbdigits == null) {
+      this._config.bubbles.nbdigits = 0;
+    }
+    assertOptionalNumber(this._config.bubbles.nbdigits, "nbdigits");
+    if (this._config.bubbles.nbdigits < 0) {
+      throw new Error("nbdigits must be >= 0");
+    }
+
+    if (this._config.bubbles.unit == null) {
+      this._config.bubbles.unit = "";
+    }
+
+    assertOptionalString(this._config.bubbles.mintext, "mintext");
+    if (this._config.bubbles.mintext == null) {
+      this._config.bubbles.mintext = "";
+    }
+    if (this._config.bubbles.mintext !== "") {
+      this._config.bubbles.mintext = this._config.bubbles.mintext + ":";
+    }
+
+    assertOptionalString(this._config.bubbles.maxtext, "maxtext");
+    if (this._config.bubbles.maxtext == null) {
+      this._config.bubbles.maxtext = "";
+    }
+    if (this._config.bubbles.maxtext !== "") {
+      this._config.bubbles.maxtext = this._config.bubbles.maxtext + ":";
+    }
+  }
+
+  protected _updateBubbles(hass: HomeAssistant): void { }
+
+  protected _resetBubbles(): void { }
+
+  public get hasBubbles(): boolean {
+    return (this._config.bubblesactive === true);
+  }
+
+  public get nbdigitsBubbles(): number {
+    if (this._config.bubbles?.nbdigits == null) {
+      throw new Error("Digits is not defined in config");
+    }
+    return this._config.bubbles.nbdigits;
+  }
+
+  public get unitBubbles(): string {
+    if (this._config.bubbles?.unit == null) {
+      throw new Error("Unit is not defined in config");
+    }
+    return this._config.bubbles.unit;
+  }
+
+  public get mintextBubbles(): string {
+    if (this._config.bubbles?.mintext == null) {
+      throw new Error("Min text is not defined in config");
+    }
+    return this._config.bubbles.mintext;
+  }
+
+  public get maxtextBubbles(): string {
+    if (this._config.bubbles?.maxtext == null) {
+      throw new Error("Max text is not defined in config");
+    }
+    return this._config.bubbles.maxtext;
   }
 
   /****************************************************/
@@ -207,10 +297,6 @@ export class FlexSliderCardConfigMngr {
       throw new Error(`Invalid range: min (${this._config.min}) cannot be greater than max (${this._config.max})`);
     }
 
-    assertOptionalBoolean(this._config.bubbles, "bubbles");
-    if (this._config.bubbles == null) {
-      this._config.bubbles = false;
-    }
   }
 
   protected _updateSlider(hass: HomeAssistant): void { }
@@ -227,10 +313,6 @@ export class FlexSliderCardConfigMngr {
 
   public get step(): number {
     return this._config.step!;
-  }
-
-  public get hasBubbles(): boolean {
-    return this._config.bubbles!;
   }
 
   /****************************************************/

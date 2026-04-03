@@ -151,7 +151,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
       return {};
     }
     if (this._config.isStd()) {
-      if (this._config.hasTitle() && this._config.hasValuesBar()) {
+      if (this._config.hasTitle && this._config.hasValuesBar) {
         return {
           rows: 2,
           min_rows: 2,
@@ -196,7 +196,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     if (!this._config) {
       return;
     }
-    if (this._config.hasValuesBar()) {
+    if (this._config.hasValuesBar) {
       this._slider.setCallbacks(this._valuesBar!.setMode, this._valuesBar!.setValue);
     }
   }
@@ -223,8 +223,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
       return html`<ha-card><div class="card-content">Entities not found</div></ha-card>`;
     }
 
-    const hasValuesBar = this._config.hasValuesBar();
-    const hasTitle = this._config.hasTitle();
+    const hasValuesBar = this._config.hasValuesBar;
+    const hasTitle = this._config.hasTitle;
     const name = this._config.title;
     const isStd = this._config.isStd();
     const containerClass = `${isStd ? "std" : "compact"} ${hasTitle ? "" : "no-title"}`;
