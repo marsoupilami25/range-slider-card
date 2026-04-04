@@ -2,11 +2,11 @@ export const stdFlexSliderSliderCardCss: string = `
 
   .slider-container.std {
     width: 100%;
-    height: 32px;/*21px; */
+    height: var(--height);
     display: flex;
     justify-content: center;
-    align-items: center;
-    border: 1px solid green; /* Debugging border */
+    align-items: var(--align-items);
+    /* border: 1px solid green; /* Debugging border */
   }
 
   .slider.std.noUi-target {
@@ -49,6 +49,10 @@ export const stdFlexSliderSliderCardCss: string = `
     border: 1px solid var(--primary-color);
     padding: 0px 4px;
     font-size: 1rem;
+    top: -26px;
+    height: 20px;
+    display: flex;
+    align-items: center; 
   }
   
   .slider.std .noUi-handle::before, .slider.std .noUi-handle::after {

@@ -117,9 +117,24 @@ export class FlexSliderCardSlider extends LitElement {
   }
 
   protected override render() {
+    let alignItems = "";
+    let height = "";
+
+    if (this.config.hasBubbles) {
+      alignItems = "flex-end";
+      height = "43px";
+    } else {
+      alignItems = "center";
+      height = "21px";
+    }
     return html`
-      <div class="slider-container ${this.sliderClass}">
-        <div class="slider ${this.sliderClass}"></div>
+      <div
+        class="slider-container ${this.sliderClass}" 
+        style="
+          --align-items: ${alignItems};
+          --height: ${height};
+        "
+      > <div class="slider ${this.sliderClass}"></div>
       </div>
     `;
   }
@@ -183,7 +198,7 @@ export class FlexSliderCardSlider extends LitElement {
   }
 
   /****************************************************/
-  /* CallBacks                                        */
+  /* Private methods                                  */
   /****************************************************/
 
   private _sliderToDisplayMin(value: number): string {
