@@ -2,6 +2,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   name: "Name",
   format: "Format",
   valuesbaractive: "Enable values bar",
+  bubblesactive: "Enable bubbles",
   entity_min: "Entity for minimum",
   entity_max: "Entity for maximum",
   min: "Min (Number only)",
@@ -12,4 +13,5 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   nbdigits: "Number of Digits (Manual only)",
   mintext: "Text for min value",
   maxtext: "Text for max value",
+  dragonly: "Visible during drag only",
 };

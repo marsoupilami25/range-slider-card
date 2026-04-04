@@ -21,9 +21,20 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
     required: false,
   },
   {
-    name: "valuesbaractive",
-    selector: { boolean: {} },
-    required: false,
+    type: "grid",
+    name: "",
+    schema: [
+      {
+        name: "valuesbaractive",
+        selector: { boolean: {} },
+        required: false,
+      },
+      {
+        name: "bubblesactive",
+        selector: { boolean: {} },
+        required: false,
+      },
+    ],
   },
   {
     type: "expandable",
@@ -90,7 +101,7 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
   },
 ]);
 
-const valuesBarSchema = memoizeOne((digits: string): HaFormSchema[] => [
+const valuesBarSchema = memoizeOne((digitsValuesBar: string): HaFormSchema[] => [
   {
     type: "expandable",
     name: "valuesbar",
@@ -121,7 +132,7 @@ const valuesBarSchema = memoizeOne((digits: string): HaFormSchema[] => [
             selector: {
               number: { mode: "box", min: 0 },
             },
-            disabled: digits !== "manual",
+            disabled: digitsValuesBar !== "manual",
           },
         ],
       },
@@ -142,8 +153,81 @@ const valuesBarSchema = memoizeOne((digits: string): HaFormSchema[] => [
   }
 ]);
 
-export const computeSchema = memoizeOne((hasValuesBar: boolean, digits: string, isNumber: boolean): HaFormSchema[] => {
-  return hasValuesBar
-    ? [...baseSchema(isNumber), ...valuesBarSchema(digits)]
-    : [...baseSchema(isNumber)];
+const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
+  {
+    type: "expandable",
+    name: "bubbles",
+    title: "Bubbles",
+    icon: "mdi:format-list-bulleted",
+    schema: [
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "dragonly",
+            selector: { boolean: {} },
+            required: false,
+          },
+          {
+            name: "unit",
+            selector: { text: {} },
+          },
+        ],
+      },
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "digits",
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: [
+                  { value: "auto", label: "Auto" },
+                  { value: "manual", label: "Manual" },
+                ],
+              },
+            },
+          },
+          {
+            name: "nbdigits",
+            selector: {
+              number: { mode: "box", min: 0 },
+            },
+            disabled: digitsBubbles !== "manual",
+          },
+        ],
+      },
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "mintext",
+            selector: { text: {} },
+          },
+          {
+            name: "maxtext",
+            selector: { text: {} },
+          },
+        ],
+      },
+    ],
+  }
+]);
+
+export const computeSchema = memoizeOne((hasValuesBar: boolean, 
+  hasBubbles: boolean,
+  digitsValuesBar: string, 
+  digitsBubbles: string,
+  isNumber: boolean): HaFormSchema[] => {
+  if (hasBubbles && hasValuesBar) {
+    return [...baseSchema(isNumber), ...valuesBarSchema(digitsValuesBar), ...bubblesSchema(digitsBubbles)];
+  }
+  if (hasValuesBar) {
+    return [...baseSchema(isNumber), ...valuesBarSchema(digitsValuesBar)];
+  }
+  if (hasBubbles) {
+    return [...baseSchema(isNumber), ...bubblesSchema(digitsBubbles)];
+  }
+  return [...baseSchema(isNumber)];
 });

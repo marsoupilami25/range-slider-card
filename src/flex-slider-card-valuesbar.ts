@@ -61,26 +61,26 @@ export class FlexSliderCardValuesBar extends LitElement {
       return nothing;
     }
 
-    if (!this.config.hasValuesBar()) {
+    if (!this.config.hasValuesBar) {
       return nothing;
     }
 
     return html`
       <div class="valuesbar">
         <span>
-          ${this.config?.mintext || ""}
+          ${this.config?.mintextValuesBar || ""}
           <span class=${this._isEditing(0) ? "editing" : ""}>
             ${this._minValue}
           </span>
-          ${this.config?.unit || ""}
+          ${this.config?.unitValuesBar || ""}
         </span>
 
         <span>
-          ${this.config?.maxtext || ""}
+          ${this.config?.maxtextValuesBar || ""}
           <span class=${this._isEditing(1) ? "editing" : ""}>
             ${this._maxValue}
           </span>
-          ${this.config?.unit || ""}
+          ${this.config?.unitValuesBar || ""}
         </span>
       </div>
     `;
@@ -144,7 +144,7 @@ export class FlexSliderCardValuesBar extends LitElement {
 
   private _sliderToDisplay(value: number): string {
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      return Number(value).toFixed(Number(this.config.nbdigits));
+      return Number(value).toFixed(Number(this.config.nbdigitsValuesBar));
     }
     if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
       return minutesToTime(value);
