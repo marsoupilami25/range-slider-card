@@ -138,7 +138,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
       return 1;
     }
     if (this._config.isStd()) {
-      return 2;
+      return 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0);
     } else if (this._config.isCompact()) {
       return 1;
     } else {
@@ -151,7 +151,9 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
       return {};
     }
     if (this._config.isStd()) {
-      if (this._config.hasTitle && this._config.hasValuesBar) {
+      if ((this._config.hasTitle && this._config.hasValuesBar) ||
+          (this._config.hasTitle && this._config.hasBubbles) ||
+          (this._config.hasValuesBar && this._config.hasBubbles)) {
         return {
           rows: 2,
           min_rows: 2,
