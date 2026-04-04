@@ -9,23 +9,18 @@ A custom card for Home Assistant that allows adjusting two `entities` values wit
 Accepted domains are `input_number`, `number` and `input_datetime`.
 For `input_datetime` the manageable range is a day (from 0 to 23h59).
 
-Two formats are available.
-
-The standard format with title and bottom values bar:
-
-![Image of a standard flex slider card](/assets/standard.png) 
-
-The compact format with title and bottom values bar:
-
-![Image of a standard flex slider card](/assets/compact.png) 
-
 ## Features  
 
-- [X] Adjust two `entities` with a single slider.  
-- [X] Define your own minimum and maximum value limits
-- [X] Select compact or standard display
+- [X] Adjust two `entities` with a single slider.
+- [X] Two display formats: standard and compact
+![Image of a standard flex slider card](/assets/standard.png) 
+![Image of a standard flex slider card](/assets/compact.png) 
 - [X] Optional title
+![Image of a standard flex slider card](/assets/title.png) 
 - [X] Option bar with entity values
+![Image of a standard flex slider card](/assets/valuesbar.png)
+- [X] Optional bubbles
+![Image of a standard flex slider card](/assets/bubbles.png)
 
 ## Note about 2.0 release
 The 2.0 release is a major update and is not backwards compatible with the previous version. The 2.0 add the visual editor feature and previous yaml configs are not compatible anymore.
@@ -57,8 +52,8 @@ The 2.0 release is a major update and is not backwards compatible with the previ
 |-------------------|---------------|---------------|---------|--------------|-|
 | `name`            | string        |All            |No       |`Range Slider`| Title for the slider. If not configured or `''`, the title is not displayed. |
 | `format`          | string        |All            |No       |`std`         | Format type. Is `std` or `compact`|
-| `unit`            | string        |All            |No       |Empty         | Display unit (e.g., `%`, `°C`, etc.) |
 | `valuesbaractive` | boolean       |All            |No       |false         | Display a bottom bar with entity values |
+| `bubblesactive`   | boolean       |All            |No       |false         | Display a bottom bar with entity values |
 
 ### Display Options for values bar
 |Option       |Type             |Domain         |Mandatory|Default | Description |
@@ -67,6 +62,17 @@ The 2.0 release is a major update and is not backwards compatible with the previ
 | `maxtext`   | string          |All            |No       |Empty   | Text to display before the maximum value. |
 | `digits`    | `auto`/`manual` |Number only (*)|No       |`auto`  | When `auto` the number of digits is automatically calculated from the step. |
 | `nbdigits`  | number          |Number only (*)|No       |Empty   | Number of digits to display when `digits` is set to `manual`. |
+| `unit`      | string          |All            |No       |Empty   | Display unit (e.g., `%`, `°C`, etc.) |
+
+### Display Options for bubbles
+|Option       |Type             |Domain         |Mandatory|Default | Description |
+|-------------|-----------------|---------------|---------|--------|-|
+| `mintext`   | string          |All            |No       |Empty   | Text to display before the minimum value. |
+| `maxtext`   | string          |All            |No       |Empty   | Text to display before the maximum value. |
+| `digits`    | `auto`/`manual` |Number only (*)|No       |`auto`  | When `auto` the number of digits is automatically calculated from the step. |
+| `nbdigits`  | number          |Number only (*)|No       |Empty   | Number of digits to display when `digits` is set to `manual`. |
+| `unit`      | string          |All            |No       |Empty   | Display unit (e.g., `%`, `°C`, etc.) |
+| `dragonly`  | boolean         |All            |No       |false   | Display bubbles only during drag |
 
 ### Behavioral Options
 | Option       | Type   |Domain         |Mandatory|Default       | Description |
