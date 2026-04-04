@@ -64,11 +64,11 @@ export class FlexSliderCardConfigMngr {
 
   protected _resetFormat(): void { }
 
-  public isCompact(): boolean {
+  public get isCompact(): boolean {
     return this._config.format === "compact";
   }
 
-  public isStd(): boolean {
+  public get isStd(): boolean {
     return this._config.format === "std";
   }
 

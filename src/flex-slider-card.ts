@@ -96,10 +96,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     try {
       this._config = new FlexSliderCardConfigMngr(config);
       this._error = undefined;
-      if (this._config.isStd()) {
+      if (this._config.isStd) {
         this.toggleAttribute("std", true);
         this.toggleAttribute("compact", false);
-      } else if (this._config.isCompact()) {
+      } else if (this._config.isCompact) {
         this.toggleAttribute("std", false);
         this.toggleAttribute("compact", true);
       } else {
@@ -137,9 +137,9 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     if (!this._config) {
       return 1;
     }
-    if (this._config.isStd()) {
+    if (this._config.isStd) {
       return 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0);
-    } else if (this._config.isCompact()) {
+    } else if (this._config.isCompact) {
       return 1;
     } else {
       throw new Error("Invalid format in getCardSize");
@@ -150,7 +150,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     if (!this._config) {
       return {};
     }
-    if (this._config.isStd()) {
+    if (this._config.isStd) {
       if ((this._config.hasTitle && this._config.hasValuesBar) ||
           (this._config.hasTitle && this._config.hasBubbles) ||
           (this._config.hasValuesBar && this._config.hasBubbles)) {
@@ -168,7 +168,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
           max_columns: 12
         };
       }
-    } else if (this._config.isCompact()) {
+    } else if (this._config.isCompact) {
       return {
         min_rows: 1,
         min_columns: 2,
@@ -228,7 +228,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     const hasValuesBar = this._config.hasValuesBar;
     const hasTitle = this._config.hasTitle;
     const name = this._config.title;
-    const isStd = this._config.isStd();
+    const isStd = this._config.isStd;
     const containerClass = `${isStd ? "std" : "compact"} ${hasTitle ? "" : "no-title"}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
     const minValue = this._config.entities.min.sliderValue;

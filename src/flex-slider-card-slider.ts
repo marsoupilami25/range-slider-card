@@ -121,13 +121,16 @@ export class FlexSliderCardSlider extends LitElement {
     
     let alignItems = "";
     let height = "";
+    let padding = "";
 
     if (this.config.hasBubbles) {
       alignItems = "flex-end";
-      height = "43px";
+      height = this.config.isStd ? "43px" : "30px";
+      padding = this.config.isStd ? "0px" : "2px";
     } else {
       alignItems = "center";
-      height = "21px";
+      height = this.config.isStd ? "21px" : "14px";
+      padding = "0px";
     }
     return html`
       <div
@@ -135,6 +138,7 @@ export class FlexSliderCardSlider extends LitElement {
         style="
           --align-items: ${alignItems};
           --height: ${height};
+          --padding: ${padding};
         "
       > <div class="slider ${this.sliderClass} ${draggerClass}"></div>
       </div>
