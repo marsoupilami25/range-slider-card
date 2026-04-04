@@ -6,7 +6,7 @@ export const stdFlexSliderSliderCardCss: string = `
     display: flex;
     justify-content: center;
     align-items: var(--align-items);
-    border: 1px solid green; /* Debugging border */
+    /* border: 1px solid green; /* Debugging border */
   }
 
   .slider.std.noUi-target {

@@ -155,37 +155,17 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const size = 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0) + (this._config.hasBubbles ? 1 : 0);
     
     if (this._config.isStd) {
-      if ((this._config.hasTitle && this._config.hasValuesBar) ||
-        (this._config.hasTitle && this._config.hasBubbles) ||
-        (this._config.hasValuesBar && this._config.hasBubbles)) {
         return {
-          rows: 2,
-          min_rows: 2,
+          min_rows: Math.round(size/2),
           min_columns: 6,
           max_columns: 12
         };
-      } else {
-        return {
-          rows: 1,
-          min_rows: 1,
-          min_columns: 6,
-          max_columns: 12
-        };
-      }
     } else if (this._config.isCompact) {
-      if (this._config.hasTitle && this._config.hasValuesBar && this._config.hasBubbles) {
         return {
-          min_rows: 1,
+          min_rows: Math.round(size / 2.5),
           min_columns: 2,
           max_columns: 9
         };
-      } else {
-        return {
-          min_rows: 1,
-          min_columns: 2,
-          max_columns: 9
-        };
-      }
     } else {
       throw new Error("Invalid format in getGridOptions");
     }
