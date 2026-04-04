@@ -231,6 +231,11 @@ export class FlexSliderCardConfigMngr {
     if (this._config.bubbles.maxtext !== "") {
       this._config.bubbles.maxtext = this._config.bubbles.maxtext + ":";
     }
+
+    assertOptionalBoolean(this._config.bubbles.dragonly, "dragonly");
+    if (this._config.bubbles.dragonly == null) {
+      this._config.bubbles.dragonly = false;
+    }
   }
 
   protected _updateBubbles(hass: HomeAssistant): void { }
@@ -269,6 +274,13 @@ export class FlexSliderCardConfigMngr {
     return this._config.bubbles.maxtext;
   }
 
+  public get isDragOnlyBubbles(): boolean {
+    if (this._config.bubbles?.dragonly == null) {
+      throw new Error("Drag only is not defined in config");
+    }
+    return this._config.bubbles.dragonly;   
+  }
+  
   /****************************************************/
   /* slider                                           */
   /****************************************************/

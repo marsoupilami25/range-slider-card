@@ -45,6 +45,7 @@ export type FlexSliderCardBubblesConfig = {
   digits?: FlexSliderCardDigits;
   nbdigits?: number;
   unit?: string;
+  dragonly?: boolean;
 };
 export const flexSliderCardBubblesConfigStruct = object({
   mintext: optional(string()),
@@ -52,6 +53,7 @@ export const flexSliderCardBubblesConfigStruct = object({
   digits: optional(flexSliderCardDigitsStruct),
   nbdigits: optional(number()),
   unit: optional(string()),
+  dragonly: optional(boolean()),
 });
 
 export type FlexSliderCardConfig = LovelaceCardConfig &

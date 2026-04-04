@@ -54,7 +54,16 @@ export const stdFlexSliderSliderCardCss: string = `
     display: flex;
     align-items: center; 
   }
-  
+
+  .slider.std.dragonly .noUi-tooltip {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .slider.std.dragonly .noUi-active .noUi-tooltip {
+    opacity: 1;
+  }
+
   .slider.std .noUi-handle::before, .slider.std .noUi-handle::after {
     display: none;
   }

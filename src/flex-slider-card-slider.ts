@@ -117,6 +117,8 @@ export class FlexSliderCardSlider extends LitElement {
   }
 
   protected override render() {
+    const draggerClass = `${this.config.isDragOnlyBubbles ? "dragonly" : ""}`;
+    
     let alignItems = "";
     let height = "";
 
@@ -134,7 +136,7 @@ export class FlexSliderCardSlider extends LitElement {
           --align-items: ${alignItems};
           --height: ${height};
         "
-      > <div class="slider ${this.sliderClass}"></div>
+      > <div class="slider ${this.sliderClass} ${draggerClass}"></div>
       </div>
     `;
   }

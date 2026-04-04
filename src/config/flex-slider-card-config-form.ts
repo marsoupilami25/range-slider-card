@@ -164,9 +164,19 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
         type: "grid",
         schema: [
           {
+            name: "dragonly",
+            selector: { boolean: {} },
+            required: false,
+          },
+          {
             name: "unit",
             selector: { text: {} },
           },
+        ],
+      },
+      {
+        type: "grid",
+        schema: [
           {
             name: "digits",
             selector: {

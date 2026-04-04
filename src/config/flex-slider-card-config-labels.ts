@@ -13,4 +13,5 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   nbdigits: "Number of Digits (Manual only)",
   mintext: "Text for min value",
   maxtext: "Text for max value",
+  dragonly: "Visible during drag only",
 };
