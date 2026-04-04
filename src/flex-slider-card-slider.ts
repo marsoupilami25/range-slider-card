@@ -27,7 +27,7 @@ export class FlexSliderCardSlider extends LitElement {
   public config!: FlexSliderCardConfigMngr;          // reference to the card configuration
 
   @property({ attribute: false })
-  public sliderClass: FlexSliderCardFormat = "std";          // reference to the card configuration
+  public sliderClass!: FlexSliderCardFormat;          // reference to the card configuration
 
   @property({ type: Number })
   public minvalue = 0;
@@ -117,7 +117,11 @@ export class FlexSliderCardSlider extends LitElement {
   }
 
   protected override render() {
-    return html`<div class="slider ${this.sliderClass}"></div>`;
+    return html`
+      <div class="slider-container ${this.sliderClass}">
+        <div class="slider ${this.sliderClass}"></div>
+      </div>
+    `;
   }
 
   /****************************************************/

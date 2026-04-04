@@ -47,16 +47,7 @@ export const compactFlexSliderCardCss: string = `
     justify-content: center;
     /* border: 1px solid red; /* Debugging border */
   }
-
-  .container.compact .slider-container {
-    width: 100%;
-    height: 14px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* border: 1px solid green; /* Debugging border */
-  }
-  
+ 
   .container.compact .slider {
     width: 100%;
   }

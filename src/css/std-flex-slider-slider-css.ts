@@ -1,20 +1,32 @@
 export const stdFlexSliderSliderCardCss: string = `
 
+  .slider-container.std {
+    width: 100%;
+    height: 32px;/*21px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid green; /* Debugging border */
+  }
+
   .slider.std.noUi-target {
     height: 16px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
     border-radius: 10px / 16px;
     border: none;
     box-shadow: none;
+    /*border: 1px solid blue; /* Debugging border */
   }
   
   .slider.std .noUi-base {
     height: 16px;
+    /* border: 1px solid green; /* Debugging border */
   }
   
   .slider.std .noUi-connect {
     height: 16px;
     background: color-mix(in srgb, var(--primary-color) 30%, transparent);
+    /* border: 1px solid red; /* Debugging border */
   }
   
   .slider.std.noUi-horizontal .noUi-handle {
@@ -28,6 +40,15 @@ export const stdFlexSliderSliderCardCss: string = `
     border-color: var(--primary-color);
     border-radius: 15px;
     box-shadow: none;
+  }
+  
+  .slider.std .noUi-tooltip {
+    background: var(--disabled-color);
+    color: var(--primary-text-color);
+    border-radius: 6px;
+    border: 1px solid var(--primary-color);
+    padding: 0px 4px;
+    font-size: 1rem;
   }
   
   .slider.std .noUi-handle::before, .slider.std .noUi-handle::after {

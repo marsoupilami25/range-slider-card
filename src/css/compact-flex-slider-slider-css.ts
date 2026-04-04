@@ -1,5 +1,14 @@
 export const compactFlexSliderSliderCardCss: string = `
   
+  .slider-container.compact {
+    width: 100%;
+    height: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid green; /* Debugging border */
+  }
+    
   .slider.compact.noUi-target {
     height: 6px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);

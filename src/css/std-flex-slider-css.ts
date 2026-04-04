@@ -48,15 +48,6 @@ export const stdFlexSliderCardCss: string = `
     /* border: 1px solid red; /* Debugging border */
   }
   
-  .container.std .slider-container {
-    width: 100%;
-    height: 21px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* border: 1px solid green; /* Debugging border */
-  }
-  
   .container.std .slider {
     width: 100%;
   }
