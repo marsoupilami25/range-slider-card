@@ -48,7 +48,7 @@ type GridOptions =
   };
 
 @customElement("flex-slider-card")
-export class FlexSliderCard extends LitElement implements LovelaceCard  {
+export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   /****************************************************/
   /* private parameters                               */
@@ -109,7 +109,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
       this._setError(error);
     }
   }
-  
+
 
 
   /****************************************************/
@@ -120,12 +120,12 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     super();
     debuglog("constructor");
   }
-  
+
   public connectedCallback(): void {
     super.connectedCallback();
     debuglog("connectedCallback");
   }
-  
+
   public disconnectedCallback(): void {
     super.disconnectedCallback();
     this._initPrivateDisplayData();
@@ -137,10 +137,12 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     if (!this._config) {
       return 1;
     }
+    const size = 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0) + (this._config.hasBubbles ? 1 : 0);
+
     if (this._config.isStd) {
-      return 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0);
+      return size;
     } else if (this._config.isCompact) {
-      return 1;
+      return Math.round(size * 2 / 3);
     } else {
       throw new Error("Invalid format in getCardSize");
     }
@@ -150,10 +152,12 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
     if (!this._config) {
       return {};
     }
+    const size = 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0) + (this._config.hasBubbles ? 1 : 0);
+    
     if (this._config.isStd) {
       if ((this._config.hasTitle && this._config.hasValuesBar) ||
-          (this._config.hasTitle && this._config.hasBubbles) ||
-          (this._config.hasValuesBar && this._config.hasBubbles)) {
+        (this._config.hasTitle && this._config.hasBubbles) ||
+        (this._config.hasValuesBar && this._config.hasBubbles)) {
         return {
           rows: 2,
           min_rows: 2,
@@ -169,11 +173,19 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
         };
       }
     } else if (this._config.isCompact) {
-      return {
-        min_rows: 1,
-        min_columns: 2,
-        max_columns: 9
-      };
+      if (this._config.hasTitle && this._config.hasValuesBar && this._config.hasBubbles) {
+        return {
+          min_rows: 1,
+          min_columns: 2,
+          max_columns: 9
+        };
+      } else {
+        return {
+          min_rows: 1,
+          min_columns: 2,
+          max_columns: 9
+        };
+      }
     } else {
       throw new Error("Invalid format in getGridOptions");
     }
@@ -249,14 +261,14 @@ export class FlexSliderCard extends LitElement implements LovelaceCard  {
           </div>
 
           ${hasValuesBar
-            ? html`
+        ? html`
               <flex-slider-card-valuesbar
                 .config=${this._config}
                 .minvalue=${minValue}
                 .maxvalue=${maxValue}              
               ></flex-slider-card-valuesbar>
             `
-          : nothing}
+        : nothing}
         </div>
       </div>
     `;
