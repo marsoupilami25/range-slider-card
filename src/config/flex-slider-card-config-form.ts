@@ -34,6 +34,11 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
         selector: { boolean: {} },
         required: false,
       },
+      {
+        name: "ticksactive",
+        selector: { boolean: {} },
+        required: false,
+      },
     ],
   },
   {

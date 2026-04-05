@@ -1,5 +1,4 @@
-import noUiSlider, { API as NoUiSliderAPI } from "nouislider";
-import { debuglog, minutesToTime, timeToMinutes } from "./utils/utils";
+import noUiSlider, { API as NoUiSliderAPI, PipsMode } from "nouislider";
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, unsafeCSS } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
@@ -8,6 +7,7 @@ import { stdFlexSliderSliderCardCss } from "./css/std-flex-slider-slider-css";
 import { compactFlexSliderSliderCardCss } from "./css/compact-flex-slider-slider-css";
 import { FlexSliderCardFormat } from "./config/flex-slider-card-config-type";
 import { FlexSliderCardValuesBarMode, FlexSliderCardValuesBarSetModeCallback, FlexSliderCardValuesBarSetValueCallback } from "./flex-slider-card-valuesbar";
+import { debuglog, minutesToTime } from "./utils/utils";
 import { FlexSliderCardEntityType } from "./utils/entity-management";
 
 
@@ -89,6 +89,11 @@ export class FlexSliderCardSlider extends LitElement {
         'max': this.config.max
       },
       step: this.config.step,
+      pips: this.config.hasTicks ? {
+        mode: PipsMode.Positions,
+        values: [0, 25, 50, 75, 100],
+        density: 4,
+      } : undefined,
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
 

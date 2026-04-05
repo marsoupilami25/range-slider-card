@@ -31,6 +31,7 @@ export class FlexSliderCardConfigMngr {
     this._checkSlider(); //warning: need to be call before _checkValuesBar because it sets default values for min, max and step
     this._checkValuesBar();
     this._checkBubbles();
+    this._checkTicks();
   }
 
   public update(hass: HomeAssistant): void {
@@ -40,6 +41,7 @@ export class FlexSliderCardConfigMngr {
     this._updateSlider(hass);
     this._updateValuesBar(hass);
     this._updateBubbles(hass);
+    this._updateTicks(hass);
   }
 
   public reset(): void {
@@ -48,7 +50,8 @@ export class FlexSliderCardConfigMngr {
     this._resetEntities();
     this._resetSlider();
     this._resetValuesBar();
-    this._checkBubbles();
+    this._resetBubbles();
+    this._resetTicks();
   }
 
   /****************************************************/
@@ -281,6 +284,29 @@ export class FlexSliderCardConfigMngr {
       throw new Error("Drag only is not defined in config");
     }
     return this._config.bubbles.dragonly;   
+  }
+  
+  /****************************************************/
+  /* tick marks                                       */
+  /****************************************************/
+
+  protected _checkTicks(): void {
+    assertOptionalBoolean(this._config.ticksactive, "ticks");
+    if (this._config.ticksactive == null) {
+      this._config.ticksactive = false;
+    }
+
+    /* if (this._config.bubbles == null) {
+      this._config.bubbles = {};
+    } */
+  }
+
+  protected _updateTicks(hass: HomeAssistant): void { }
+
+  protected _resetTicks(): void { }
+
+  public get hasTicks(): boolean {
+    return (this._config.ticksactive === true);
   }
   
   /****************************************************/

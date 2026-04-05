@@ -7,7 +7,7 @@
 A custom card for Home Assistant that allows adjusting two `entities` values with a single slider, enabling the selection of a custom value range.  
 Accepted domains are `input_number`, `number` and `input_datetime`.
 For `input_datetime` the manageable range is a day (from 0 to 23h59).   
-![Exmple of a flex slider card](/assets/slider.png)    
+![Example of a flex slider card](/assets/slider_example.png)    
 
 ## Features  
 

@@ -77,6 +77,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   valuesbar?: FlexSliderCardValuesBarConfig;
   bubbles?: FlexSliderCardBubblesConfig;
   direction?: FlexSliderCardDirection;
+  ticksactive?: boolean;
 
  /* bahavioral */
   entity_min: string;
@@ -96,6 +97,7 @@ export const flexSliderCardConfigStruct = assign(
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
     bubbles: optional(flexSliderCardBubblesConfigStruct),
     direction: optional(flexSliderCardDirectionStruct),
+    ticksactive: optional(boolean()),
     
     /* behavioral */
     entity_min: string(),
