@@ -24,6 +24,17 @@ export const flexSliderCardDigitsStruct = union([
   literal("manual"),
 ]);
 
+export type FlexSliderCardDirection = "rtl" | "ltr";
+export function assertFlexSliderCardDirection(value: any): asserts value is FlexSliderCardDirection {
+  if (!["rtl", "ltr"].includes(value)) {
+    throw new Error(`Invalid FlexSliderCardDirection: ${value}`);
+  }
+}
+export const flexSliderCardDirectionStruct = union([
+  literal("rtl"),
+  literal("ltr"),
+]);
+
 export type FlexSliderCardValuesBarConfig = {
   mintext?: string;
   maxtext?: string;
@@ -65,6 +76,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   bubblesactive?: boolean;
   valuesbar?: FlexSliderCardValuesBarConfig;
   bubbles?: FlexSliderCardBubblesConfig;
+  direction?: FlexSliderCardDirection;
 
  /* bahavioral */
   entity_min: string;
@@ -83,6 +95,7 @@ export const flexSliderCardConfigStruct = assign(
     bubblesactive: optional(boolean()),
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
     bubbles: optional(flexSliderCardBubblesConfigStruct),
+    direction: optional(flexSliderCardDirectionStruct),
     
     /* behavioral */
     entity_min: string(),

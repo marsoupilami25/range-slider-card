@@ -14,4 +14,5 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   mintext: "Text for min value",
   maxtext: "Text for max value",
   dragonly: "Visible during drag only",
+  direction: "Direction",
 };

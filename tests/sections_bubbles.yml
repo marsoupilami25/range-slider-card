@@ -77,7 +77,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: Sans grid reversed
         valuesbaractive: true
         grid_options:
           columns: null
@@ -86,10 +86,11 @@ sections:
           unit: °C
           mintext: Min
           maxtext: Max
-        buubles:
+        bubbles:
           unit: °C
           mintext: Min
           maxtext: Max
+        direction: rtl
       - type: heading
         icon: ""
         heading: Sans grid sans titre
@@ -230,11 +231,12 @@ sections:
         entity_max: input_datetime.inputheuretestmax
         bubblesactive: true
         step: 10
-        name: Avec grid R1
+        name: Avec grid R1 reversed
         format: compact
         grid_options:
           columns: 12
           rows: 1
+        direction: rtl
       - type: heading
         icon: ""
         heading: Avec values bar

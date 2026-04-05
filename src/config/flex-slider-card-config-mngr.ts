@@ -3,7 +3,9 @@ import { FlexSliderCardEntity } from "../flex-slider-card-entity";
 import {
   FlexSliderCardConfig,
   assertFlexSliderCardFormat,
-  assertFlexSliderCardDigits
+  assertFlexSliderCardDigits,
+  assertFlexSliderCardDirection,
+  FlexSliderCardDirection
 } from "./flex-slider-card-config-type";
 import {
   assertOptionalString,
@@ -309,6 +311,10 @@ export class FlexSliderCardConfigMngr {
       throw new Error(`Invalid range: min (${this._config.min}) cannot be greater than max (${this._config.max})`);
     }
 
+    if (this._config.direction == null) {
+      this._config.direction = "ltr";
+    }
+    assertFlexSliderCardDirection(this._config.direction);
   }
 
   protected _updateSlider(hass: HomeAssistant): void { }
@@ -327,6 +333,13 @@ export class FlexSliderCardConfigMngr {
     return this._config.step!;
   }
 
+  public get direction(): FlexSliderCardDirection {
+    if (this._config.direction == null) {
+      throw new Error("Direction is not defined in config");
+    }
+    return this._config.direction;
+  }
+  
   /****************************************************/
   /* entities                                         */
   /****************************************************/

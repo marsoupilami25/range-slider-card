@@ -71,13 +71,14 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre et valuesbar
+    name: Compact avec titre et valuesbar reversed
     format: compact
     valuesbaractive: true
     valuesbar:
       unit: °C
       mintext: Min
       maxtext: Max
+    direction: rtl
   - type: vertical-stack
     cards:
       - type: heading

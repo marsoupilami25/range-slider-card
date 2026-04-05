@@ -6,20 +6,24 @@
 
 A custom card for Home Assistant that allows adjusting two `entities` values with a single slider, enabling the selection of a custom value range.  
 Accepted domains are `input_number`, `number` and `input_datetime`.
-For `input_datetime` the manageable range is a day (from 0 to 23h59).
+For `input_datetime` the manageable range is a day (from 0 to 23h59).   
+![Exmple of a flex slider card](/assets/slider.png)    
 
 ## Features  
 
 - [X] Adjust two `entities` with a single slider.
+- [X] Use current Home Assistant theme
 - [X] Two display formats: standard and compact   
 ![Image of a standard flex slider card](/assets/standard.png)    
-![Image of a standard flex slider card](/assets/compact.png) 
+![Image of a compact flex slider card](/assets/compact.png) 
 - [X] Optional title   
-![Image of a standard flex slider card](/assets/title.png) 
+![Image of a flex slider card with title](/assets/title.png) 
 - [X] Option bar with entity values   
-![Image of a standard flex slider card](/assets/valuesbar.png)
+![Image of a flex slider card with values bar](/assets/valuesbar.png)
 - [X] Optional bubbles   
-![Image of a standard flex slider card](/assets/bubbles.png)
+![Image of a flex slider card with bubbles](/assets/bubbles.png)
+- [X] Manageable direction  
+![Image of a reversed flex slider card](/assets/direction.png)  
 
 ## Note about 2.0 release
 The 2.0 release is a major update and is not backwards compatible with the previous version. The 2.0 add the visual editor feature and previous yaml configs are not compatible anymore.

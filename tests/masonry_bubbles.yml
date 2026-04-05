@@ -29,7 +29,7 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: Standard avec titre et valuesbar
+    name: My Slider
     valuesbaractive: true
     bubblesactive: true
     valuesbar:
@@ -77,9 +77,10 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre
+    name: Compact avec titre reversed
     format: compact
     bubblesactive: true
+    direction: rtl
   - type: custom:flex-slider-card
     entity_min: input_number.inputnumbertestmin
     entity_max: input_number.inputnumbertestmax
