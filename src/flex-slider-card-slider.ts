@@ -76,6 +76,9 @@ export class FlexSliderCardSlider extends LitElement {
       throw new Error("Config not initialized");
     }
 
+    const pipsValues = Array.from({ length: this.config.majorticks }, (_, i) => i * 100 / (this.config.majorticks - 1));
+    const density = 100 / ((this.config.majorticks - 1) * (this.config.minorticks + 1));
+
     noUiSlider.create(this._sliderElement, {
       start: [this.minvalue, this.maxvalue],
       direction: this.config.direction,
@@ -91,8 +94,8 @@ export class FlexSliderCardSlider extends LitElement {
       step: this.config.step,
       pips: this.config.hasTicks ? {
         mode: PipsMode.Positions,
-        values: [0, 25, 50, 75, 100],
-        density: 4,
+        values: pipsValues,
+        density: density,
       } : undefined,
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance

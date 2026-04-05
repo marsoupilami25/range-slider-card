@@ -296,9 +296,25 @@ export class FlexSliderCardConfigMngr {
       this._config.ticksactive = false;
     }
 
-    /* if (this._config.bubbles == null) {
-      this._config.bubbles = {};
-    } */
+    if (this._config.ticks == null) {
+      this._config.ticks = {};
+    }
+
+    assertOptionalNumber(this._config.ticks.majorticks, "majorticks");
+    if (this._config.ticks.majorticks == null) {
+      this._config.ticks.majorticks = 4;
+    }
+    if (this._config.ticks.majorticks < 2) {
+      throw new Error("majorticks must be >= 2");
+    }
+
+    assertOptionalNumber(this._config.ticks.minorticks, "minorticks");
+    if (this._config.ticks.minorticks == null) {
+      this._config.ticks.minorticks = 0;
+    }
+    if (this._config.ticks.minorticks < 0) {
+      throw new Error("minorticks must be >= 0");
+    }
   }
 
   protected _updateTicks(hass: HomeAssistant): void { }
@@ -307,6 +323,20 @@ export class FlexSliderCardConfigMngr {
 
   public get hasTicks(): boolean {
     return (this._config.ticksactive === true);
+  }
+  
+  public get majorticks(): number {
+    if (this._config.ticks?.majorticks == null) {
+      throw new Error("Major ticks is not defined in config");
+    }
+    return this._config.ticks.majorticks;
+  }
+  
+  public get minorticks(): number {
+    if (this._config.ticks?.minorticks == null) {
+      throw new Error("Minor ticks is not defined in config");
+    }
+    return this._config.ticks.minorticks;
   }
   
   /****************************************************/

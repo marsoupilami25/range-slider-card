@@ -33,6 +33,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     const schema: HaFormSchema[] = computeSchema(
       this._config.valuesbaractive === true,
       this._config.bubblesactive === true,
+      this._config.ticksactive === true,
       this._config.valuesbar?.digits ?? "",
       this._config.bubbles?.digits ?? "",
       isNumber,

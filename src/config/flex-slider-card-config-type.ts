@@ -67,6 +67,15 @@ export const flexSliderCardBubblesConfigStruct = object({
   dragonly: optional(boolean()),
 });
 
+export type FlexSliderCardTicksConfig = {
+  majorticks?: number;
+  minorticks?: number;
+};
+export const flexSliderCardTicksConfigStruct = object({
+  majorticks: optional(number()),
+  minorticks: optional(number()),
+});
+
 export type FlexSliderCardConfig = LovelaceCardConfig &
 {
   /* display options */
@@ -78,6 +87,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   bubbles?: FlexSliderCardBubblesConfig;
   direction?: FlexSliderCardDirection;
   ticksactive?: boolean;
+  ticks?: FlexSliderCardTicksConfig;
 
  /* bahavioral */
   entity_min: string;
@@ -98,6 +108,7 @@ export const flexSliderCardConfigStruct = assign(
     bubbles: optional(flexSliderCardBubblesConfigStruct),
     direction: optional(flexSliderCardDirectionStruct),
     ticksactive: optional(boolean()),
+    ticks: optional(flexSliderCardTicksConfigStruct),
     
     /* behavioral */
     entity_min: string(),
