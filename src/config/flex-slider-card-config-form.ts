@@ -95,6 +95,19 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
             },
             disabled: !isNumber,
           },
+          {
+            name: "direction",
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: [
+                  { value: "ltr", label: "Left to Right" },
+                  { value: "rtl", label: "Right to Left" },
+                ],
+              },
+            },
+            required: false,
+          },
         ],
       },
     ],
@@ -215,9 +228,9 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
   }
 ]);
 
-export const computeSchema = memoizeOne((hasValuesBar: boolean, 
+export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,
-  digitsValuesBar: string, 
+  digitsValuesBar: string,
   digitsBubbles: string,
   isNumber: boolean): HaFormSchema[] => {
   if (hasBubbles && hasValuesBar) {

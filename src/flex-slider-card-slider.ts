@@ -78,6 +78,7 @@ export class FlexSliderCardSlider extends LitElement {
 
     noUiSlider.create(this._sliderElement, {
       start: [this.minvalue, this.maxvalue],
+      direction: this.config.direction,
       tooltips: [ 
         this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMin(value) } : false,
         this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMax(value) } : false,

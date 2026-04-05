@@ -127,11 +127,12 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         step: 10
-        name: Avec grid R2
+        name: Avec grid R2 reversed
         valuesbaractive: true
         grid_options:
           columns: 9
           rows: 1
+        direction: rtl
       - type: custom:flex-slider-card
         entity_min: number.bureaucontrole_chauffagetempcftmin
         entity_max: number.bureaucontrole_chauffagetempcftmax
@@ -216,7 +217,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: Sans grid reversed
         format: compact
         valuesbaractive: true
         grid_options:
@@ -224,6 +225,7 @@ sections:
           rows: null
         valuesbar:
           unit: °C
+        direction: rtl
       - type: heading
         icon: ""
         heading: Sans grid sans titre

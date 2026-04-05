@@ -65,20 +65,43 @@ export class FlexSliderCardValuesBar extends LitElement {
       return nothing;
     }
 
+    let minText: string;
+    let minValue: string;
+    let minIndex: number;
+    let maxText: string;
+    let maxValue: string;
+    let maxIndex: number;
+
+    if (this.config.direction === "ltr") {
+      minText = this.config?.mintextValuesBar || ""; 
+      minValue = this._minValue;
+      minIndex = 0;
+      maxText = this.config?.maxtextValuesBar || "";
+      maxValue = this._maxValue;
+      maxIndex = 1;
+    } else {
+      minText = this.config?.maxtextValuesBar || "";
+      minValue = this._maxValue;
+      minIndex = 1;
+      maxText = this.config?.mintextValuesBar || "";
+      maxValue = this._minValue;
+      maxIndex = 0;
+    }
+
     return html`
       <div class="valuesbar">
         <span>
-          ${this.config?.mintextValuesBar || ""}
-          <span class=${this._isEditing(0) ? "editing" : ""}>
-            ${this._minValue}
+          ${minText}
+          <span class=${this._isEditing(minIndex) ? "editing" : ""}>
+            ${minValue}
           </span>
           ${this.config?.unitValuesBar || ""}
         </span>
 
         <span>
-          ${this.config?.maxtextValuesBar || ""}
-          <span class=${this._isEditing(1) ? "editing" : ""}>
-            ${this._maxValue}
+          ${maxText}
+          <span class=${this._isEditing(maxIndex) ? "editing" : ""}>
+            ${maxValue}
           </span>
           ${this.config?.unitValuesBar || ""}
         </span>

@@ -8,6 +8,7 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "skipLibCheck": true,
+    "rootDir": "./src",
     "outDir": "./dist"
   },
   "include": ["src"]
