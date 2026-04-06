@@ -19,6 +19,10 @@ sections:
         max: 30
         step: 0.5
         name: Sans grid
+        ticksactive: true
+        ticks:
+          majorticks: 4
+          minorticks: 7
         grid_options:
           columns: null
           rows: null
@@ -30,6 +34,9 @@ sections:
         grid_options:
           columns: 9
           rows: 1
+        ticksactive: true
+        ticks:
+          majorticks: 3
       - type: heading
         icon: ""
         heading: Sans grid sans titre
@@ -46,6 +53,7 @@ sections:
         grid_options:
           columns: 12
           rows: null
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Avec grid R1 sans titre
@@ -62,6 +70,7 @@ sections:
         grid_options:
           columns: 12
           rows: 1
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Avec valuesbar
@@ -81,6 +90,7 @@ sections:
           unit: °C
           mintext: Min
           maxtext: Max
+        ticksactive: true
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
@@ -91,6 +101,7 @@ sections:
           columns: 9
           rows: 2
         direction: rtl
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Sans grid sans titre
@@ -112,6 +123,7 @@ sections:
           digits: manual
           nbdigits: 1
           unit: °C
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Avec grid R1 sans titre
@@ -133,6 +145,7 @@ sections:
           digits: manual
           nbdigits: 1
           unit: °C
+        ticksactive: true
       - type: custom:flex-slider-card
         entity_min: number.bureaucontrole_chauffagetempcftmin
         entity_max: number.bureaucontrole_chauffagetempcftmax
@@ -148,6 +161,7 @@ sections:
           unit: °C
           mintext: Min
           maxtext: Max
+        ticksactive: true
   - type: grid
     cards:
       - type: heading
@@ -164,6 +178,7 @@ sections:
         grid_options:
           columns: null
           rows: null
+        ticksactive: true
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
@@ -173,6 +188,7 @@ sections:
         grid_options:
           columns: 12
           rows: 1
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Sans grid sans titre
@@ -190,6 +206,7 @@ sections:
         grid_options:
           columns: null
           rows: null
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Avec grid R1 sans titre
@@ -207,6 +224,7 @@ sections:
         grid_options:
           columns: 12
           rows: 1
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Avec values bar
@@ -226,6 +244,7 @@ sections:
         valuesbar:
           unit: °C
         direction: rtl
+        ticksactive: true
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
@@ -236,6 +255,7 @@ sections:
         grid_options:
           columns: 12
           rows: 1
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Sans grid sans titre
@@ -256,6 +276,7 @@ sections:
           rows: null
         valuesbar:
           unit: °C
+        ticksactive: true
       - type: heading
         icon: ""
         heading: Avec grid R1 sans titre
@@ -278,6 +299,7 @@ sections:
           digits: manual
           nbdigits: 2
           unit: °C
+        ticksactive: true
 max_columns: 4
 theme: Caule Black Coral
 cards: []
