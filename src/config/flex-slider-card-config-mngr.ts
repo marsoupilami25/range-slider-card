@@ -54,6 +54,10 @@ export class FlexSliderCardConfigMngr {
     this._resetTicks();
   }
 
+  public get config() : FlexSliderCardConfig {
+    return this._config;
+  }
+
   /****************************************************/
   /* format                                           */
   /****************************************************/

@@ -23,7 +23,8 @@ For `input_datetime` the manageable range is a day (from 0 to 23h59).
 - [X] Optional bubbles   
 ![Image of a flex slider card with bubbles](/assets/bubbles.png)
 - [X] Manageable direction  
-![Image of a reversed flex slider card](/assets/direction.png)  
+![Image of a reversed flex slider card](/assets/direction.png) 
+- [X] card-mod compatible
 
 ## Note about 2.0 release
 The 2.0 release is a major update and is not backwards compatible with the previous version. The 2.0 add the visual editor feature and previous yaml configs are not compatible anymore.
@@ -91,6 +92,19 @@ The 2.0 release is a major update and is not backwards compatible with the previ
 ### Configuration example
 
 From version 2, configuration is fully accessible by thevisual editor.
+
+### card-mod usage
+You can use card-mod for css customization or debug purpose.
+The custom ha-card is composed of two sub elements: `flex-slider-card-slider` and `flex-slider-card-valuesbar`.  
+Below is an example of an access to a css property of `flex-slider-card-slider`:  
+```
+card_mod:
+  style:
+    flex-slider-card-slider$: |
+      .slider-container.std {
+        border: 2px solid red;
+      }
+```
 
 ### Bugs
 

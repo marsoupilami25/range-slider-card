@@ -153,19 +153,19 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return {};
     }
     const size = 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0) + (this._config.hasBubbles ? 1 : 0);
-    
+
     if (this._config.isStd) {
-        return {
-          min_rows: Math.round(size/2),
-          min_columns: 6,
-          max_columns: 12
-        };
+      return {
+        min_rows: Math.round(size / 2),
+        min_columns: 6,
+        max_columns: 12
+      };
     } else if (this._config.isCompact) {
-        return {
-          min_rows: Math.round(size / 2.5),
-          min_columns: 2,
-          max_columns: 9
-        };
+      return {
+        min_rows: Math.round(size / 2.5),
+        min_columns: 2,
+        max_columns: 9
+      };
     } else {
       throw new Error("Invalid format in getGridOptions");
     }
@@ -193,6 +193,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (this._config.hasValuesBar) {
       this._slider.setCallbacks(this._valuesBar!.setMode, this._valuesBar!.setValue);
     }
+    this._applyCardMod();
   }
 
   protected override updated(changedProps: Map<string, unknown>): void {
@@ -227,39 +228,54 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const maxValue = this._config.entities.max.sliderValue;
 
     return html`
-      <div class="container ${containerClass}">
-        ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
-
-        <div class="slider-with-values">
-          <div class="slider-container">
-            <flex-slider-card-slider
-              .config=${this._config}
-              .minvalue=${minValue}
-              .maxvalue=${maxValue} 
-              .sliderClass=${sliderClass}             
-            ></flex-slider-card-slider>
-          </div>
-
-          ${hasValuesBar
-        ? html`
-              <flex-slider-card-valuesbar
+      <ha-card>
+        <div class="container ${containerClass}">
+          ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
+          <div class="slider-with-values">
+            <div class="slider-container">
+              <flex-slider-card-slider
                 .config=${this._config}
                 .minvalue=${minValue}
-                .maxvalue=${maxValue}              
-              ></flex-slider-card-valuesbar>
-            `
-        : nothing}
+                .maxvalue=${maxValue}
+                .sliderClass=${sliderClass}
+              ></flex-slider-card-slider>
+            </div>
+            ${hasValuesBar ? html`
+                <flex-slider-card-valuesbar
+                  .config=${this._config}
+                  .minvalue=${minValue}
+                  .maxvalue=${maxValue}
+                ></flex-slider-card-valuesbar>
+              ` : nothing}
+          </div>
         </div>
-      </div>
+      </ha-card>
     `;
   }
 
   /****************************************************/
-  /* Private parameters                               */
+  /* Private methods                                  */
   /****************************************************/
 
   private _initPrivateDisplayData(): void {                           //parameters initialized by the constructor or when the card is disconnected
     this._firstUpdate = true;                                 // flag to indicate if it is the first update of the card
+  }
+
+  private _applyCardMod(): void {
+    const config = this._config;
+
+    if (!config?.config.card_mod) return;
+
+    customElements.whenDefined("card-mod").then((cardMod: any) => {
+      cardMod.applyToElement(
+        this,
+        "card",
+        config.config.card_mod,
+        { config },
+        true,
+        `type-${this.localName}`
+      );
+    });
   }
 
   /****************************************************/

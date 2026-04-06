@@ -13,13 +13,6 @@ export const compactFlexSliderCardCss: string = `
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--ha-card-background, var(--card-background-color));
-    border-radius: var(--ha-card-border-radius, 12px);
-    box-shadow: var(--ha-card-box-shadow, 0px 2px 4px rgba(0, 0, 0, 0.16));
-    border-width: var(--ha-card-border-width, 1px);
-    border-style: solid;
-    border-color: var(--ha-card-border-color, var(--divider-color));
-    transition: all 0.3s ease-out;
   }
   
   .container.compact.no-title {
