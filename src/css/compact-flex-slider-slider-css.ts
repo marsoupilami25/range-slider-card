@@ -37,6 +37,7 @@ export const compactFlexSliderSliderCardCss: string = `
     border-radius: 10px;
     box-shadow: none;
   }
+    
   .slider.compact .noUi-tooltip {
     background: var(--disabled-color);
     color: var(--primary-text-color);

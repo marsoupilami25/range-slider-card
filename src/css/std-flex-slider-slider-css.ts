@@ -16,7 +16,7 @@ export const stdFlexSliderSliderCardCss: string = `
     border: none;
     box-shadow: none;
     margin-top: var(--margin-top);
-    /*border: 1px solid blue; /* Debugging border */
+    /* border: 1px solid blue; /* Debugging border */
   }
   
   .slider.std .noUi-base {

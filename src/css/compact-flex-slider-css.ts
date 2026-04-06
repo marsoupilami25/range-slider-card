@@ -38,7 +38,7 @@ export const compactFlexSliderCardCss: string = `
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    border: 1px solid red; /* Debugging border */
+    /* border: 1px solid red; /* Debugging border */
   }
  
   .container.compact .slider {

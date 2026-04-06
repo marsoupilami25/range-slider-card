@@ -23,12 +23,12 @@ export const stdFlexSliderCardCss: string = `
 
   .container.std .title {
     display: flex;
-    height: 35px;
+    height: 30px;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
-    border: 1px solid green; /* Debugging border */
+    /* border: 1px solid green; /* Debugging border */
   }
 
   .container.std .slider-with-values {
@@ -38,7 +38,7 @@ export const stdFlexSliderCardCss: string = `
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    border: 1px solid red; /* Debugging border */
+    /* border: 1px solid red; /* Debugging border */
   }
   
   .container.std .slider {
