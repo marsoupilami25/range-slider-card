@@ -233,13 +233,37 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
   }
 ]);
 
-const ticksSchema = memoizeOne((): HaFormSchema[] => [
+const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
   {
     type: "expandable",
     name: "ticks",
     title: "Tick Marks",
     icon: "mdi:format-list-bulleted",
     schema: [
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "digits",
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: [
+                  { value: "auto", label: "Auto" },
+                  { value: "manual", label: "Manual" },
+                ],
+              },
+            },
+          },
+          {
+            name: "nbdigits",
+            selector: {
+              number: { mode: "box", min: 0 },
+            },
+            disabled: digitsTicks !== "manual",
+          },
+        ],
+      },
       {
         type: "grid",
         schema: [
@@ -276,11 +300,12 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasTicks: boolean,
   digitsValuesBar: string,
   digitsBubbles: string,
+  digitsTicks: string,
   isNumber: boolean): HaFormSchema[] => {
 
   const schema = [...baseSchema(isNumber)];
   if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
   if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
-  if (hasTicks) schema.push(...ticksSchema());
+  if (hasTicks) schema.push(...ticksSchema(digitsTicks));
   return schema;
 });

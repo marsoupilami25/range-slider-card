@@ -304,6 +304,22 @@ export class FlexSliderCardConfigMngr {
       this._config.ticks = {};
     }
 
+    if (this._config.ticks.digits == null) {
+      this._config.ticks.digits = "auto";
+    }
+    assertFlexSliderCardDigits(this._config.ticks.digits);
+
+    if (this._config.ticks.digits === "auto") {
+      this._config.ticks.nbdigits = this.step.toString().split(".")[1]?.length || 0;
+    }
+    if (this._config.ticks.nbdigits == null) {
+      this._config.ticks.nbdigits = 0;
+    }
+    assertOptionalNumber(this._config.ticks.nbdigits, "nbdigits");
+    if (this._config.ticks.nbdigits < 0) {
+      throw new Error("nbdigits must be >= 0");
+    }
+
     assertOptionalNumber(this._config.ticks.majorticks, "majorticks");
     if (this._config.ticks.majorticks == null) {
       this._config.ticks.majorticks = 4;
@@ -327,6 +343,13 @@ export class FlexSliderCardConfigMngr {
 
   public get hasTicks(): boolean {
     return (this._config.ticksactive === true);
+  }
+
+  public get nbdigitsTicks(): number {
+    if (this._config.ticks?.nbdigits == null) {
+      throw new Error("Digits is not defined in config");
+    }
+    return this._config.ticks.nbdigits;
   }
   
   public get majorticks(): number {

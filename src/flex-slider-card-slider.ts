@@ -235,7 +235,7 @@ export class FlexSliderCardSlider extends LitElement {
     let valueToDisplay: string = "";
 
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
+      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsTicks));
     } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
       valueToDisplay = minutesToTime(value);
     } else {

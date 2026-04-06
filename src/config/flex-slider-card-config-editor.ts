@@ -36,6 +36,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.ticksactive === true,
       this._config.valuesbar?.digits ?? "",
       this._config.bubbles?.digits ?? "",
+      this._config.ticks?.digits ?? "",
       isNumber,
     );
 

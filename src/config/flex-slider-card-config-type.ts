@@ -68,10 +68,14 @@ export const flexSliderCardBubblesConfigStruct = object({
 });
 
 export type FlexSliderCardTicksConfig = {
+  digits?: FlexSliderCardDigits;
+  nbdigits?: number;
   majorticks?: number;
   minorticks?: number;
 };
 export const flexSliderCardTicksConfigStruct = object({
+  digits: optional(flexSliderCardDigitsStruct),
+  nbdigits: optional(number()),
   majorticks: optional(number()),
   minorticks: optional(number()),
 });

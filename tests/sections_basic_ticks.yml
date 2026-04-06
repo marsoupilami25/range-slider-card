@@ -21,6 +21,8 @@ sections:
         name: Sans grid
         ticksactive: true
         ticks:
+          digits: manual
+          nbdigits: 3
           majorticks: 4
           minorticks: 7
         grid_options:
@@ -36,6 +38,8 @@ sections:
           rows: 1
         ticksactive: true
         ticks:
+          digits: manual
+          nbdigits: 1
           majorticks: 3
       - type: heading
         icon: ""
@@ -300,6 +304,9 @@ sections:
           nbdigits: 2
           unit: °C
         ticksactive: true
+        ticks:
+          digits: manual
+          nbdigits: 0
 max_columns: 4
 theme: Caule Black Coral
 cards: []

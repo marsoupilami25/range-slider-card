@@ -22,6 +22,8 @@ sections:
         step: 0.5
         name: Sans grid
         ticks:
+          digits: manual
+          nbdigits: 3
           majorticks: 6
           minorticks: 2
         grid_options:
@@ -34,6 +36,9 @@ sections:
         ticksactive: true
         step: 10
         name: Avec grid R1
+        ticks:
+          digits: manual
+          nbdigits: 1
         grid_options:
           columns: 9
           rows: 1
@@ -345,6 +350,8 @@ sections:
         format: compact
         valuesbaractive: true
         ticks:
+          digits: manual
+          nbdigits: 0
           majorticks: 5
           minorticks: 4
         grid_options:
