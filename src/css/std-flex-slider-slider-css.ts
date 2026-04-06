@@ -87,6 +87,14 @@ export const stdFlexSliderSliderCardCss: string = `
     transform: translateX(-1px);
   }
 
+  .slider.std.noUi-horizontal.noUi-rtl .noUi-marker-large {
+    transform: translateX(1px);
+  }
+
+  .slider.std.noUi-horizontal.noUi-rtl .noUi-marker-normal {
+    transform: translateX(1px);
+  }
+
   .slider.std.noUi-horizontal .noUi-marker-sub {
     display: none;
   }
@@ -95,6 +103,10 @@ export const stdFlexSliderSliderCardCss: string = `
     transform: translateX(-50%);
     top: +19px;
     line-height: 1;
+  }
+
+  .slider.std.noUi-horizontal.noUi-rtl .noUi-value-horizontal {
+    transform: translate(50%, 0);
   }
 
   .slider.std.noUi-horizontal .noUi-value-large {
