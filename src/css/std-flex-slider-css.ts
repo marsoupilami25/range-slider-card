@@ -8,18 +8,11 @@ export const stdFlexSliderCardCss: string = `
   }
   
   .container.std {
-    height: 100%;
+    min-height: 100%;
     padding-bottom: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--ha-card-background, var(--card-background-color));
-    border-radius: var(--ha-card-border-radius, 12px);
-    box-shadow: var(--ha-card-box-shadow, 0px 2px 4px rgba(0, 0, 0, 0.16));
-    border-width: var(--ha-card-border-width, 1px);
-    border-style: solid;
-    border-color: var(--ha-card-border-color, var(--divider-color));
-    transition: all 0.3s ease-out;
   }
   
   .container.std.no-title {
@@ -30,21 +23,21 @@ export const stdFlexSliderCardCss: string = `
 
   .container.std .title {
     display: flex;
-    height: 35px;
+    height: 30px;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
-    /* border: 1px solid blue; /* Debugging border */
+    /* border: 1px solid green; /* Debugging border */
   }
 
   .container.std .slider-with-values {
     width: 90%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-block: auto;
     /* border: 1px solid red; /* Debugging border */
   }
   

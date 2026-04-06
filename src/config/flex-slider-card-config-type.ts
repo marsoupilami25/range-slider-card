@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { assign, union, literal, refine, number, object, optional, string, boolean } from "superstruct";
+import { assign, union, literal, refine, number, object, optional, string, boolean, any } from "superstruct";
 import { lovelaceCardConfigStruct } from "../type/ha";
 
 export type FlexSliderCardFormat = "std" | "compact";
@@ -67,6 +67,19 @@ export const flexSliderCardBubblesConfigStruct = object({
   dragonly: optional(boolean()),
 });
 
+export type FlexSliderCardTicksConfig = {
+  digits?: FlexSliderCardDigits;
+  nbdigits?: number;
+  majorticks?: number;
+  minorticks?: number;
+};
+export const flexSliderCardTicksConfigStruct = object({
+  digits: optional(flexSliderCardDigitsStruct),
+  nbdigits: optional(number()),
+  majorticks: optional(number()),
+  minorticks: optional(number()),
+});
+
 export type FlexSliderCardConfig = LovelaceCardConfig &
 {
   /* display options */
@@ -77,6 +90,8 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   valuesbar?: FlexSliderCardValuesBarConfig;
   bubbles?: FlexSliderCardBubblesConfig;
   direction?: FlexSliderCardDirection;
+  ticksactive?: boolean;
+  ticks?: FlexSliderCardTicksConfig;
 
  /* bahavioral */
   entity_min: string;
@@ -84,6 +99,9 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   min?: number;
   max?: number;
   step?: number;
+
+  /* card mod */
+  card_mod?: Record<string, unknown>;
 };
 export const flexSliderCardConfigStruct = assign(
   lovelaceCardConfigStruct,
@@ -96,6 +114,8 @@ export const flexSliderCardConfigStruct = assign(
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
     bubbles: optional(flexSliderCardBubblesConfigStruct),
     direction: optional(flexSliderCardDirectionStruct),
+    ticksactive: optional(boolean()),
+    ticks: optional(flexSliderCardTicksConfigStruct),
     
     /* behavioral */
     entity_min: string(),
@@ -103,5 +123,8 @@ export const flexSliderCardConfigStruct = assign(
     min: optional(number()),
     max: optional(number()),
     step: optional(number()),
+
+    /* card mod */
+    card_mod: optional(any()),
   })
 );

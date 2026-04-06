@@ -1,0 +1,160 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertestmin
+    show_header_toggle: true
+    state_color: false
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Standard avec titre
+    ticksactive: true
+    ticks:
+      digits: manual
+      nbdigits: 3
+      majorticks: 6
+      minorticks: 2
+    valuesbaractive: false
+    bubblesactive: true
+    valuesbar:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
+    bubbles:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: My Slider
+    ticksactive: true
+    valuesbaractive: true
+    bubblesactive: true
+    valuesbar:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
+    bubbles:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std sans titre
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        bubblesactive: true
+        ticksactive: true
+        ticks:
+          majorticks: 4
+          minorticks: 1
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std sans titre et valuesbar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        ticksactive: true
+        valuesbaractive: true
+        bubblesactive: true
+        valuesbar:
+          unit: °C
+        bubbles:
+          unit: °C
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Compact avec titre reversed
+    format: compact
+    bubblesactive: true
+    ticksactive: true
+    ticks:
+      majorticks: 7
+    direction: rtl
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Compact avec titre et valuesbar
+    format: compact
+    ticksactive: true
+    valuesbaractive: true
+    bubblesactive: true
+    valuesbar:
+      unit: °C
+      mintext: Min
+      maxtext: Max
+    bubbles:
+      unit: °C
+      mintext: Min
+      maxtext: Max
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Compact sans titre
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 10
+        max: 40
+        step: 1
+        format: compact
+        bubblesactive: true
+        ticksactive: true
+        ticks:
+          majorticks: 5
+          minorticks: 4
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Compact sans titre et valuesbar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 10
+        max: 40
+        step: 1
+        format: compact
+        ticksactive: true
+        valuesbaractive: true
+        bubblesactive: true
+        valuesbar:
+          unit: "%"
+        bubbles:
+          unit: "%"
+        ticks:
+          digits: manual
+          nbdigits: 2
+theme: Caule Light Green
+title: Masonry/basic

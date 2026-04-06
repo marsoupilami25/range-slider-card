@@ -1,5 +1,4 @@
-import noUiSlider, { API as NoUiSliderAPI } from "nouislider";
-import { debuglog, minutesToTime, timeToMinutes } from "./utils/utils";
+import noUiSlider, { API as NoUiSliderAPI, PipsMode } from "nouislider";
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, unsafeCSS } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
@@ -8,6 +7,7 @@ import { stdFlexSliderSliderCardCss } from "./css/std-flex-slider-slider-css";
 import { compactFlexSliderSliderCardCss } from "./css/compact-flex-slider-slider-css";
 import { FlexSliderCardFormat } from "./config/flex-slider-card-config-type";
 import { FlexSliderCardValuesBarMode, FlexSliderCardValuesBarSetModeCallback, FlexSliderCardValuesBarSetValueCallback } from "./flex-slider-card-valuesbar";
+import { debuglog, minutesToTime } from "./utils/utils";
 import { FlexSliderCardEntityType } from "./utils/entity-management";
 
 
@@ -76,12 +76,15 @@ export class FlexSliderCardSlider extends LitElement {
       throw new Error("Config not initialized");
     }
 
+    const pipsValues = Array.from({ length: this.config.majorticks }, (_, i) => i * 100 / (this.config.majorticks - 1));
+    const density = 100 / ((this.config.majorticks - 1) * (this.config.minorticks + 1));
+
     noUiSlider.create(this._sliderElement, {
       start: [this.minvalue, this.maxvalue],
       direction: this.config.direction,
       tooltips: [ 
-        this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMin(value) } : false,
-        this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMax(value) } : false,
+        this.config.hasBubbles ? { to: (value) => this._sliderToBubbleMin(value) } : false,
+        this.config.hasBubbles ? { to: (value) => this._sliderToBubbleMax(value) } : false,
       ],
       connect: true,
       range: {
@@ -89,6 +92,12 @@ export class FlexSliderCardSlider extends LitElement {
         'max': this.config.max
       },
       step: this.config.step,
+      pips: this.config.hasTicks ? {
+        mode: PipsMode.Positions,
+        values: pipsValues,
+        density: density,
+        format: { to: (value) => this._sliderToPips(value) },
+      } : undefined,
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
 
@@ -123,15 +132,28 @@ export class FlexSliderCardSlider extends LitElement {
     let alignItems = "";
     let height = "";
     let padding = "";
+    let marginTop = "";
 
-    if (this.config.hasBubbles) {
-      alignItems = "flex-end";
-      height = this.config.isStd ? "43px" : "30px";
+    if (this.config.hasBubbles && this.config.hasTicks) {
+      alignItems = "center";
+      height = this.config.isStd ? "67px" : "49px";
       padding = this.config.isStd ? "0px" : "2px";
+      marginTop = this.config.isStd ? "-1px" : "0px";
+    } else if (this.config.hasBubbles) {
+      alignItems = "flex-end";
+      height = this.config.isStd ? "42px" : "30px";
+      padding = this.config.isStd ? "0px" : "2px";
+      marginTop = "0px";
+    } else if (this.config.hasTicks) {
+      alignItems = "flex-start";
+      height = this.config.isStd ? "42px" : "28px";
+      padding = this.config.isStd ? "0px" : "2px";
+      marginTop = "0px";
     } else {
       alignItems = "center";
       height = this.config.isStd ? "21px" : "14px";
       padding = "0px";
+      marginTop = "0px";
     }
     return html`
       <div
@@ -140,6 +162,7 @@ export class FlexSliderCardSlider extends LitElement {
           --align-items: ${alignItems};
           --height: ${height};
           --padding: ${padding};
+          --margin-top: ${marginTop};
         "
       > <div class="slider ${this.sliderClass} ${draggerClass}"></div>
       </div>
@@ -208,7 +231,21 @@ export class FlexSliderCardSlider extends LitElement {
   /* Private methods                                  */
   /****************************************************/
 
-  private _sliderToDisplayMin(value: number): string {
+  private _sliderToPips(value: number): string {
+    let valueToDisplay: string = "";
+
+    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
+      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsTicks));
+    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
+      valueToDisplay = minutesToTime(value);
+    } else {
+      throw new Error("Unsupported entity type");
+    }
+
+    return valueToDisplay;
+  }
+
+  private _sliderToBubbleMin(value: number): string {
     let valueToDisplay: string = "";
 
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
@@ -224,7 +261,7 @@ export class FlexSliderCardSlider extends LitElement {
     return valueToDisplay;
   }
 
-  private _sliderToDisplayMax(value: number): string {
+  private _sliderToBubbleMax(value: number): string {
     let valueToDisplay: string = "";
 
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {

@@ -34,6 +34,11 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
         selector: { boolean: {} },
         required: false,
       },
+      {
+        name: "ticksactive",
+        selector: { boolean: {} },
+        required: false,
+      },
     ],
   },
   {
@@ -228,19 +233,79 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
   }
 ]);
 
+const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
+  {
+    type: "expandable",
+    name: "ticks",
+    title: "Tick Marks",
+    icon: "mdi:format-list-bulleted",
+    schema: [
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "digits",
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: [
+                  { value: "auto", label: "Auto" },
+                  { value: "manual", label: "Manual" },
+                ],
+              },
+            },
+          },
+          {
+            name: "nbdigits",
+            selector: {
+              number: { mode: "box", min: 0 },
+            },
+            disabled: digitsTicks !== "manual",
+          },
+        ],
+      },
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "majorticks",
+            selector: {
+              number: {
+                mode: "box",
+                step: 1,
+                min: 2,
+              },
+            },
+            required: false,
+          },
+          {
+            name: "minorticks",
+            selector: {
+              number: {
+                mode: "box",
+                step: 1,
+                min: 0,
+              },
+            },
+            required: false,
+          },
+        ],
+      },
+    ],
+  }
+]);
+
 export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,
+  hasTicks: boolean,
   digitsValuesBar: string,
   digitsBubbles: string,
+  digitsTicks: string,
   isNumber: boolean): HaFormSchema[] => {
-  if (hasBubbles && hasValuesBar) {
-    return [...baseSchema(isNumber), ...valuesBarSchema(digitsValuesBar), ...bubblesSchema(digitsBubbles)];
-  }
-  if (hasValuesBar) {
-    return [...baseSchema(isNumber), ...valuesBarSchema(digitsValuesBar)];
-  }
-  if (hasBubbles) {
-    return [...baseSchema(isNumber), ...bubblesSchema(digitsBubbles)];
-  }
-  return [...baseSchema(isNumber)];
+
+  const schema = [...baseSchema(isNumber)];
+  if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
+  if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
+  if (hasTicks) schema.push(...ticksSchema(digitsTicks));
+  return schema;
 });

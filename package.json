@@ -25,8 +25,8 @@
   },
   "homepage": "https://github.com/marsoupilami25/flex-slider-card#readme",
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3"
   },
   "dependencies": {
     "custom-card-helpers": "^2.0.0",

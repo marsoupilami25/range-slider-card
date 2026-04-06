@@ -31,6 +31,7 @@ export class FlexSliderCardConfigMngr {
     this._checkSlider(); //warning: need to be call before _checkValuesBar because it sets default values for min, max and step
     this._checkValuesBar();
     this._checkBubbles();
+    this._checkTicks();
   }
 
   public update(hass: HomeAssistant): void {
@@ -40,6 +41,7 @@ export class FlexSliderCardConfigMngr {
     this._updateSlider(hass);
     this._updateValuesBar(hass);
     this._updateBubbles(hass);
+    this._updateTicks(hass);
   }
 
   public reset(): void {
@@ -48,7 +50,12 @@ export class FlexSliderCardConfigMngr {
     this._resetEntities();
     this._resetSlider();
     this._resetValuesBar();
-    this._checkBubbles();
+    this._resetBubbles();
+    this._resetTicks();
+  }
+
+  public get config() : FlexSliderCardConfig {
+    return this._config;
   }
 
   /****************************************************/
@@ -281,6 +288,82 @@ export class FlexSliderCardConfigMngr {
       throw new Error("Drag only is not defined in config");
     }
     return this._config.bubbles.dragonly;   
+  }
+  
+  /****************************************************/
+  /* tick marks                                       */
+  /****************************************************/
+
+  protected _checkTicks(): void {
+    assertOptionalBoolean(this._config.ticksactive, "ticks");
+    if (this._config.ticksactive == null) {
+      this._config.ticksactive = false;
+    }
+
+    if (this._config.ticks == null) {
+      this._config.ticks = {};
+    }
+
+    if (this._config.ticks.digits == null) {
+      this._config.ticks.digits = "auto";
+    }
+    assertFlexSliderCardDigits(this._config.ticks.digits);
+
+    if (this._config.ticks.digits === "auto") {
+      this._config.ticks.nbdigits = this.step.toString().split(".")[1]?.length || 0;
+    }
+    if (this._config.ticks.nbdigits == null) {
+      this._config.ticks.nbdigits = 0;
+    }
+    assertOptionalNumber(this._config.ticks.nbdigits, "nbdigits");
+    if (this._config.ticks.nbdigits < 0) {
+      throw new Error("nbdigits must be >= 0");
+    }
+
+    assertOptionalNumber(this._config.ticks.majorticks, "majorticks");
+    if (this._config.ticks.majorticks == null) {
+      this._config.ticks.majorticks = 4;
+    }
+    if (this._config.ticks.majorticks < 2) {
+      throw new Error("majorticks must be >= 2");
+    }
+
+    assertOptionalNumber(this._config.ticks.minorticks, "minorticks");
+    if (this._config.ticks.minorticks == null) {
+      this._config.ticks.minorticks = 0;
+    }
+    if (this._config.ticks.minorticks < 0) {
+      throw new Error("minorticks must be >= 0");
+    }
+  }
+
+  protected _updateTicks(hass: HomeAssistant): void { }
+
+  protected _resetTicks(): void { }
+
+  public get hasTicks(): boolean {
+    return (this._config.ticksactive === true);
+  }
+
+  public get nbdigitsTicks(): number {
+    if (this._config.ticks?.nbdigits == null) {
+      throw new Error("Digits is not defined in config");
+    }
+    return this._config.ticks.nbdigits;
+  }
+  
+  public get majorticks(): number {
+    if (this._config.ticks?.majorticks == null) {
+      throw new Error("Major ticks is not defined in config");
+    }
+    return this._config.ticks.majorticks;
+  }
+  
+  public get minorticks(): number {
+    if (this._config.ticks?.minorticks == null) {
+      throw new Error("Minor ticks is not defined in config");
+    }
+    return this._config.ticks.minorticks;
   }
   
   /****************************************************/

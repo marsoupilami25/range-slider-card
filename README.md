@@ -1,104 +1,219 @@
-
 [![GitHub release](https://img.shields.io/github/v/release/marsoupilami25/flex-slider-card?display_name=tag)](https://github.com/marsoupilami25/flex-slider-card/releases)
 [![HACS validation](https://github.com/marsoupilami25/flex-slider-card/actions/workflows/hacs.yml/badge.svg)](https://github.com/marsoupilami25/flex-slider-card/actions/workflows/hacs.yml)
 
-# Home Assistant Custom Card for a flexible Slider
+# Flex Slider Card
 
-A custom card for Home Assistant that allows adjusting two `entities` values with a single slider, enabling the selection of a custom value range.  
-Accepted domains are `input_number`, `number` and `input_datetime`.
-For `input_datetime` the manageable range is a day (from 0 to 23h59).   
-![Exmple of a flex slider card](/assets/slider.png)    
+A Home Assistant custom card to control two entities with a single range slider.
 
-## Features  
+Supported domains:
+- `input_number`
+- `number`
+- `input_datetime`
 
-- [X] Adjust two `entities` with a single slider.
-- [X] Use current Home Assistant theme
-- [X] Two display formats: standard and compact   
-![Image of a standard flex slider card](/assets/standard.png)    
-![Image of a compact flex slider card](/assets/compact.png) 
-- [X] Optional title   
-![Image of a flex slider card with title](/assets/title.png) 
-- [X] Option bar with entity values   
-![Image of a flex slider card with values bar](/assets/valuesbar.png)
-- [X] Optional bubbles   
-![Image of a flex slider card with bubbles](/assets/bubbles.png)
-- [X] Manageable direction  
-![Image of a reversed flex slider card](/assets/direction.png)  
+For `input_datetime`, the slider manages a single day from `00:00` to `23:59`.
 
-## Note about 2.0 release
-The 2.0 release is a major update and is not backwards compatible with the previous version. The 2.0 add the visual editor feature and previous yaml configs are not compatible anymore.
+![Example of a flex slider card](/assets/slider_example.png)
 
-## Installation  
+## Features
+
+- Control `entity_min` and `entity_max` from one slider
+- Standard and compact layouts   
+![Standard format](/assets/standard.png)   
+![Compact format](/assets/compact.png)   
+- Optional title   
+![With title](/assets/title.png)   
+- Optional values bar   
+![With values bar](/assets/valuesbar.png)   
+- Optional bubbles   
+![With bubbles](/assets/bubbles.png)   
+- Optional tick marks   
+![With title](/assets/ticks.png)   
+- Left-to-right or right-to-left direction   
+![Reversed direction](/assets/direction.png)   
+- Uses the active Home Assistant theme
+- Visual editor support   
+![Visual editor](/assets/configuration.png)   
+- `card-mod` compatible
+
+## Version 2 note
+
+Version `2.x` introduced the visual editor and changed the configuration format.  
+Configurations from `1.x` are not backward compatible and must be recreated.
+
+## Installation
 
 ### HACS
 
-1.  Ensure you have [HACS (Home Assistant Community Store)](https://hacs.xyz/) installed.
-2.  Go to HACS -> Frontend -> Explore & Add Repositories.
-3.  Click on the top right triple dots and go to "Custom repositories".
-4.  Add https://github.com/marsoupilami25/flex-slider-card as custom repository
+1. Install [HACS](https://hacs.xyz/) if it is not already available.
+2. Go to HACS > Frontend.
+3. Open the top-right menu, then select `Custom repositories`.
+4. Add `https://github.com/marsoupilami25/flex-slider-card` as a frontend repository.
+5. Search for `Flex Slider Card`.
+6. Install it.
+7. Restart Home Assistant if prompted.
 
-![](/assets/custom_repo.png)   
-5.  Search for "Flex Slider Card".
-6.  Click "Install".
-7.  Restart Home Assistant (if prompted).
+![Add custom repository](/assets/custom_repo.png)
 
-### Manual Installation  
-- Download `flex-slider-card.js` in the release page https://github.com/marsoupilami25/flex-slider-card/releases/tag/vx.y.z
-- Place it in your `www` folder in Home Assistant  
-- Installation instructions: go to Settings > Dashboards > (top right, the three dots) > Resources > Add resource > paste the following URL: `/local/flex-slider-card.js`
-- Restart Home Assistant
+### Manual installation
 
-## Options  
+1. Download `flex-slider-card.js` from the latest release:
+   `https://github.com/marsoupilami25/flex-slider-card/releases`
+2. Copy it to your Home Assistant `www` folder.
+3. Add it as a dashboard resource:
 
-### Display Options
-|Option             |Type           |Domain         |Mandatory|Default       | Description |
-|-------------------|---------------|---------------|---------|--------------|-|
-| `name`            | string        |All            |No       |`Range Slider`| Title for the slider. If not configured or `''`, the title is not displayed. |
-| `format`          | string        |All            |No       |`std`         | Format type. Is `std` or `compact`|
-| `valuesbaractive` | boolean       |All            |No       |false         | Display a bottom bar with entity values |
-| `bubblesactive`   | boolean       |All            |No       |false         | Display a bottom bar with entity values |
+```text
+/local/flex-slider-card.js
+```
 
-### Display Options for values bar
-|Option       |Type             |Domain         |Mandatory|Default | Description |
-|-------------|-----------------|---------------|---------|--------|-|
-| `mintext`   | string          |All            |No       |Empty   | Text to display before the minimum value. |
-| `maxtext`   | string          |All            |No       |Empty   | Text to display before the maximum value. |
-| `digits`    | `auto`/`manual` |Number only (*)|No       |`auto`  | When `auto` the number of digits is automatically calculated from the step. |
-| `nbdigits`  | number          |Number only (*)|No       |Empty   | Number of digits to display when `digits` is set to `manual`. |
-| `unit`      | string          |All            |No       |Empty   | Display unit (e.g., `%`, `°C`, etc.) |
+4. Restart Home Assistant.
 
-### Display Options for bubbles
-|Option       |Type             |Domain         |Mandatory|Default | Description |
-|-------------|-----------------|---------------|---------|--------|-|
-| `mintext`   | string          |All            |No       |Empty   | Text to display before the minimum value. |
-| `maxtext`   | string          |All            |No       |Empty   | Text to display before the maximum value. |
-| `digits`    | `auto`/`manual` |Number only (*)|No       |`auto`  | When `auto` the number of digits is automatically calculated from the step. |
-| `nbdigits`  | number          |Number only (*)|No       |Empty   | Number of digits to display when `digits` is set to `manual`. |
-| `unit`      | string          |All            |No       |Empty   | Display unit (e.g., `%`, `°C`, etc.) |
-| `dragonly`  | boolean         |All            |No       |false   | Display bubbles only during drag |
+## Configuration
 
-### Behavioral Options
-| Option       | Type   |Domain         |Mandatory|Default       | Description |
-|--------------|--------|-----------    |---------|--------------|-------------|
-| `entity_min` | string |All            |Yes      |/             | The `entity` for the minimum value |
-| `entity_max` | string |All            |Yes      |/             | The `entity` entity for the maximum value |
-| `min`        | number |Number only (*)|No       |0             | The minimum selectable value. Always 00:00 for `input_date`|
-| `max`        | number |Number only (*)|No       |100           | The maximum selectable value. Always 23:59 for `input_date`|
-| `step`       | number |All            |No       |1             | Increment step for the slider. Rounded for `input_date`|
+From version `2.x`, the card can be configured entirely from the visual editor.  
+YAML configuration is still supported.
 
-(*) Number means `input_number` and `number`
+### Basic example
 
-### Configuration example
+```yaml
+type: custom:flex-slider-card
+name: Heating schedule
+entity_min: input_datetime.heating_start
+entity_max: input_datetime.heating_end
+format: std
+valuesbaractive: true
+bubblesactive: true
+ticksactive: true
+direction: ltr
+step: 15
+valuesbar:
+  mintext: Start
+  maxtext: End
+bubbles:
+  dragonly: true
+ticks:
+  majorticks: 5
+  minorticks: 3
+```
 
-From version 2, configuration is fully accessible by thevisual editor.
+### Number example
 
-### Bugs
+```yaml
+type: custom:flex-slider-card
+name: Comfort range
+entity_min: input_number.temperature_min
+entity_max: input_number.temperature_max
+min: 15
+max: 25
+step: 0.5
+valuesbaractive: true
+bubblesactive: true
+valuesbar:
+  unit: "%"
+  digits: auto
+bubbles:
+  unit: "%"
+  digits: auto
+```
 
-If the card is not displaying in Home Assistant, please try the following troubleshooting steps:
-- Clear your browser cache or the Home Assistant app cache to ensure that the latest resources are loaded.   
-- Otherwise got to the [issues](https://github.com/marsoupilami25/flex-slider-card/issues) page, check the issue exist or open a new one.
+## Options
 
-## Contributing  
-Feel free to submit issues or pull requests to improve this component!  
+### Main options
 
-⭐ **If you find this useful, don't forget to star this repository!**  
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `name` | string | No | hidden | Card title. If omitted, no title is shown |
+| `format` | `std` \| `compact` | No | `std` | Card layout |
+| `valuesbaractive` | boolean | No | `false` | Shows the values bar under the slider |
+| `bubblesactive` | boolean | No | `false` | Shows value bubbles on slider handles |
+| `ticksactive` | boolean | No | `false` | Shows tick marks under the slider |
+| `direction` | `ltr` \| `rtl` | No | `ltr` | Slider direction |
+
+### Entities Management
+
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `entity_min` | string | Yes | - | Entity used for the minimum handle |
+| `entity_max` | string | Yes | - | Entity used for the maximum handle |
+| `min` | number | No | `0` | Minimum slider value for number entities only |
+| `max` | number | No | `100` | Maximum slider value for number entities only |
+| `step` | number | No | `1` | Slider step. For `input_datetime`, it is rounded to an integer number of minutes |
+
+
+### Domain behavior
+
+| Domain | Supported | Notes |
+|---|---|---|
+| `number` | Yes | Uses configured `min`, `max`, and `step` |
+| `input_number` | Yes | Uses configured `min`, `max`, and `step` |
+| `input_datetime` | Yes | Range is always `00:00` to `23:59`; `min` and `max` are ignored |
+
+`entity_min` and `entity_max` must use compatible domains.
+
+### `valuesbar` options
+
+Available when `valuesbaractive: true`.
+
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `mintext` | string | No | `""` | Text shown before the minimum value |
+| `maxtext` | string | No | `""` | Text shown before the maximum value |
+| `digits` | `auto` \| `manual` | No | `auto` | Number formatting mode for number entities |
+| `nbdigits` | number | No | derived from `step` or `0` | Number of decimals when `digits: manual` |
+| `unit` | string | No | `""` | Unit suffix |
+
+### `bubbles` options
+
+Available when `bubblesactive: true`.
+
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `mintext` | string | No | `""` | Text shown before the minimum bubble value |
+| `maxtext` | string | No | `""` | Text shown before the maximum bubble value |
+| `digits` | `auto` \| `manual` | No | `auto` | Number formatting mode for number entities |
+| `nbdigits` | number | No | derived from `step` or `0` | Number of decimals when `digits: manual` |
+| `unit` | string | No | `""` | Unit suffix |
+| `dragonly` | boolean | No | `false` | Shows bubbles only while dragging |
+
+### `ticks` options
+
+Available when `ticksactive: true`.
+
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `digits` | `auto` \| `manual` | No | `auto` | Number formatting mode for number entities |
+| `nbdigits` | number | No | derived from `step` or `0` | Number of decimals when `digits: manual` |
+| `majorticks` | number | No | `4` | Number of labeled major ticks. Minimum: `2` |
+| `minorticks` | number | No | `0` | Number of minor ticks between each major tick |
+
+## card-mod
+
+You can use `card-mod` for styling or debugging.
+
+The card exposes two internal custom elements:
+- `flex-slider-card-slider`
+- `flex-slider-card-valuesbar`
+
+Example:
+
+```yaml
+card_mod:
+  style:
+    flex-slider-card-slider$: |
+      .slider-container.std {
+        border: 2px solid red;
+      }
+```
+
+## Troubleshooting
+
+If the card does not appear in Home Assistant:
+
+- Clear the browser cache or the Home Assistant app cache
+- Verify that `/local/flex-slider-card.js` is added as a dashboard resource
+- Make sure both configured entities exist and use compatible domains
+- Check open issues or report a new one:
+  https://github.com/marsoupilami25/flex-slider-card/issues
+
+## Contributing
+
+Issues and pull requests are welcome.

@@ -8,18 +8,11 @@ export const compactFlexSliderCardCss: string = `
   }
   
   .container.compact {
-    height: 100%;
+    min-height: 100%;
     padding-bottom: 3px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--ha-card-background, var(--card-background-color));
-    border-radius: var(--ha-card-border-radius, 12px);
-    box-shadow: var(--ha-card-box-shadow, 0px 2px 4px rgba(0, 0, 0, 0.16));
-    border-width: var(--ha-card-border-width, 1px);
-    border-style: solid;
-    border-color: var(--ha-card-border-color, var(--divider-color));
-    transition: all 0.3s ease-out;
   }
   
   .container.compact.no-title {
@@ -40,11 +33,11 @@ export const compactFlexSliderCardCss: string = `
  
   .container.compact .slider-with-values {
     width: 90%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-block: auto;
     /* border: 1px solid red; /* Debugging border */
   }
  
