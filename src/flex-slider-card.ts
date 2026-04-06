@@ -137,7 +137,11 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       return 1;
     }
-    const size = 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0) + (this._config.hasBubbles ? 1 : 0);
+    const size = 1 + 
+      (this._config.hasTitle ? 1 : 0) + 
+      (this._config.hasValuesBar ? 1 : 0) + 
+      (this._config.hasBubbles ? 1 : 0)
+      + (this._config.hasTicks ? 1 : 0);
 
     if (this._config.isStd) {
       return size;
@@ -152,7 +156,11 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       return {};
     }
-    const size = 1 + (this._config.hasTitle ? 1 : 0) + (this._config.hasValuesBar ? 1 : 0) + (this._config.hasBubbles ? 1 : 0);
+    const size = 1 + 
+      (this._config.hasTitle ? 1 : 0) + 
+      (this._config.hasValuesBar ? 1 : 0) + 
+      (this._config.hasBubbles ? 1 : 0)+
+      (this._config.hasTicks ? 1 : 0);
 
     if (this._config.isStd) {
       return {
