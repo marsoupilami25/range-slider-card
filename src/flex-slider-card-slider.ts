@@ -136,7 +136,7 @@ export class FlexSliderCardSlider extends LitElement {
 
     if (this.config.hasBubbles && this.config.hasTicks) {
       alignItems = "center";
-      height = this.config.isStd ? "67px" : "30px";
+      height = this.config.isStd ? "67px" : "49px";
       padding = this.config.isStd ? "0px" : "2px";
       marginTop = this.config.isStd ? "-1px" : "0px";
     } else if (this.config.hasBubbles) {
@@ -146,7 +146,7 @@ export class FlexSliderCardSlider extends LitElement {
       marginTop = "0px";
     } else if (this.config.hasTicks) {
       alignItems = "flex-start";
-      height = this.config.isStd ? "42px" : "30px";
+      height = this.config.isStd ? "42px" : "28px";
       padding = this.config.isStd ? "0px" : "2px";
       marginTop = "0px";
     } else {

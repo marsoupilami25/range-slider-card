@@ -8,7 +8,7 @@ export const compactFlexSliderCardCss: string = `
   }
   
   .container.compact {
-    height: 100%;
+    min-height: 100%;
     padding-bottom: 3px;
     display: flex;
     flex-direction: column;
@@ -33,12 +33,12 @@ export const compactFlexSliderCardCss: string = `
  
   .container.compact .slider-with-values {
     width: 90%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
-    /* border: 1px solid red; /* Debugging border */
+    justify-content: flex-start;
+    margin-block: auto;
+    border: 1px solid red; /* Debugging border */
   }
  
   .container.compact .slider {
