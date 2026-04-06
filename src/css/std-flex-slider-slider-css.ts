@@ -67,4 +67,31 @@ export const stdFlexSliderSliderCardCss: string = `
   .slider.std .noUi-handle::before, .slider.std .noUi-handle::after {
     display: none;
   }
+
+  .slider.std.noUi-horizontal .noUi-marker-large {
+    background: var(--primary-color);
+    width: 3px;
+    height: 8px;
+    transform: translateX(-1px);
+  }
+
+  .slider.std.noUi-horizontal .noUi-marker-normal {
+    background: var(--divider-color);
+    width: 2px;
+    height: 5px;
+    transform: translateX(-1px);
+  }
+
+  .slider.std.noUi-horizontal .noUi-marker-sub {
+    display: none;
+  }
+
+  .slider.std.noUi-horizontal .noUi-value-large {
+    font-size: 1rem;
+    color: var(--primary-text-color);
+  }
+
+  .slider.std.noUi-horizontal .noUi-value-normal {
+    display: none;
+  }
 `;

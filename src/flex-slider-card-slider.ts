@@ -132,7 +132,11 @@ export class FlexSliderCardSlider extends LitElement {
     let height = "";
     let padding = "";
 
-    if (this.config.hasBubbles) {
+    if (this.config.hasBubbles && this.config.hasTicks) {
+      alignItems = "stretch";
+      height = this.config.isStd ? "43px" : "30px";
+      padding = this.config.isStd ? "0px" : "2px";
+    } else if (this.config.hasBubbles) {
       alignItems = "flex-end";
       height = this.config.isStd ? "43px" : "30px";
       padding = this.config.isStd ? "0px" : "2px";

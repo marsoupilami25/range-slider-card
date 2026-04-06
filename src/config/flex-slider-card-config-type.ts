@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { assign, union, literal, refine, number, object, optional, string, boolean } from "superstruct";
+import { assign, union, literal, refine, number, object, optional, string, boolean, any } from "superstruct";
 import { lovelaceCardConfigStruct } from "../type/ha";
 
 export type FlexSliderCardFormat = "std" | "compact";
@@ -95,6 +95,9 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   min?: number;
   max?: number;
   step?: number;
+
+  /* card mod */
+  card_mod?: Record<string, unknown>;
 };
 export const flexSliderCardConfigStruct = assign(
   lovelaceCardConfigStruct,
@@ -116,5 +119,8 @@ export const flexSliderCardConfigStruct = assign(
     min: optional(number()),
     max: optional(number()),
     step: optional(number()),
+
+    /* card mod */
+    card_mod: optional(any()),
   })
 );
