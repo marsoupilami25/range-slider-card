@@ -83,8 +83,8 @@ export class FlexSliderCardSlider extends LitElement {
       start: [this.minvalue, this.maxvalue],
       direction: this.config.direction,
       tooltips: [ 
-        this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMin(value) } : false,
-        this.config.hasBubbles ? { to: (value) => this._sliderToDisplayMax(value) } : false,
+        this.config.hasBubbles ? { to: (value) => this._sliderToBubbleMin(value) } : false,
+        this.config.hasBubbles ? { to: (value) => this._sliderToBubbleMax(value) } : false,
       ],
       connect: true,
       range: {
@@ -96,6 +96,7 @@ export class FlexSliderCardSlider extends LitElement {
         mode: PipsMode.Positions,
         values: pipsValues,
         density: density,
+        format: { to: (value) => this._sliderToPips(value) },
       } : undefined,
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
@@ -230,7 +231,21 @@ export class FlexSliderCardSlider extends LitElement {
   /* Private methods                                  */
   /****************************************************/
 
-  private _sliderToDisplayMin(value: number): string {
+  private _sliderToPips(value: number): string {
+    let valueToDisplay: string = "";
+
+    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
+      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
+    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
+      valueToDisplay = minutesToTime(value);
+    } else {
+      throw new Error("Unsupported entity type");
+    }
+
+    return valueToDisplay;
+  }
+
+  private _sliderToBubbleMin(value: number): string {
     let valueToDisplay: string = "";
 
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
@@ -246,7 +261,7 @@ export class FlexSliderCardSlider extends LitElement {
     return valueToDisplay;
   }
 
-  private _sliderToDisplayMax(value: number): string {
+  private _sliderToBubbleMax(value: number): string {
     let valueToDisplay: string = "";
 
     if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
