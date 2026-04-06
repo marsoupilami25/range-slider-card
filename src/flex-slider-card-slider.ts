@@ -131,19 +131,28 @@ export class FlexSliderCardSlider extends LitElement {
     let alignItems = "";
     let height = "";
     let padding = "";
+    let marginTop = "";
 
     if (this.config.hasBubbles && this.config.hasTicks) {
-      alignItems = "stretch";
-      height = this.config.isStd ? "43px" : "30px";
+      alignItems = "center";
+      height = this.config.isStd ? "67px" : "30px";
       padding = this.config.isStd ? "0px" : "2px";
+      marginTop = this.config.isStd ? "-1px" : "0px";
     } else if (this.config.hasBubbles) {
       alignItems = "flex-end";
-      height = this.config.isStd ? "43px" : "30px";
+      height = this.config.isStd ? "42px" : "30px";
       padding = this.config.isStd ? "0px" : "2px";
+      marginTop = "0px";
+    } else if (this.config.hasTicks) {
+      alignItems = "flex-start";
+      height = this.config.isStd ? "42px" : "30px";
+      padding = this.config.isStd ? "0px" : "2px";
+      marginTop = "0px";
     } else {
       alignItems = "center";
       height = this.config.isStd ? "21px" : "14px";
       padding = "0px";
+      marginTop = "0px";
     }
     return html`
       <div
@@ -152,6 +161,7 @@ export class FlexSliderCardSlider extends LitElement {
           --align-items: ${alignItems};
           --height: ${height};
           --padding: ${padding};
+          --margin-top: ${marginTop};
         "
       > <div class="slider ${this.sliderClass} ${draggerClass}"></div>
       </div>
