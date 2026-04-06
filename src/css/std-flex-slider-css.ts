@@ -2,6 +2,7 @@ export const stdFlexSliderCardCss: string = `
   
   :host([std]) {
     display: block;
+    height: 100%;
     --flex-slider-card-barvalues-font-size: 1rem;
     --flex-slider-card-barvalues-padding-bottom: 2px;
   }
@@ -27,15 +28,17 @@ export const stdFlexSliderCardCss: string = `
     justify-content: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
+    border: 1px solid green; /* Debugging border */
   }
 
   .container.std .slider-with-values {
     width: 90%;
-    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-block: auto;
+    border: 1px solid red; /* Debugging border */
   }
   
   .container.std .slider {
