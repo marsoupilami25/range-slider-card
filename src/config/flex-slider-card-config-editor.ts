@@ -30,6 +30,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     } catch (e) {
       isNumber = true;
     }
+    const isVertical = this._config.orientation === "vertical";
     const schema: HaFormSchema[] = computeSchema(
       this._config.valuesbaractive === true,
       this._config.bubblesactive === true,
@@ -38,6 +39,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.bubbles?.digits ?? "",
       this._config.ticks?.digits ?? "",
       isNumber,
+      isVertical,
     );
 
     return html`
@@ -60,6 +62,9 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
   private _handleValueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
     const newConfig = ev.detail.value as FlexSliderCardConfig;
+    if (newConfig.orientation === "vertical") {
+      newConfig.valuesbaractive = false;
+    }
     this._config = newConfig;
     fireEvent(this, "config-changed", { config: this._config });
   }

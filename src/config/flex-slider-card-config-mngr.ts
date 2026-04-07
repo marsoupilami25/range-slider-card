@@ -112,7 +112,9 @@ export class FlexSliderCardConfigMngr {
 
   protected _checkValuesBar(): void {
     assertOptionalBoolean(this._config.valuesbaractive, "valuesbar");
-    if (this._config.valuesbaractive == null) {
+    if (this._config.orientation === "vertical") {
+      this._config.valuesbaractive = false;
+    } else if (this._config.valuesbaractive == null) {
       this._config.valuesbaractive = false;
     }
 
