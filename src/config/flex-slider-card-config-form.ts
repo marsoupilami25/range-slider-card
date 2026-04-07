@@ -21,6 +21,19 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
     required: false,
   },
   {
+    name: "orientation",
+    selector: {
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "horizontal", label: "Horizontal" },
+          { value: "vertical", label: "Vertical" },
+        ],
+      },
+    },
+    required: false,
+  },
+  {
     type: "grid",
     name: "",
     schema: [

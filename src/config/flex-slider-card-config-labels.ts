@@ -15,6 +15,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   maxtext: "Text for max value",
   dragonly: "Visible during drag only",
   direction: "Direction",
+  orientation: "Orientation",
   ticksactive: "Show tick marks",
   majorticks: "Number of Major Ticks",
   minorticks: "Number of Minor Ticks",

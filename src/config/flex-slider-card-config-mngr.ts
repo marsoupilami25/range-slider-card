@@ -5,7 +5,9 @@ import {
   assertFlexSliderCardFormat,
   assertFlexSliderCardDigits,
   assertFlexSliderCardDirection,
-  FlexSliderCardDirection
+  FlexSliderCardDirection,
+  assertFlexSliderCardOrientation,
+  FlexSliderCardOrientation
 } from "./flex-slider-card-config-type";
 import {
   assertOptionalString,
@@ -398,6 +400,11 @@ export class FlexSliderCardConfigMngr {
       this._config.direction = "ltr";
     }
     assertFlexSliderCardDirection(this._config.direction);
+
+    if (this._config.orientation == null) {
+      this._config.orientation = "horizontal";
+    }
+    assertFlexSliderCardOrientation(this._config.orientation);
   }
 
   protected _updateSlider(hass: HomeAssistant): void { }
@@ -422,7 +429,18 @@ export class FlexSliderCardConfigMngr {
     }
     return this._config.direction;
   }
-  
+
+  public get orientation(): FlexSliderCardOrientation {
+    if (this._config.orientation == null) {
+      throw new Error("Orientation is not defined in config");
+    }
+    return this._config.orientation;
+  }
+
+  public get isVertical(): boolean {
+    return this._config.orientation === "vertical";
+  }
+
   /****************************************************/
   /* entities                                         */
   /****************************************************/

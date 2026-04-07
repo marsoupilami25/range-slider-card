@@ -35,6 +35,17 @@ export const flexSliderCardDirectionStruct = union([
   literal("ltr"),
 ]);
 
+export type FlexSliderCardOrientation = "horizontal" | "vertical";
+export function assertFlexSliderCardOrientation(value: any): asserts value is FlexSliderCardOrientation {
+  if (!["horizontal", "vertical"].includes(value)) {
+    throw new Error(`Invalid FlexSliderCardOrientation: ${value}`);
+  }
+}
+export const flexSliderCardOrientationStruct = union([
+  literal("horizontal"),
+  literal("vertical"),
+]);
+
 export type FlexSliderCardValuesBarConfig = {
   mintext?: string;
   maxtext?: string;
@@ -90,6 +101,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   valuesbar?: FlexSliderCardValuesBarConfig;
   bubbles?: FlexSliderCardBubblesConfig;
   direction?: FlexSliderCardDirection;
+  orientation?: FlexSliderCardOrientation;
   ticksactive?: boolean;
   ticks?: FlexSliderCardTicksConfig;
 
@@ -114,6 +126,7 @@ export const flexSliderCardConfigStruct = assign(
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
     bubbles: optional(flexSliderCardBubblesConfigStruct),
     direction: optional(flexSliderCardDirectionStruct),
+    orientation: optional(flexSliderCardOrientationStruct),
     ticksactive: optional(boolean()),
     ticks: optional(flexSliderCardTicksConfigStruct),
     
