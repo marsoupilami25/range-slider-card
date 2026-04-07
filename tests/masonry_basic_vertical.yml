@@ -1,0 +1,54 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertestmin
+    show_header_toggle: true
+    state_color: false
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Standard avec titre
+    orientation: vertical
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std sans titre
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        orientation: vertical
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Compact avec titre
+    format: compact
+    orientation: vertical
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Compact sans titre
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 10
+        max: 40
+        step: 1
+        format: compact
+        orientation: vertical
+theme: Caule Light Green
+title: Masonry/basic/vertical

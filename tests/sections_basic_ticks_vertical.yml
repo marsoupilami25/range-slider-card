@@ -1,0 +1,152 @@
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: tile
+        entity: input_number.inputnumbertestmin
+        vertical: false
+        features_position: bottom
+        grid_options:
+          columns: 6
+          rows: 1
+      - type: heading
+        heading: Sans valuebar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        name: Sans grid
+        ticksactive: true
+        ticks:
+          digits: manual
+          nbdigits: 3
+          majorticks: 4
+          minorticks: 7
+        orientation: vertical
+        grid_options:
+          columns: null
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        step: 10
+        name: Avec grid R1
+        ticksactive: true
+        ticks:
+          digits: manual
+          nbdigits: 1
+          majorticks: 3
+        orientation: vertical
+        grid_options:
+          columns: 9
+          rows: 1
+      - type: heading
+        icon: ""
+        heading: Sans grid sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        ticksactive: true
+        orientation: vertical
+        grid_options:
+          columns: 12
+          rows: null
+      - type: heading
+        icon: ""
+        heading: Avec grid R1 sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        ticksactive: true
+        orientation: vertical
+        grid_options:
+          columns: 12
+          rows: 1
+  - type: grid
+    cards:
+      - type: heading
+        heading: Sans values bar
+        heading_style: title
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.25
+        name: Sans grid
+        format: compact
+        ticksactive: true
+        orientation: vertical
+        grid_options:
+          columns: null
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_datetime.inputheuretestmin
+        entity_max: input_datetime.inputheuretestmax
+        step: 10
+        name: Avec grid R1
+        format: compact
+        ticksactive: true
+        orientation: vertical
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: heading
+        icon: ""
+        heading: Sans grid sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        format: compact
+        ticksactive: true
+        orientation: vertical
+        grid_options:
+          columns: null
+          rows: null
+      - type: heading
+        icon: ""
+        heading: Avec grid R1 sans titre
+        heading_style: subtitle
+        grid_options:
+          columns: full
+          rows: null
+      - type: custom:flex-slider-card
+        entity_min: input_number.inputnumbertestmin
+        entity_max: input_number.inputnumbertestmax
+        min: 18
+        max: 30
+        step: 0.5
+        format: compact
+        ticksactive: true
+        orientation: vertical
+        grid_options:
+          columns: 12
+          rows: 1
+max_columns: 4
+theme: Caule Black Coral
+cards: []
+title: Sections/basic/vertical
