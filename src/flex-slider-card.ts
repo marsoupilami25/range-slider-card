@@ -230,7 +230,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const hasTitle = this._config.hasTitle;
     const name = this._config.title;
     const isStd = this._config.isStd;
-    const containerClass = `${isStd ? "std" : "compact"} ${hasTitle ? "" : "no-title"}`;
+    const isVertical = this._config.isVertical;
+    const containerClass = `${isStd ? "std" : "compact"} ${hasTitle ? "" : "no-title"} ${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;

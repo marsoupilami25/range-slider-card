@@ -129,7 +129,27 @@ export class FlexSliderCardSlider extends LitElement {
 
   protected override render() {
     const draggerClass = `${this.config.isDragOnlyBubbles ? "dragonly" : ""}`;
-    
+
+    if (this.config.isVertical) {
+      let width: string;
+      if (this.config.hasBubbles && this.config.hasTicks) {
+        width = this.config.isStd ? "110px" : "80px";
+      } else if (this.config.hasBubbles) {
+        width = this.config.isStd ? "90px" : "65px";
+      } else if (this.config.hasTicks) {
+        width = this.config.isStd ? "70px" : "50px";
+      } else {
+        width = this.config.isStd ? "20px" : "14px";
+      }
+      return html`
+        <div
+          class="slider-container ${this.sliderClass} vertical"
+          style="--width: ${width};"
+        ><div class="slider ${this.sliderClass} ${draggerClass} vertical"></div>
+        </div>
+      `;
+    }
+
     let alignItems = "";
     let height = "";
     let padding = "";
@@ -158,7 +178,7 @@ export class FlexSliderCardSlider extends LitElement {
     }
     return html`
       <div
-        class="slider-container ${this.sliderClass}" 
+        class="slider-container ${this.sliderClass}"
         style="
           --align-items: ${alignItems};
           --height: ${height};

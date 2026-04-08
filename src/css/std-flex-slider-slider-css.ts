@@ -117,4 +117,86 @@ export const stdFlexSliderSliderCardCss: string = `
   .slider.std.noUi-horizontal .noUi-value-normal {
     display: none;
   }
+
+  /* ===== Vertical mode ===== */
+
+  .slider-container.std.vertical {
+    width: var(--width);
+    height: 100%;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    border: 1px solid green; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical.noUi-target {
+    width: 16px;
+    height: 100%;
+    border-radius: 10px / 16px;
+  }
+
+  .slider.std.noUi-vertical .noUi-base {
+    width: 16px;
+    height: 100%;
+  }
+
+  .slider.std.noUi-vertical .noUi-connect {
+    width: 16px;
+  }
+
+  .slider.std.noUi-vertical .noUi-handle {
+    width: 18px;
+    height: 18px;
+    left: -1px;
+    bottom: -9px;
+    right: auto;
+    top: auto;
+    background: var(--primary-text-color);
+    border-width: 3px;
+    border-style: solid;
+    border-color: var(--primary-color);
+    border-radius: 15px;
+    box-shadow: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-tooltip {
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    right: auto;
+    white-space: nowrap;
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-large {
+    background: var(--primary-color);
+    height: 3px;
+    width: 8px;
+    transform: translateY(-1px);
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-normal {
+    background: var(--divider-color);
+    height: 2px;
+    width: 5px;
+    transform: translateY(-1px);
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-sub {
+    display: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-value-vertical {
+    transform: translateY(-50%);
+    left: 19px;
+    line-height: 1;
+  }
+
+  .slider.std.noUi-vertical .noUi-value-large {
+    font-size: 1rem;
+    color: var(--primary-text-color);
+  }
+
+  .slider.std.noUi-vertical .noUi-value-normal {
+    display: none;
+  }
 `;
