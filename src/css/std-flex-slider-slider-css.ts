@@ -6,6 +6,8 @@ export const stdFlexSliderSliderCardCss: string = `
     display: flex;
     justify-content: center;
     align-items: var(--align-items);
+    padding-bottom: var(--padding);
+    margin-top: var(--margin-top);
     /* border: 1px solid green; /* Debugging border */
   }
 
@@ -15,7 +17,6 @@ export const stdFlexSliderSliderCardCss: string = `
     border-radius: 10px / 16px;
     border: none;
     box-shadow: none;
-    margin-top: var(--margin-top);
     /* border: 1px solid blue; /* Debugging border */
   }
   

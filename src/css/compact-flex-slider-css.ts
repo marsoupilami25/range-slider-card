@@ -4,21 +4,23 @@ export const compactFlexSliderCardCss: string = `
     display: block;
     height: 100%;
     --flex-slider-card-barvalues-font-size: 0.8rem;
-    --flex-slider-card-barvalues-padding-bottom: 1px;
   }
   
   .container.compact {
-    min-height: 100%;
-    padding-bottom: 3px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
   }
   
   .container.compact.no-title {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 3px;
     justify-content: center;
+  }
+
+  .container.compact.no-values {
+    padding-bottom: 3px;
   }
 
   .container.compact .title {
@@ -33,6 +35,7 @@ export const compactFlexSliderCardCss: string = `
  
   .container.compact .slider-with-values {
     width: 90%;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -40,9 +43,5 @@ export const compactFlexSliderCardCss: string = `
     margin-block: auto;
     /* border: 1px solid red; /* Debugging border */
   }
- 
-  .container.compact .slider {
-    width: 100%;
-  }
-  
+   
 `;

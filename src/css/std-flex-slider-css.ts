@@ -4,13 +4,10 @@ export const stdFlexSliderCardCss: string = `
     display: block;
     height: 100%;
     --flex-slider-card-barvalues-font-size: 1rem;
-    --flex-slider-card-barvalues-padding-bottom: 2px;
   }
   
   .container.std {
-    min-height: 100%;
     height: 100%;
-    padding-bottom: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,8 +16,11 @@ export const stdFlexSliderCardCss: string = `
   
   .container.std.no-title {
     padding-top: 5px;
-    padding-bottom: 5px;
     justify-content: center;
+  }
+
+  .container.std.no-values {
+    padding-bottom: 5px;
   }
 
   .container.std .title {
@@ -35,6 +35,7 @@ export const stdFlexSliderCardCss: string = `
 
   .container.std .slider-with-values {
     width: 90%;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -43,15 +44,6 @@ export const stdFlexSliderCardCss: string = `
     /* border: 1px solid red; /* Debugging border */
   }
   
-  .container.std .slider {
-    width: 100%;
-    height: 100%;
-  }
-
-  .container.std.no-title .values {
-    font-size: 0.9rem;
-  }
-
   /* ===== Vertical mode ===== */
 
   .container.std.vertical .slider-with-values {

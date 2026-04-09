@@ -157,22 +157,22 @@ export class FlexSliderCardSlider extends LitElement {
 
     if (this.config.hasBubbles && this.config.hasTicks) {
       alignItems = "center";
-      height = this.config.isStd ? "67px" : "49px";
+      height = this.config.isStd ? "67px" : "50px";
       padding = this.config.isStd ? "0px" : "2px";
       marginTop = this.config.isStd ? "-1px" : "0px";
     } else if (this.config.hasBubbles) {
       alignItems = "flex-end";
-      height = this.config.isStd ? "42px" : "30px";
-      padding = this.config.isStd ? "0px" : "2px";
+      height = this.config.isStd ? "43px" : "32px";
+      padding = this.config.isStd ? "1px" : "4px";
       marginTop = "0px";
     } else if (this.config.hasTicks) {
       alignItems = "flex-start";
-      height = this.config.isStd ? "42px" : "28px";
+      height = this.config.isStd ? "43px" : "28px";
       padding = this.config.isStd ? "0px" : "2px";
-      marginTop = "0px";
+      marginTop = this.config.isStd ? "0px" : "2px";;
     } else {
       alignItems = "center";
-      height = this.config.isStd ? "21px" : "14px";
+      height = this.config.isStd ? "20px" : "14px";
       padding = "0px";
       marginTop = "0px";
     }

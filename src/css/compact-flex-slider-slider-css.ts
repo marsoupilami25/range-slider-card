@@ -7,6 +7,7 @@ export const compactFlexSliderSliderCardCss: string = `
     justify-content: center;
     align-items: var(--align-items);
     padding-bottom: var(--padding);
+    margin-top: var(--margin-top);
     /* border: 1px solid green; /* Debugging border */
   }
     
