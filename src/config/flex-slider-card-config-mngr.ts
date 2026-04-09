@@ -407,6 +407,16 @@ export class FlexSliderCardConfigMngr {
       this._config.orientation = "horizontal";
     }
     assertFlexSliderCardOrientation(this._config.orientation);
+
+    if (this._config.orientation === "horizontal") {
+      assertOptionalNumber(this._config.horizontalsize, "horizontalsize");
+      this._config.horizontalsize ??= 90;
+      if (this._config.horizontalsize < 10 || this._config.horizontalsize > 100) {
+        throw new Error("horizontalsize must be between 10 and 100");
+      }
+    } else {
+      this._config.horizontalsize = undefined;
+    }
   }
 
   protected _updateSlider(hass: HomeAssistant): void { }
@@ -441,6 +451,13 @@ export class FlexSliderCardConfigMngr {
 
   public get isVertical(): boolean {
     return this._config.orientation === "vertical";
+  }
+
+  public get sliderHorizontalSize(): number {
+    if (this._config.horizontalsize == null) {
+      throw new Error("Size is not defined in config");
+    }
+    return this._config.horizontalsize;
   }
 
   /****************************************************/

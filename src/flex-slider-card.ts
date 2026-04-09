@@ -65,6 +65,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   private _firstUpdate: boolean = true;           // flag to indicate if it is the first update of the card
   private _config?: FlexSliderCardConfigMngr;        // reference to the card configuration
+  private _dashboardType?: 'masonry' | 'sections'; // deduced from which sizing method HA calls
 
   static override styles = css`
     * {
@@ -134,12 +135,17 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   }
 
   public getCardSize(): number | Promise<number> {
+    debuglog("getCardSize");
+    this._dashboardType = 'masonry';
     if (!this._config) {
       return 1;
     }
-    const size = 1 + 
-      (this._config.hasTitle ? 1 : 0) + 
-      (this._config.hasValuesBar ? 1 : 0) + 
+    if (this._config.isVertical) {
+      return 2;
+    }
+    const size = 1 +
+      (this._config.hasTitle ? 1 : 0) +
+      (this._config.hasValuesBar ? 1 : 0) +
       (this._config.hasBubbles ? 1 : 0)
       + (this._config.hasTicks ? 1 : 0);
 
@@ -153,29 +159,41 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   }
 
   public getGridOptions(): GridOptions {
+    debuglog("getGridOptions");
+    this._dashboardType = 'sections';
     if (!this._config) {
       return {};
     }
-    const size = 1 + 
-      (this._config.hasTitle ? 1 : 0) + 
-      (this._config.hasValuesBar ? 1 : 0) + 
-      (this._config.hasBubbles ? 1 : 0)+
-      (this._config.hasTicks ? 1 : 0);
 
-    if (this._config.isStd) {
+    if (this._config.isVertical) {
       return {
-        min_rows: Math.round(size / 2),
-        min_columns: 6,
-        max_columns: 12
-      };
-    } else if (this._config.isCompact) {
-      return {
-        min_rows: Math.round(size / 2.5),
-        min_columns: 2,
-        max_columns: 9
-      };
+        rows: 2,
+        min_rows: 2,
+        min_columns: 1,
+        max_columns: 12,
+      }
     } else {
-      throw new Error("Invalid format in getGridOptions");
+      const size = 1 +
+        (this._config.hasTitle ? 1 : 0) +
+        (this._config.hasValuesBar ? 1 : 0) +
+        (this._config.hasBubbles ? 1 : 0) +
+        (this._config.hasTicks ? 1 : 0);
+
+      if (this._config.isStd) {
+        return {
+          min_rows: Math.round(size / 2),
+          min_columns: 6,
+          max_columns: 12
+        };
+      } else if (this._config.isCompact) {
+        return {
+          min_rows: Math.round(size / 2.5),
+          min_columns: 2,
+          max_columns: 9
+        };
+      } else {
+        throw new Error("Invalid format in getGridOptions");
+      }
     }
   }
 
@@ -231,7 +249,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const name = this._config.title;
     const isStd = this._config.isStd;
     const isVertical = this._config.isVertical;
-    const containerClass = 
+    const containerClass =
       `${isStd ? "std" : "compact"} ` +
       `${hasTitle ? "" : "no-title"} ` +
       `${hasValuesBar ? "" : "no-values"} ` +
@@ -239,12 +257,13 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const sliderClass = `${isStd ? "std" : "compact"}`;
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;
+    const sizeStyle = isVertical ? "" : `--flex-slider-size: ${this._config.sliderHorizontalSize}%`;
 
     return html`
       <ha-card>
         <div class="container ${containerClass}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
-          <div class="slider-with-values">
+          <div class="slider-with-values" style="${sizeStyle}">
             <div class="slider-container">
               <flex-slider-card-slider
                 .config=${this._config}
@@ -272,6 +291,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   private _initPrivateDisplayData(): void {                           //parameters initialized by the constructor or when the card is disconnected
     this._firstUpdate = true;                                 // flag to indicate if it is the first update of the card
+    this._dashboardType = undefined;
   }
 
   private _applyCardMod(): void {

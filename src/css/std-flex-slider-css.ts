@@ -34,7 +34,7 @@ export const stdFlexSliderCardCss: string = `
   }
 
   .container.std .slider-with-values {
-    width: 90%;
+    width: var(--flex-slider-size, 90%);
     height: auto;
     display: flex;
     flex-direction: column;
@@ -46,10 +46,21 @@ export const stdFlexSliderCardCss: string = `
   
   /* ===== Vertical mode ===== */
 
+  /* In masonry and sections with auto-height, the container has no defined height.
+     min-height provides a fallback so HA can measure the card correctly (2 rows ≈ 130px).
+     In sections with fixed height, height:100% on :host overrides this naturally. */
+  :host([std][vertical]) {
+    min-height: 130px;
+  }
+
   .container.std.vertical .slider-with-values {
     width: auto;
     height: 100%;
-    min-height: 150px
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    margin-block: auto;
   }
 
   .container.std.vertical .slider-container {

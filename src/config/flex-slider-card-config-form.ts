@@ -21,17 +21,35 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean): HaFormSc
     required: false,
   },
   {
-    name: "orientation",
-    selector: {
-      select: {
-        mode: "dropdown",
-        options: [
-          { value: "horizontal", label: "Horizontal" },
-          { value: "vertical", label: "Vertical" },
-        ],
+    type: "grid",
+    name: "",
+    schema: [
+      {
+        name: "orientation",
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "horizontal", label: "Horizontal" },
+              { value: "vertical", label: "Vertical" },
+            ],
+          },
+        },
+        required: false,
       },
-    },
-    required: false,
+      ...(!isVertical ? [{
+        name: "horizontalsize",
+        selector: {
+          number: {
+            mode: "slider",
+            min: 10,
+            max: 100,
+            step: 5,
+          },
+        },
+        required: false,
+      }] : []),
+    ],
   },
   {
     type: "grid",

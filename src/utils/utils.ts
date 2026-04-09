@@ -1,5 +1,5 @@
 export function debuglog(message: unknown): void {
-  const debug: boolean = false; // set to true to enable debug logging
+  const debug: boolean = true; // set to true to enable debug logging
   
   if (debug) {
     console.log(message);
