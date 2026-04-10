@@ -48,6 +48,7 @@ export const stdFlexSliderCardCss: string = `
 
   .container.std.vertical .slider-with-values {
     width: auto;
+    height: 100%;
     display: flex;
     flex-direction: row;
     align-items: stretch;
