@@ -231,7 +231,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     }
   }
 
-  protected override render() {
+    protected override render() {
     if (this._error) {
       return html`<ha-card><div class="card-content">${this._error}</div></ha-card>`;
     }
@@ -258,10 +258,11 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;
     const sizeStyle = isVertical ? "" : `--flex-slider-size: ${this._config.sliderHorizontalSize}%`;
+    const height = this._shallForceHeight() ? `--flex-slider-height: 120px` : "";
 
     return html`
       <ha-card>
-        <div class="container ${containerClass}">
+        <div class="container ${containerClass}" style="${height}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
           <div class="slider-with-values" style="${sizeStyle}">
             <div class="slider-container">
@@ -309,6 +310,22 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
         `type-${this.localName}`
       );
     });
+  }
+
+  private _shallForceHeight(): boolean {
+    if (!this._config) {
+      throw new Error("Invalid config in _shallForceHeight");
+    }
+    const needsForced =
+      this._config.isVertical && (
+        this._dashboardType === 'masonry' ||
+        ( this._dashboardType === 'sections' && 
+          ( this._config.gridRows === null ||
+            typeof this._config.gridRows === 'string'
+          )
+        )
+      );
+    return needsForced;
   }
 
   /****************************************************/

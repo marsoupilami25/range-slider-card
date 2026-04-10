@@ -453,6 +453,10 @@ export class FlexSliderCardConfigMngr {
     return this._config.orientation === "vertical";
   }
 
+  public get gridRows(): number | string | undefined {
+    return this._config.grid_options?.rows;
+  }
+
   public get sliderHorizontalSize(): number {
     if (this._config.horizontalsize == null) {
       throw new Error("Size is not defined in config");
