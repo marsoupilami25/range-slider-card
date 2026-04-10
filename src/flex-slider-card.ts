@@ -316,8 +316,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       throw new Error("Invalid config in _shallForceHeight");
     }
+    debuglog(`_shallForceHeight: dashboardType="${this._dashboardType}"`);
     const needsForced =
       this._config.isVertical && (
+        this._dashboardType === undefined ||  // dashboard type is unknown in masonry editor
         this._dashboardType === 'masonry' ||
         ( this._dashboardType === 'sections' && 
           ( this._config.gridRows === null ||
