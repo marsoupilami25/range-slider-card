@@ -34,7 +34,7 @@ export const compactFlexSliderCardCss: string = `
   }
  
   .container.compact .slider-with-values {
-    width: var(--flex-slider-size, 90%);
+    width: var(--flex-slider-width, 90%);
     height: auto;
     display: flex;
     flex-direction: column;

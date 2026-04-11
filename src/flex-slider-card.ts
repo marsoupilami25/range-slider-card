@@ -257,14 +257,16 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const sliderClass = `${isStd ? "std" : "compact"}`;
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;
-    const sizeStyle = isVertical ? "" : `--flex-slider-size: ${this._config.sliderHorizontalSize}%`;
-    const height = this._shallForceHeight() ? `--flex-slider-height: 120px` : "";
+    const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
+    const verticalHeight = isVertical && this._shallForceHeight()
+      ? `--flex-slider-height: ${this._config.sliderVerticalHeight * 60}px`
+      : "";
 
     return html`
       <ha-card>
-        <div class="container ${containerClass}" style="${height}">
+        <div class="container ${containerClass}" style="${verticalHeight}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
-          <div class="slider-with-values" style="${sizeStyle}">
+          <div class="slider-with-values" style="${horizontalWidth}">
             <div class="slider-container">
               <flex-slider-card-slider
                 .config=${this._config}

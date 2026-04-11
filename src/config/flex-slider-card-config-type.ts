@@ -104,7 +104,8 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   orientation?: FlexSliderCardOrientation;
   ticksactive?: boolean;
   ticks?: FlexSliderCardTicksConfig;
-  horizontalsize?: number;
+  horizontalwidth?: number;
+  verticalheight?: number;
 
  /* bahavioral */
   entity_min: string;
@@ -130,7 +131,8 @@ export const flexSliderCardConfigStruct = assign(
     orientation: optional(flexSliderCardOrientationStruct),
     ticksactive: optional(boolean()),
     ticks: optional(flexSliderCardTicksConfigStruct),
-    horizontalsize: optional(number()),
+    horizontalwidth: optional(number()),
+    verticalheight: optional(number()),
 
     /* behavioral */
     entity_min: string(),

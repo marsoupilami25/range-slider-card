@@ -38,7 +38,7 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean): HaFormSc
         required: false,
       },
       ...(!isVertical ? [{
-        name: "horizontalsize",
+        name: "horizontalwidth",
         selector: {
           number: {
             mode: "slider",
@@ -48,7 +48,18 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean): HaFormSc
           },
         },
         required: false,
-      }] : []),
+      }] : [{
+        name: "verticalheight",
+        selector: {
+          number: {
+            mode: "slider",
+            min: 1,
+            max: 12,
+            step: 1,
+          },
+        },
+        required: false,
+      }]),
     ],
   },
   {

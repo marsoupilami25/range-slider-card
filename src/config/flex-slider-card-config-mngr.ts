@@ -409,13 +409,19 @@ export class FlexSliderCardConfigMngr {
     assertFlexSliderCardOrientation(this._config.orientation);
 
     if (this._config.orientation === "horizontal") {
-      assertOptionalNumber(this._config.horizontalsize, "horizontalsize");
-      this._config.horizontalsize ??= 90;
-      if (this._config.horizontalsize < 10 || this._config.horizontalsize > 100) {
-        throw new Error("horizontalsize must be between 10 and 100");
+      assertOptionalNumber(this._config.horizontalwidth, "horizontalwidth");
+      this._config.horizontalwidth ??= 90;
+      if (this._config.horizontalwidth < 10 || this._config.horizontalwidth > 100) {
+        throw new Error("horizontalwidth must be between 10 and 100");
       }
+      this._config.verticalheight = undefined;
     } else {
-      this._config.horizontalsize = undefined;
+      this._config.horizontalwidth = undefined;
+      assertOptionalNumber(this._config.verticalheight, "verticalheight");
+      this._config.verticalheight ??= 2;
+      if (this._config.verticalheight < 1 || this._config.verticalheight > 12) {
+        throw new Error("verticalheight must be between 1 and 12");
+      }
     }
   }
 
@@ -457,11 +463,18 @@ export class FlexSliderCardConfigMngr {
     return this._config.grid_options?.rows;
   }
 
-  public get sliderHorizontalSize(): number {
-    if (this._config.horizontalsize == null) {
+  public get sliderHorizontalWidth(): number {
+    if (this._config.horizontalwidth == null) {
       throw new Error("Size is not defined in config");
     }
-    return this._config.horizontalsize;
+    return this._config.horizontalwidth;
+  }
+
+  public get sliderVerticalHeight(): number {
+    if (this._config.verticalheight == null) {
+      throw new Error("Vertical size is not defined in config");
+    }
+    return this._config.verticalheight;
   }
 
   /****************************************************/
