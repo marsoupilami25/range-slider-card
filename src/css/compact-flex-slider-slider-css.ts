@@ -8,7 +8,7 @@ export const compactFlexSliderSliderCardCss: string = `
     align-items: var(--align-items);
     padding-bottom: var(--padding);
     margin-top: var(--margin-top);
-    /* outline: 1px solid green; /* Debugging border */
+    outline: 1px solid green; /* Debugging border */
   }
     
   .slider.compact.noUi-target {
