@@ -168,7 +168,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (this._config.isVertical) {
       return {
         rows: 2,
-        min_rows: 2,
+        min_rows: 1,
         min_columns: 1,
         max_columns: 12,
       }
@@ -229,6 +229,11 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (changedProps.has("hass")) {
       this._config.entitiesSetBaseline();
     }
+    if (this._config.isVertical && this._shallForceHeight()) {
+      this.style.setProperty('--flex-slider-height', `${56 + (this._config.sliderVerticalHeight - 1) * 64}px`);
+    } else {
+      this.style.removeProperty('--flex-slider-height');
+    }
   }
 
     protected override render() {
@@ -258,13 +263,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;
     const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
-    const verticalHeight = isVertical && this._shallForceHeight()
-      ? `--flex-slider-height: ${this._config.sliderVerticalHeight * 60}px`
-      : "";
 
     return html`
       <ha-card>
-        <div class="container ${containerClass}" style="${verticalHeight}">
+        <div class="container ${containerClass}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
           <div class="slider-with-values" style="${horizontalWidth}">
             <div class="slider-container">

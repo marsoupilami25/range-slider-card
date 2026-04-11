@@ -2,12 +2,12 @@ export const stdFlexSliderCardCss: string = `
   
   :host([std]) {
     display: block;
-    height: 100%;
+    height: var(--flex-slider-height, 100%);
     --flex-slider-card-barvalues-font-size: 1rem;
   }
   
   .container.std {
-    height: var(--flex-slider-height, 100%);
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
