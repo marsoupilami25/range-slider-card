@@ -123,4 +123,73 @@ export const compactFlexSliderSliderCardCss: string = `
     /* outline: 1px solid green; /* Debugging border */
   }
 
+  .slider.compact.noUi-vertical.noUi-target {
+    width: 6px;
+    height: 100%;
+    border-radius: 4px / 6px;
+  }
+
+  .slider.compact.noUi-vertical .noUi-base {
+    width: 6px;
+    height: 100%;
+  }
+
+  .slider.compact.noUi-vertical .noUi-connect {
+    width: 6px;
+  }
+
+  .slider.compact.noUi-vertical .noUi-handle {
+    width: 12px;
+    height: 12px;
+    left: -3px;
+    bottom: -6px;
+    right: auto;
+    top: auto;
+    background: var(--primary-color);
+    border-width: 0px;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-tooltip {
+    left: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    right: auto;
+    white-space: nowrap;
+  }
+
+  .slider.compact.noUi-vertical .noUi-marker-large {
+    background: var(--primary-color);
+    height: 2px;
+    width: 6px;
+    transform: translateY(-1px);
+  }
+
+  .slider.compact.noUi-vertical .noUi-marker-normal {
+    background: var(--divider-color);
+    height: 1px;
+    width: 4px;
+    transform: translateY(-1px);
+  }
+
+  .slider.compact.noUi-vertical .noUi-marker-sub {
+    display: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-value-vertical {
+    transform: translateY(-50%);
+    left: 17px;
+    line-height: 1;
+  }
+
+  .slider.compact.noUi-vertical .noUi-value-large {
+    font-size: 0.7rem;
+    color: var(--primary-text-color);
+  }
+
+  .slider.compact.noUi-vertical .noUi-value-normal {
+    display: none;
+  }
+
 `;

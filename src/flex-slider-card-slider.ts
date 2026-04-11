@@ -143,7 +143,7 @@ export class FlexSliderCardSlider extends LitElement {
       } else if (this.config.hasTicks) {
         width = this.config.isStd ? "70px" : "50px";
       } else {
-        width = this.config.isStd ? "20px" : "14px";
+        width = this.config.isStd ? "19px" : "14px";
       }
       let height: string;
       if (this.forceHeight || this.config.sliderVerticalHeight == null) {
