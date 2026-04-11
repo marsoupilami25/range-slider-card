@@ -4,7 +4,7 @@ export const compactFlexSliderCardCss: string = `
 
   :host([compact]) {
     display: block;
-    height: 100%;
+    height: var(--flex-slider-height, 100%);
     --flex-slider-card-barvalues-font-size: 0.8rem;
   }
 
@@ -47,4 +47,27 @@ export const compactFlexSliderCardCss: string = `
     outline: 1px solid blue; /* Debugging border */
   }
 
+  /* ===== Vertical mode ===== */
+
+  .container.compact.vertical .slider-with-values {
+    width: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .container.compact.vertical .slider-container {
+    height: 100%;
+    width: auto;
+  }
+
+  .container.compact.vertical flex-slider-card-slider {
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+    
 `;
