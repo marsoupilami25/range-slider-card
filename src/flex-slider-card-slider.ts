@@ -9,6 +9,7 @@ import { FlexSliderCardFormat } from "./config/flex-slider-card-config-type";
 import { FlexSliderCardValuesBarMode, FlexSliderCardValuesBarSetModeCallback, FlexSliderCardValuesBarSetValueCallback } from "./flex-slider-card-valuesbar";
 import { debuglog, minutesToTime } from "./utils/utils";
 import { FlexSliderCardEntityType } from "./utils/entity-management";
+import { CARD_HEIGHT_BASE, INTER_CARD, COMPACT_CONTAINER_PADDING, COMPACT_TITLE_HEIGHT, STD_CONTAINER_PADDING, STD_TITLE_HEIGHT } from "./type/constants";
 
 
 // Extension de HTMLElement pour typer noUiSlider
@@ -27,7 +28,10 @@ export class FlexSliderCardSlider extends LitElement {
   public config!: FlexSliderCardConfigMngr;          // reference to the card configuration
 
   @property({ attribute: false })
-  public sliderClass!: FlexSliderCardFormat;          // reference to the card configuration
+  public sliderClass!: FlexSliderCardFormat;
+
+  @property({ type: Boolean })
+  public forceHeight = false;          // reference to the card configuration
 
   @property({ type: Number })
   public minvalue = 0;
@@ -141,10 +145,20 @@ export class FlexSliderCardSlider extends LitElement {
       } else {
         width = this.config.isStd ? "20px" : "14px";
       }
+      let height: string;
+      if (this.forceHeight) {
+        height = "100%";
+      } else {
+        const cardHeight = CARD_HEIGHT_BASE + (this.config.sliderVerticalHeight - 1) * (CARD_HEIGHT_BASE + INTER_CARD);
+        const titleHeight = this.config.hasTitle ? (this.config.isStd ? STD_TITLE_HEIGHT : COMPACT_TITLE_HEIGHT) : 0;
+        const paddingTop = this.config.hasTitle ? 0 : (this.config.isStd ? STD_CONTAINER_PADDING : COMPACT_CONTAINER_PADDING);
+        const paddingBottom = this.config.hasValuesBar ? 0 : (this.config.isStd ? STD_CONTAINER_PADDING : COMPACT_CONTAINER_PADDING);
+        height = `calc(${cardHeight - titleHeight - paddingTop - paddingBottom}px - var(--ha-card-border-total, 0px))`;
+      }
       return html`
         <div
           class="slider-container ${this.sliderClass} vertical"
-          style="--width: ${width};"
+          style="--width: ${width}; --height: ${height};"
         ><div class="slider ${this.sliderClass} ${draggerClass} vertical"></div>
         </div>
       `;

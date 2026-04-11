@@ -13,6 +13,7 @@ import { FlexSliderCardSlider } from "./flex-slider-card-slider";
 import { flexSliderCardConfigStub } from "./config/flex-slider-card-config-stub";
 import { assert } from "superstruct";
 import { getVersion } from "./utils/version";
+import { CARD_HEIGHT_BASE, INTER_CARD } from "./type/constants";
 
 // Styled console banner so your card is easy to spot in the browser console.
 // Stays visible in production — useful for version-mismatch debugging in HA.
@@ -229,8 +230,15 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (changedProps.has("hass")) {
       this._config.entitiesSetBaseline();
     }
+    const haCard = this.shadowRoot?.querySelector('ha-card');
+    const borderHeight = haCard
+      ? parseFloat(getComputedStyle(haCard).borderTopWidth) +
+        parseFloat(getComputedStyle(haCard).borderBottomWidth)
+      : 0;
+    this.style.setProperty('--ha-card-border-total', `${borderHeight}px`);
+
     if (this._config.isVertical && this._shallForceHeight()) {
-      this.style.setProperty('--flex-slider-height', `${56 + (this._config.sliderVerticalHeight - 1) * 64}px`);
+      this.style.setProperty('--flex-slider-height', `${CARD_HEIGHT_BASE + (this._config.sliderVerticalHeight - 1) * (CARD_HEIGHT_BASE + INTER_CARD)}px`);
     } else {
       this.style.removeProperty('--flex-slider-height');
     }
@@ -275,6 +283,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
                 .minvalue=${minValue}
                 .maxvalue=${maxValue}
                 .sliderClass=${sliderClass}
+                .forceHeight=${this._shallForceHeight()}
               ></flex-slider-card-slider>
             </div>
             ${hasValuesBar ? html`

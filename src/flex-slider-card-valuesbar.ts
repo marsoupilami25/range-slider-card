@@ -41,7 +41,7 @@ export class FlexSliderCardValuesBar extends LitElement {
       width: 100%;
       color: var(--primary-text-color);
       font-size: var(--flex-slider-card-barvalues-font-size);
-      /* border: 1px solid green; /* Debugging border */
+      /* outline: 1px solid green; /* Debugging border */
     }
     .editing {
       color: var(--primary-color);

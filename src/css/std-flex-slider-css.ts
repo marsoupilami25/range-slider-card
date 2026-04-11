@@ -1,11 +1,13 @@
+import { STD_TITLE_HEIGHT, STD_CONTAINER_PADDING } from "../type/constants";
+
 export const stdFlexSliderCardCss: string = `
-  
+
   :host([std]) {
     display: block;
     height: var(--flex-slider-height, 100%);
     --flex-slider-card-barvalues-font-size: 1rem;
   }
-  
+
   .container.std {
     height: 100%;
     display: flex;
@@ -13,24 +15,25 @@ export const stdFlexSliderCardCss: string = `
     align-items: center;
     justify-content: flex-start;
   }
-  
+
   .container.std.no-title {
-    padding-top: 5px;
+    padding-top: ${STD_CONTAINER_PADDING}px;
     justify-content: center;
   }
 
   .container.std.no-values {
-    padding-bottom: 5px;
+    padding-bottom: ${STD_CONTAINER_PADDING}px;
   }
 
   .container.std .title {
     display: flex;
-    height: 30px;
+    height: ${STD_TITLE_HEIGHT}px;
+    min-height: ${STD_TITLE_HEIGHT}px;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
-    /* border: 1px solid green; /* Debugging border */
+    /* outline: 1px solid green; /* Debugging border */
   }
 
   .container.std .slider-with-values {
@@ -41,9 +44,9 @@ export const stdFlexSliderCardCss: string = `
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    /* border: 1px solid red; /* Debugging border */
+    /* outline: 1px solid red; /* Debugging border */
   }
-  
+
   /* ===== Vertical mode ===== */
 
   .container.std.vertical .slider-with-values {
@@ -52,7 +55,7 @@ export const stdFlexSliderCardCss: string = `
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .container.std.vertical .slider-container {
@@ -63,6 +66,8 @@ export const stdFlexSliderCardCss: string = `
   .container.std.vertical flex-slider-card-slider {
     height: 100%;
     width: auto;
+    display: flex;
+    align-items: center;
   }
 
 `;

@@ -8,7 +8,7 @@ export const stdFlexSliderSliderCardCss: string = `
     align-items: var(--align-items);
     padding-bottom: var(--padding);
     margin-top: var(--margin-top);
-    /* border: 1px solid green; /* Debugging border */
+    /* outline: 1px solid green; /* Debugging border */
   }
 
   .slider.std.noUi-target {
@@ -17,20 +17,20 @@ export const stdFlexSliderSliderCardCss: string = `
     border-radius: 10px / 16px;
     border: none;
     box-shadow: none;
-    /* border: 1px solid blue; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
   
   .slider.std .noUi-base {
     height: 16px;
-    /* border: 1px solid green; /* Debugging border */
+    /* outline: 1px solid green; /* Debugging border */
   }
-  
+
   .slider.std .noUi-connect {
     height: 16px;
     background: color-mix(in srgb, var(--primary-color) 30%, transparent);
-    /* border: 1px solid red; /* Debugging border */
+    /* outline: 1px solid red; /* Debugging border */
   }
-  
+
   .slider.std.noUi-horizontal .noUi-handle {
     width: 18px;
     height: 18px;
@@ -123,11 +123,9 @@ export const stdFlexSliderSliderCardCss: string = `
 
   .slider-container.std.vertical {
     width: var(--width);
-    height: 100%;
+    height: var(--height, 100%);
     flex-direction: row;
-    align-items: stretch;
-    justify-content: center;
-    border: 1px solid green; /* Debugging border */
+    /* outline: 1px solid green; /* Debugging border */
   }
 
   .slider.std.noUi-vertical.noUi-target {
