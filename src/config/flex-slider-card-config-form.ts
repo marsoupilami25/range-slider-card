@@ -1,7 +1,7 @@
 import memoizeOne from "memoize-one";
 import { HaFormSchema } from "../type/ha";
 
-const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean): HaFormSchema[] => [
+const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean, isCompact: boolean): HaFormSchema[] => [
   {
     name: "name",
     selector: { text: {} },
@@ -53,7 +53,7 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean): HaFormSc
         selector: {
           number: {
             mode: "slider",
-            min: 1,
+            min: isCompact ? 1 : 2,
             max: 12,
             step: 1,
           },
@@ -345,9 +345,10 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   digitsBubbles: string,
   digitsTicks: string,
   isNumber: boolean,
-  isVertical: boolean): HaFormSchema[] => {
+  isVertical: boolean,
+  isCompact: boolean): HaFormSchema[] => {
 
-  const schema = [...baseSchema(isNumber, isVertical)];
+  const schema = [...baseSchema(isNumber, isVertical, isCompact)];
   if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
   if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
   if (hasTicks) schema.push(...ticksSchema(digitsTicks));

@@ -418,9 +418,11 @@ export class FlexSliderCardConfigMngr {
     } else {
       this._config.horizontalwidth = undefined;
       assertOptionalNumber(this._config.verticalheight, "verticalheight");
-      this._config.verticalheight ??= 2;
-      if (this._config.verticalheight < 1 || this._config.verticalheight > 12) {
-        throw new Error("verticalheight must be between 1 and 12");
+      if (this._config.verticalheight != null) {
+        const minVerticalHeight = this.isCompact ? 1 : 2;
+        if (this._config.verticalheight < minVerticalHeight || this._config.verticalheight > 12) {
+          throw new Error(`verticalheight must be between ${minVerticalHeight} and 12`);
+        }
       }
     }
   }
@@ -470,11 +472,12 @@ export class FlexSliderCardConfigMngr {
     return this._config.horizontalwidth;
   }
 
-  public get sliderVerticalHeight(): number {
-    if (this._config.verticalheight == null) {
-      throw new Error("Vertical size is not defined in config");
-    }
-    return this._config.verticalheight;
+  public get sliderVerticalHeight(): number | undefined {
+    return this._config.verticalheight ?? undefined;
+  }
+
+  public get sliderVerticalHeightDefault(): number {
+    return this.isCompact ? 1 : 2;
   }
 
   /****************************************************/

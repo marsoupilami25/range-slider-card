@@ -31,6 +31,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       isNumber = true;
     }
     const isVertical = this._config.orientation === "vertical";
+    const isCompact = this._config.format === "compact";
     const schema: HaFormSchema[] = computeSchema(
       this._config.valuesbaractive === true,
       this._config.bubblesactive === true,
@@ -40,6 +41,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.ticks?.digits ?? "",
       isNumber,
       isVertical,
+      isCompact,
     );
 
     return html`

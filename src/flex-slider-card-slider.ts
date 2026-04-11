@@ -146,7 +146,7 @@ export class FlexSliderCardSlider extends LitElement {
         width = this.config.isStd ? "20px" : "14px";
       }
       let height: string;
-      if (this.forceHeight) {
+      if (this.forceHeight || this.config.sliderVerticalHeight == null) {
         height = "100%";
       } else {
         const cardHeight = CARD_HEIGHT_BASE + (this.config.sliderVerticalHeight - 1) * (CARD_HEIGHT_BASE + INTER_CARD);

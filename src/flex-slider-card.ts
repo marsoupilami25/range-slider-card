@@ -142,7 +142,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return 1;
     }
     if (this._config.isVertical) {
-      return 2;
+      return this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
     }
     const size = 1 +
       (this._config.hasTitle ? 1 : 0) +
@@ -167,11 +167,21 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     }
 
     if (this._config.isVertical) {
-      return {
-        rows: 2,
-        min_rows: 1,
-        min_columns: 1,
-        max_columns: 12,
+      if (this._shallForceHeight() || this._config.sliderVerticalHeight == null) {
+        return {
+          rows: 2,
+          min_rows: this._config.sliderVerticalHeightDefault,
+          max_columns: 12,
+          min_columns: 1,
+        };
+      } else {
+        const vh = this._config.sliderVerticalHeight;
+        return {
+          rows: vh,
+          min_rows: vh,
+          max_columns: 12,
+          min_columns: 1,
+        };
       }
     } else {
       const size = 1 +
@@ -238,7 +248,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     this.style.setProperty('--ha-card-border-total', `${borderHeight}px`);
 
     if (this._config.isVertical && this._shallForceHeight()) {
-      this.style.setProperty('--flex-slider-height', `${CARD_HEIGHT_BASE + (this._config.sliderVerticalHeight - 1) * (CARD_HEIGHT_BASE + INTER_CARD)}px`);
+      const vh = this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
+      this.style.setProperty('--flex-slider-height', `${CARD_HEIGHT_BASE + (vh - 1) * (CARD_HEIGHT_BASE + INTER_CARD)}px`);
     } else {
       this.style.removeProperty('--flex-slider-height');
     }
