@@ -118,14 +118,24 @@ export const compactFlexSliderSliderCardCss: string = `
 
   .slider-container.compact.vertical {
     height: var(--height, 100%);
-    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     /* outline: 1px solid green; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical {
+    width: 6px;
+    height: 100%;
   }
 
   .slider.compact.noUi-vertical.noUi-target {
     width: 6px;
     height: 100%;
-    border-radius: 4px / 6px;
+    border-radius: 6px / 4px;
+    background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
+    border: none;
+    box-shadow: none;
   }
 
   .slider.compact.noUi-vertical .noUi-base {
@@ -135,12 +145,14 @@ export const compactFlexSliderSliderCardCss: string = `
 
   .slider.compact.noUi-vertical .noUi-connect {
     width: 6px;
+    height: 100%;
+    background: color-mix(in srgb, var(--primary-color) 30%, transparent);
   }
 
   .slider.compact.noUi-vertical .noUi-handle {
     width: 12px;
     height: 12px;
-    left: -3px;
+    left: -9px;
     bottom: -6px;
     right: auto;
     top: auto;
@@ -151,20 +163,18 @@ export const compactFlexSliderSliderCardCss: string = `
   }
 
   .slider.compact.noUi-vertical .noUi-tooltip {
-    left: calc(100% + 6px);
-    top: 50%;
-    transform: translateY(-50%);
-    right: auto;
-    white-space: nowrap;
+    top: 6px;
   }
 
   .slider.compact.noUi-vertical.mirrored .noUi-tooltip {
+    left: 15px;
+    right: auto;
     text-align: left;
   }
 
   .slider.compact.noUi-vertical .noUi-pips-vertical {
     left: 100%;
-    padding-left: 6px;
+    padding-left: 5px;
     width: max-content;
     color: var(--primary-text-color);
   }
@@ -172,8 +182,7 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.noUi-vertical.mirrored .noUi-pips-vertical {
     left: auto;
     right: 100%;
-    padding-left: 0;
-    padding-right: 6px;
+    padding-right: 10px;
   }
 
   .slider.compact.noUi-vertical .noUi-marker-large {
@@ -195,14 +204,14 @@ export const compactFlexSliderSliderCardCss: string = `
   }
 
   .slider.compact.noUi-vertical .noUi-value-vertical {
-    transform: translateY(-50%);
-    left: 17px;
+    transform: translateY(-60%);
+    left: -12px;
     line-height: 1;
   }
 
   .slider.compact.noUi-vertical.mirrored .noUi-value-vertical {
     left: auto;
-    right: 17px;
+    right: 12px;
     text-align: right;
   }
 

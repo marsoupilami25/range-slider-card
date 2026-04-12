@@ -283,6 +283,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
     const hasValuesBar = this._config.hasValuesBar;
     const hasTitle = this._config.hasTitle;
+    const hasBubbles = this._config.hasBubbles;
     const hasTicks = this._config.hasTicks;
     const name = this._config.title;
     const isStd = this._config.isStd;
@@ -291,6 +292,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       `${isStd ? "std" : "compact"} ` +
       `${hasTitle ? "" : "no-title"} ` +
       `${hasValuesBar ? "" : "no-values"} ` +
+      `${hasBubbles ? "has-bubbles " : ""}` +
       `${hasTicks ? "has-ticks " : ""}` +
       `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;

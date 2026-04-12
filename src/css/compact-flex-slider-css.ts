@@ -50,11 +50,11 @@ export const compactFlexSliderCardCss: string = `
   /* ===== Vertical mode ===== */
 
   .container.compact.vertical .slider-with-values {
-    width: auto;
+    width: 80%;
     height: 100%;
     display: flex;
     flex-direction: row;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
   }
 
@@ -65,7 +65,8 @@ export const compactFlexSliderCardCss: string = `
     justify-content: var(--flex-slider-vertical-slider-justify-content, center);
   }
 
-  .container.compact.vertical.has-ticks .slider-container {
+  .container.compact.vertical.has-ticks .slider-container,
+  .container.compact.vertical.has-bubbles .slider-container {
     height: 95%;
   }
 

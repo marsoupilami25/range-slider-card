@@ -65,7 +65,8 @@ export const stdFlexSliderCardCss: string = `
     justify-content: var(--flex-slider-vertical-slider-justify-content, center);
   }
 
-  .container.std.vertical.has-ticks .slider-container {
+  .container.std.vertical.has-ticks .slider-container,
+  .container.std.vertical.has-bubbles .slider-container {
     height: 95%;
   }
 
