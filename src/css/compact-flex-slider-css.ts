@@ -29,8 +29,10 @@ export const compactFlexSliderCardCss: string = `
     display: flex;
     height: ${COMPACT_TITLE_HEIGHT}px;
     min-height: ${COMPACT_TITLE_HEIGHT}px;
+    width: 100%;
     align-items: center;
     justify-content: center;
+    text-align: center;
     font-size: 0.9rem;
     color: var(--primary-text-color);
      outline: 1px solid blue; /* Debugging border */

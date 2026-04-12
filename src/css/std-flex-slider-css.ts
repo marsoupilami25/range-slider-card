@@ -29,8 +29,10 @@ export const stdFlexSliderCardCss: string = `
     display: flex;
     height: ${STD_TITLE_HEIGHT}px;
     min-height: ${STD_TITLE_HEIGHT}px;
+    width: 100%;
     align-items: center;
     justify-content: center;
+    text-align: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
     outline: 1px solid blue; /* Debugging border */
