@@ -60,9 +60,9 @@ export const compactFlexSliderCardCss: string = `
 
   .container.compact.vertical .slider-container {
     height: 100%;
-    width: var(--flex-slider-vertical-slider-container-width, auto);
+    width: auto;
     display: flex;
-    justify-content: var(--flex-slider-vertical-slider-justify-content, center);
+    justify-content: center;
   }
 
   .container.compact.vertical.has-ticks .slider-container,

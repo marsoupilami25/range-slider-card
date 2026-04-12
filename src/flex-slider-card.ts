@@ -254,18 +254,6 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       this.style.removeProperty('--flex-slider-height');
     }
 
-    if (this._config.isVertical && this._config.hasBubbles !== this._config.hasTicks) {
-      this.style.setProperty('--flex-slider-vertical-slider-container-width', '100%');
-      this.style.setProperty(
-        '--flex-slider-vertical-slider-justify-content',
-        this._config.hasBubbles
-          ? (this._config.verticalLayout === 'mirrored' ? 'flex-start' : 'flex-end')
-          : (this._config.verticalLayout === 'mirrored' ? 'flex-end' : 'flex-start')
-      );
-    } else {
-      this.style.removeProperty('--flex-slider-vertical-slider-container-width');
-      this.style.removeProperty('--flex-slider-vertical-slider-justify-content');
-    }
   }
 
     protected override render() {
@@ -299,13 +287,21 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;
     const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
+    const verticalSliderContainerStyle =
+      isVertical && hasBubbles !== hasTicks
+        ? `width: 100%; justify-content: ${
+            hasBubbles
+              ? (this._config.verticalLayout === 'mirrored' ? 'flex-start' : 'flex-end')
+              : (this._config.verticalLayout === 'mirrored' ? 'flex-end' : 'flex-start')
+          };`
+        : "";
 
     return html`
       <ha-card>
         <div class="container ${containerClass}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
           <div class="slider-with-values" style="${horizontalWidth}">
-            <div class="slider-container">
+            <div class="slider-container" style="${verticalSliderContainerStyle}">
               <flex-slider-card-slider
                 .config=${this._config}
                 .minvalue=${minValue}
