@@ -7,7 +7,9 @@ import {
   assertFlexSliderCardDirection,
   FlexSliderCardDirection,
   assertFlexSliderCardOrientation,
-  FlexSliderCardOrientation
+  FlexSliderCardOrientation,
+  assertFlexSliderCardVerticalLayout,
+  FlexSliderCardVerticalLayout,
 } from "./flex-slider-card-config-type";
 import {
   assertOptionalString,
@@ -408,6 +410,11 @@ export class FlexSliderCardConfigMngr {
     }
     assertFlexSliderCardOrientation(this._config.orientation);
 
+    if (this._config.verticallayout == null) {
+      this._config.verticallayout = "standard";
+    }
+    assertFlexSliderCardVerticalLayout(this._config.verticallayout);
+
     if (this._config.orientation === "horizontal") {
       assertOptionalNumber(this._config.horizontalwidth, "horizontalwidth");
       this._config.horizontalwidth ??= 90;
@@ -459,6 +466,13 @@ export class FlexSliderCardConfigMngr {
 
   public get isVertical(): boolean {
     return this._config.orientation === "vertical";
+  }
+
+  public get verticalLayout(): FlexSliderCardVerticalLayout {
+    if (this._config.verticallayout == null) {
+      throw new Error("Vertical layout is not defined in config");
+    }
+    return this._config.verticallayout;
   }
 
   public get gridRows(): number | string | undefined {

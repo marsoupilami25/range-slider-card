@@ -158,6 +158,10 @@ export const compactFlexSliderSliderCardCss: string = `
     white-space: nowrap;
   }
 
+  .slider.compact.noUi-vertical.mirrored .noUi-tooltip {
+    text-align: left;
+  }
+
   .slider.compact.noUi-vertical .noUi-marker-large {
     background: var(--primary-color);
     height: 2px;

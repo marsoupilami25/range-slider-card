@@ -133,6 +133,9 @@ export class FlexSliderCardSlider extends LitElement {
 
   protected override render() {
     const draggerClass = `${this.config.isDragOnlyBubbles ? "dragonly" : ""}`;
+    const verticalLayoutClass = this.config.isVertical && this.config.verticalLayout === "mirrored"
+      ? " mirrored"
+      : "";
 
     if (this.config.isVertical) {
       let height: string;
@@ -147,9 +150,9 @@ export class FlexSliderCardSlider extends LitElement {
       }
       return html`
         <div
-          class="slider-container ${this.sliderClass} vertical"
+          class="slider-container ${this.sliderClass} vertical${verticalLayoutClass}"
           style="--height: ${height};"
-        ><div class="slider ${this.sliderClass} ${draggerClass} vertical"></div>
+        ><div class="slider ${this.sliderClass} ${draggerClass} vertical${verticalLayoutClass}"></div>
         </div>
       `;
     }

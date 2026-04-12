@@ -256,7 +256,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
     if (this._config.isVertical && this._config.hasBubbles) {
       this.style.setProperty('--flex-slider-vertical-slider-container-width', '100%');
-      this.style.setProperty('--flex-slider-vertical-slider-justify-content', 'flex-end');
+      this.style.setProperty(
+        '--flex-slider-vertical-slider-justify-content',
+        this._config.verticalLayout === 'mirrored' ? 'flex-start' : 'flex-end'
+      );
     } else {
       this.style.removeProperty('--flex-slider-vertical-slider-container-width');
       this.style.removeProperty('--flex-slider-vertical-slider-justify-content');

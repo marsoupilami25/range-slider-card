@@ -180,4 +180,10 @@ export const stdFlexSliderSliderCardCss: string = `
     top: 7px;
     translate: -3px;
   }
-`;
+
+  .slider.std.noUi-vertical.mirrored .noUi-tooltip {
+    left: 22px;
+    right: auto;
+    text-align: left;
+  }
+  `;

@@ -46,6 +46,17 @@ export const flexSliderCardOrientationStruct = union([
   literal("vertical"),
 ]);
 
+export type FlexSliderCardVerticalLayout = "standard" | "mirrored";
+export function assertFlexSliderCardVerticalLayout(value: any): asserts value is FlexSliderCardVerticalLayout {
+  if (!["standard", "mirrored"].includes(value)) {
+    throw new Error(`Invalid FlexSliderCardVerticalLayout: ${value}`);
+  }
+}
+export const flexSliderCardVerticalLayoutStruct = union([
+  literal("standard"),
+  literal("mirrored"),
+]);
+
 export type FlexSliderCardValuesBarConfig = {
   mintext?: string;
   maxtext?: string;
@@ -102,6 +113,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   bubbles?: FlexSliderCardBubblesConfig;
   direction?: FlexSliderCardDirection;
   orientation?: FlexSliderCardOrientation;
+  verticallayout?: FlexSliderCardVerticalLayout;
   ticksactive?: boolean;
   ticks?: FlexSliderCardTicksConfig;
   horizontalwidth?: number;
@@ -129,6 +141,7 @@ export const flexSliderCardConfigStruct = assign(
     bubbles: optional(flexSliderCardBubblesConfigStruct),
     direction: optional(flexSliderCardDirectionStruct),
     orientation: optional(flexSliderCardOrientationStruct),
+    verticallayout: optional(flexSliderCardVerticalLayoutStruct),
     ticksactive: optional(boolean()),
     ticks: optional(flexSliderCardTicksConfigStruct),
     horizontalwidth: optional(number()),

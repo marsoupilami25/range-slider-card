@@ -16,6 +16,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   dragonly: "Visible during drag only",
   direction: "Direction",
   orientation: "Orientation",
+  verticallayout: "Vertical layout",
   horizontalwidth: "Slider width (%)",
   verticalheight: "Slider height (rows)",
   ticksactive: "Show tick marks",
