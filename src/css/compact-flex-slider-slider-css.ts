@@ -162,6 +162,20 @@ export const compactFlexSliderSliderCardCss: string = `
     text-align: left;
   }
 
+  .slider.compact.noUi-vertical .noUi-pips-vertical {
+    left: 100%;
+    padding-left: 6px;
+    width: max-content;
+    color: var(--primary-text-color);
+  }
+
+  .slider.compact.noUi-vertical.mirrored .noUi-pips-vertical {
+    left: auto;
+    right: 100%;
+    padding-left: 0;
+    padding-right: 6px;
+  }
+
   .slider.compact.noUi-vertical .noUi-marker-large {
     background: var(--primary-color);
     height: 2px;
@@ -184,6 +198,12 @@ export const compactFlexSliderSliderCardCss: string = `
     transform: translateY(-50%);
     left: 17px;
     line-height: 1;
+  }
+
+  .slider.compact.noUi-vertical.mirrored .noUi-value-vertical {
+    left: auto;
+    right: 17px;
+    text-align: right;
   }
 
   .slider.compact.noUi-vertical .noUi-value-large {

@@ -65,6 +65,10 @@ export const compactFlexSliderCardCss: string = `
     justify-content: var(--flex-slider-vertical-slider-justify-content, center);
   }
 
+  .container.compact.vertical.has-ticks .slider-container {
+    height: 95%;
+  }
+
   .container.compact.vertical flex-slider-card-slider {
     height: 100%;
     width: auto;

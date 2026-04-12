@@ -54,7 +54,7 @@ export const stdFlexSliderCardCss: string = `
     height: 100%;
     display: flex;
     flex-direction: row;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
   }
 
@@ -63,6 +63,10 @@ export const stdFlexSliderCardCss: string = `
     width: var(--flex-slider-vertical-slider-container-width, auto);
     display: flex;
     justify-content: var(--flex-slider-vertical-slider-justify-content, center);
+  }
+
+  .container.std.vertical.has-ticks .slider-container {
+    height: 95%;
   }
 
   .container.std.vertical flex-slider-card-slider {

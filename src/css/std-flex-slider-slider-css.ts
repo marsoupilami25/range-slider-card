@@ -172,10 +172,6 @@ export const stdFlexSliderSliderCardCss: string = `
     box-shadow: none;
   }
 
-  .slider.std.noUi-vertical .noUi-pips-vertical {
-    display: none;
-  }
-
   .slider.std.noUi-vertical .noUi-tooltip{
     top: 7px;
     translate: -3px;
@@ -186,4 +182,57 @@ export const stdFlexSliderSliderCardCss: string = `
     right: auto;
     text-align: left;
   }
-  `;
+
+  .slider.std.noUi-vertical .noUi-pips-vertical {
+    left: 100%;
+    padding-left: 5px;
+    width: max-content;
+    color: var(--primary-text-color);
+  }
+
+  .slider.std.noUi-vertical.mirrored .noUi-pips-vertical {
+    left: auto;
+    right: 100%;
+    padding-right: 12px;
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-large {
+    background: var(--primary-color);
+    height: 3px;
+    width: 8px;
+    transform: translateY(-1px);
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-normal {
+    background: var(--divider-color);
+    height: 2px;
+    width: 5px;
+    transform: translateY(-1px);
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-sub {
+    display: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-value-vertical {
+    transform: translateY(-50%);
+    left: -8px;
+    line-height: 1;
+  }
+
+  .slider.std.noUi-vertical.mirrored .noUi-value-vertical {
+    left: auto;
+    right: 16px;
+    text-align: right;
+  }
+
+  .slider.std.noUi-vertical .noUi-value-large {
+    font-size: 1rem;
+    color: var(--primary-text-color);
+  }
+
+  .slider.std.noUi-vertical .noUi-value-normal {
+    display: none;
+  }
+
+`;
