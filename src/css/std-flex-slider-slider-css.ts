@@ -122,7 +122,6 @@ export const stdFlexSliderSliderCardCss: string = `
   /* ===== Vertical mode ===== */
 
   .slider-container.std.vertical {
-    width: var(--width);
     height: var(--height, 100%);
     display: flex;
     justify-content: center;

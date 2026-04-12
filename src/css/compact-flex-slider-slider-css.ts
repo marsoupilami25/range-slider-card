@@ -117,7 +117,6 @@ export const compactFlexSliderSliderCardCss: string = `
   /* ===== Vertical mode ===== */
 
   .slider-container.compact.vertical {
-    width: var(--width);
     height: var(--height, 100%);
     flex-direction: row;
     /* outline: 1px solid green; /* Debugging border */
