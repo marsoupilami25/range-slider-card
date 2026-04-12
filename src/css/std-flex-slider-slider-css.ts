@@ -176,8 +176,8 @@ export const stdFlexSliderSliderCardCss: string = `
     display: none;
   }
 
-  .slider.std.noUi-vertical .noUi-tooltip,
-  .slider.std.noUi-vertical .noUi-origin > .noUi-tooltip {
-    display: none;
+  .slider.std.noUi-vertical .noUi-tooltip{
+    top: 7px;
+    translate: -3px;
   }
 `;

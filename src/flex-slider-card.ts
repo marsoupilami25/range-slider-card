@@ -253,6 +253,14 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     } else {
       this.style.removeProperty('--flex-slider-height');
     }
+
+    if (this._config.isVertical && this._config.hasBubbles) {
+      this.style.setProperty('--flex-slider-vertical-slider-container-width', '100%');
+      this.style.setProperty('--flex-slider-vertical-slider-justify-content', 'flex-end');
+    } else {
+      this.style.removeProperty('--flex-slider-vertical-slider-container-width');
+      this.style.removeProperty('--flex-slider-vertical-slider-justify-content');
+    }
   }
 
     protected override render() {

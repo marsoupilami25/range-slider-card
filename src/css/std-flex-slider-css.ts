@@ -50,7 +50,7 @@ export const stdFlexSliderCardCss: string = `
   /* ===== Vertical mode ===== */
 
   .container.std.vertical .slider-with-values {
-    width: 90%;
+    width: 80%;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -60,7 +60,9 @@ export const stdFlexSliderCardCss: string = `
 
   .container.std.vertical .slider-container {
     height: 100%;
-    width: auto;
+    width: var(--flex-slider-vertical-slider-container-width, auto);
+    display: flex;
+    justify-content: var(--flex-slider-vertical-slider-justify-content, center);
   }
 
   .container.std.vertical flex-slider-card-slider {
