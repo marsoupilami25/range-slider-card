@@ -1,7 +1,15 @@
 import memoizeOne from "memoize-one";
 import { HaFormSchema } from "../type/ha";
 
-const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean, isCompact: boolean, showVerticalLayout: boolean): HaFormSchema[] => [
+// The form only supports an inclusive minimum, while runtime validation requires step > 0.
+const MIN_POSITIVE_STEP_FOR_FORM = 0.000001;
+
+const baseSchema = memoizeOne((
+  isNumber: boolean,
+  isVertical: boolean,
+  isCompact: boolean,
+  showVerticalLayout: boolean,
+): HaFormSchema[] => [
   {
     name: "name",
     selector: { text: {} },
@@ -109,7 +117,7 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean, isCompact
         schema: [
           {
             name: "entity_min",
-            required: true,
+            required: false,
             selector: {
               entity: {
                 domain: ["number", "input_number", "input_datetime"],
@@ -118,7 +126,7 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean, isCompact
           },
           {
             name: "entity_max",
-            required: true,
+            required: false,
             selector: {
               entity: {
                 domain: ["number", "input_number", "input_datetime"],
@@ -151,7 +159,7 @@ const baseSchema = memoizeOne((isNumber: boolean, isVertical: boolean, isCompact
               number: {
                 mode: "box",
                 step: "any",
-                min: 0,
+                min: MIN_POSITIVE_STEP_FOR_FORM,
               },
             },
             disabled: !isNumber,

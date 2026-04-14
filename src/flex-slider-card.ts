@@ -27,16 +27,18 @@ console.info(
 // "Add Card" UI picker with a name and description. This array is shared by all
 // custom cards on the page, so we guard with `|| []` before pushing.
 interface WindowWithCustomCards extends Window {
-  customCards: Array<{ type: string; name: string; description: string; preview?: boolean }>;
+  customCards?: Array<{ type: string; name: string; description: string; preview?: boolean }>;
 }
 
-(window as unknown as WindowWithCustomCards).customCards =
-  (window as unknown as WindowWithCustomCards).customCards || [];
-(window as unknown as WindowWithCustomCards).customCards.push({
+const windowWithCustomCards = window as unknown as WindowWithCustomCards;
+windowWithCustomCards.customCards ??= [];
+if (!windowWithCustomCards.customCards.some((card) => card.type === "flex-slider-card")) {
+  windowWithCustomCards.customCards.push({
   type: 'flex-slider-card',
   name: 'Flex Slider Card',
   description: 'Card to adjust entities with a single slider',
-});
+  });
+}
 
 type GridOptions =
   {
