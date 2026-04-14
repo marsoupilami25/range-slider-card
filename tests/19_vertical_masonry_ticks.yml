@@ -12,13 +12,19 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: Standard avec titre
+    name: Std | 6/2
+    ticksactive: true
+    ticks:
+      digits: manual
+      nbdigits: 3
+      majorticks: 6
+      minorticks: 2
     orientation: vertical
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Std sans titre
+        heading: Std | no tit. | 4/1 | h3
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -26,21 +32,30 @@ cards:
         min: 18
         max: 30
         step: 0.5
+        ticksactive: true
+        ticks:
+          majorticks: 4
+          minorticks: 1
         orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
   - type: custom:flex-slider-card
     entity_min: input_number.inputnumbertestmin
     entity_max: input_number.inputnumbertestmax
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre
+    name: Cmp | 7/0
     format: compact
+    ticksactive: true
+    ticks:
+      majorticks: 7
     orientation: vertical
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Compact sans titre
+        heading: Cmp | no tit. | 5/4 | h3
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -49,6 +64,12 @@ cards:
         max: 40
         step: 1
         format: compact
+        ticksactive: true
+        ticks:
+          majorticks: 5
+          minorticks: 4
         orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
 theme: Caule Light Green
-title: Masonry/basic/vertical
+title: Ticks

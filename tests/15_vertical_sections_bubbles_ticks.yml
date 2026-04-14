@@ -2,16 +2,6 @@ type: sections
 sections:
   - type: grid
     cards:
-      - type: tile
-        entity: input_number.inputnumbertestmin
-        vertical: false
-        features_position: bottom
-        grid_options:
-          columns: 6
-          rows: 1
-      - type: heading
-        heading: Sans valuebar
-        heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
@@ -20,7 +10,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: inum | 6/2 | rA
         ticks:
           digits: manual
           nbdigits: 3
@@ -28,29 +18,31 @@ sections:
           minorticks: 2
         orientation: vertical
         grid_options:
-          columns: null
-          rows: null
+          columns: 6
+          rows: auto
+        valuesbaractive: false
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
         ticksactive: true
         step: 10
-        name: Avec grid R1
+        name: inum | d1 | r3
         ticks:
           digits: manual
           nbdigits: 1
         orientation: vertical
         grid_options:
-          columns: 9
-          rows: 1
+          columns: 6
+          rows: 3
+        valuesbaractive: false
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Std | no tit. | h3 | rA
         heading_style: subtitle
         grid_options:
-          columns: full
-          rows: null
+          columns: 6
+          rows: auto
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
@@ -61,15 +53,16 @@ sections:
         step: 0.5
         orientation: vertical
         grid_options:
-          columns: 12
-          rows: null
+          columns: 6
+        verticalheight: 3
+        valuesbaractive: false
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Std | no tit. | 4/1 | h2 | r3
         heading_style: subtitle
         grid_options:
-          columns: full
-          rows: null
+          columns: 6
+          rows: auto
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
@@ -83,13 +76,19 @@ sections:
           minorticks: 1
         orientation: vertical
         grid_options:
-          columns: 12
+          columns: 6
+          rows: 3
+        verticalheight: 2
+        valuesbaractive: false
+      - type: tile
+        entity: input_number.inputnumbertestmin
+        vertical: false
+        features_position: bottom
+        grid_options:
+          columns: 6
           rows: 1
   - type: grid
     cards:
-      - type: heading
-        heading: Sans values bar
-        heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
@@ -98,35 +97,38 @@ sections:
         min: 18
         max: 30
         step: 0.25
-        name: Sans grid
+        name: inum | 6/3 | rA
         format: compact
         ticks:
           majorticks: 6
           minorticks: 3
         orientation: vertical
         grid_options:
-          columns: null
-          rows: null
+          columns: 6
+        valuesbaractive: false
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         bubblesactive: true
         ticksactive: true
         step: 10
-        name: Avec grid R1 reversed
+        name: time | RTL | r1
         format: compact
         direction: rtl
         orientation: vertical
         grid_options:
-          columns: 12
+          columns: 6
           rows: 1
+        valuesbaractive: false
+  - type: grid
+    cards:
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Cmp | no tit. | r1
         heading_style: subtitle
         grid_options:
-          columns: full
-          rows: null
+          columns: 6
+          rows: auto
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
@@ -138,15 +140,17 @@ sections:
         format: compact
         orientation: vertical
         grid_options:
-          columns: null
-          rows: null
+          columns: 3
+          rows: 1
+  - type: grid
+    cards:
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Cmp | no tit. | 4/2 | h1 | r2
         heading_style: subtitle
         grid_options:
-          columns: full
-          rows: null
+          columns: 6
+          rows: auto
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
@@ -161,9 +165,11 @@ sections:
           minorticks: 2
         orientation: vertical
         grid_options:
-          columns: 12
-          rows: 1
+          columns: 3
+          rows: 2
+        verticalheight: 1
+        valuesbaractive: false
 max_columns: 4
-theme: Caule Black Coral
+theme: Caule Light Gray
 cards: []
-title: Sections/basic/vertical
+title: Bubbles & Ticks

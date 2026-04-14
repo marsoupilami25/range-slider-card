@@ -1,0 +1,70 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertestmin
+    show_header_toggle: true
+    state_color: false
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | W90
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | W50
+    horizontalwidth: 50
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | W100 | VB
+    horizontalwidth: 100
+    valuesbaractive: true
+    valuesbar:
+      unit: C
+      mintext: Min
+      maxtext: Max
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Cmp | W90
+    format: compact
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Cmp | W40 | Bul
+    format: compact
+    horizontalwidth: 40
+    bubblesactive: true
+    bubbles:
+      unit: "%"
+  - type: custom:flex-slider-card
+    entity_min: input_number.inputnumbertestmin
+    entity_max: input_number.inputnumbertestmax
+    min: 10
+    max: 40
+    step: 1
+    name: Cmp | W100 | Tk 6/2
+    format: compact
+    horizontalwidth: 100
+    ticksactive: true
+    ticks:
+      majorticks: 6
+      minorticks: 2
+title: HWidth

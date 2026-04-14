@@ -12,18 +12,13 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: Standard avec titre
-    bubblesactive: true
-    bubbles:
-      unit: °C
-      mintext: Inf
-      maxtext: Sup
+    name: Std | hA
     orientation: vertical
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Std sans titre
+        heading: Std | no tit. | h3
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -31,24 +26,23 @@ cards:
         min: 18
         max: 30
         step: 0.5
-        bubblesactive: true
         orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
   - type: custom:flex-slider-card
     entity_min: input_number.inputnumbertestmin
     entity_max: input_number.inputnumbertestmax
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre reversed
+    name: Cmp | hA
     format: compact
-    bubblesactive: true
-    direction: rtl
     orientation: vertical
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Compact sans titre
+        heading: Cmp | no tit. | h3
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -57,7 +51,8 @@ cards:
         max: 40
         step: 1
         format: compact
-        bubblesactive: true
         orientation: vertical
-theme: Caule Light Green
-title: Masonry/basic/vertical
+        verticalheight: 3
+        valuesbaractive: false
+theme: Caule Light Orange
+title: Basic

@@ -12,13 +12,7 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: Standard avec titre
-    ticksactive: true
-    ticks:
-      digits: manual
-      nbdigits: 3
-      majorticks: 6
-      minorticks: 2
+    name: Std
     valuesbaractive: false
     bubblesactive: true
     valuesbar:
@@ -35,8 +29,7 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: My Slider
-    ticksactive: true
+    name: Std | VB
     valuesbaractive: true
     bubblesactive: true
     valuesbar:
@@ -51,7 +44,7 @@ cards:
     cards:
       - type: heading
         icon: ""
-        heading: Std sans titre
+        heading: Std | no tit.
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -60,15 +53,11 @@ cards:
         max: 30
         step: 0.5
         bubblesactive: true
-        ticksactive: true
-        ticks:
-          majorticks: 4
-          minorticks: 1
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Std sans titre et valuesbar
+        heading: Std | no tit. | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -76,7 +65,6 @@ cards:
         min: 18
         max: 30
         step: 0.5
-        ticksactive: true
         valuesbaractive: true
         bubblesactive: true
         valuesbar:
@@ -89,12 +77,9 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre reversed
+    name: Cmp | RTL
     format: compact
     bubblesactive: true
-    ticksactive: true
-    ticks:
-      majorticks: 7
     direction: rtl
   - type: custom:flex-slider-card
     entity_min: input_number.inputnumbertestmin
@@ -102,9 +87,8 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre et valuesbar
+    name: Cmp | VB
     format: compact
-    ticksactive: true
     valuesbaractive: true
     bubblesactive: true
     valuesbar:
@@ -119,7 +103,7 @@ cards:
     cards:
       - type: heading
         icon: ""
-        heading: Compact sans titre
+        heading: Cmp | no tit.
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -129,15 +113,11 @@ cards:
         step: 1
         format: compact
         bubblesactive: true
-        ticksactive: true
-        ticks:
-          majorticks: 5
-          minorticks: 4
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Compact sans titre et valuesbar
+        heading: Cmp | no tit. | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -146,15 +126,11 @@ cards:
         max: 40
         step: 1
         format: compact
-        ticksactive: true
         valuesbaractive: true
         bubblesactive: true
         valuesbar:
           unit: "%"
         bubbles:
           unit: "%"
-        ticks:
-          digits: manual
-          nbdigits: 2
 theme: Caule Light Green
-title: Masonry/basic
+title: Bubbles
