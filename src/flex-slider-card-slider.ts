@@ -2,6 +2,7 @@ import noUiSlider, { API as NoUiSliderAPI, PipsMode } from "nouislider";
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, unsafeCSS } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { fireEvent } from "custom-card-helpers";
 import nouiCss from "nouislider/dist/nouislider.css?inline";
 import { stdFlexSliderSliderCardCss } from "./css/std-flex-slider-slider-css";
 import { compactFlexSliderSliderCardCss } from "./css/compact-flex-slider-slider-css";
@@ -44,6 +45,14 @@ export class FlexSliderCardSlider extends LitElement {
   private _isSyncing: boolean = false;                         // true when the slider is being updated programmatically, false otherwise
   private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null;
   private _valuesBarSetValue: FlexSliderCardValuesBarSetValueCallback | null = null;
+
+  private _emitUserUpdateStateChanged(isUserUpdating: boolean): void {
+    this.dispatchEvent(new CustomEvent("user-update-state-changed", {
+      detail: { isUserUpdating },
+      bubbles: true,
+      composed: true,
+    }));
+  }
 
   static override styles = css`
     ${unsafeCSS(nouiCss)}
@@ -217,6 +226,7 @@ export class FlexSliderCardSlider extends LitElement {
   private _onStart(handle: number): void {
     debuglog(`slider start ${handle}`);
     this._userIsUpdating = true;
+    this._emitUserUpdateStateChanged(true);
     this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.USERUPDATE, handle);
   }
 
@@ -226,15 +236,35 @@ export class FlexSliderCardSlider extends LitElement {
     // noUiSlider renvoie souvent des strings → conversion recommandée
     const min = Number(values[0]);
     const max = Number(values[1]);
+    const currentMin = this.config.entities.min.sliderValue;
+    const currentMax = this.config.entities.max.sliderValue;
+
+    if (currentMin === min && currentMax === max) {
+      this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
+      return;
+    }
 
     this._isSyncing = true;
     try {
-      await Promise.all([
-        this.config.entities.min.setSliderValue(min),
-        this.config.entities.max.setSliderValue(max)
-      ]);
+      if (currentMin !== min && min > currentMax) {
+        if (currentMax !== max) {
+          await this.config.entities.max.setSliderValue(max);
+        }
+        await this.config.entities.min.setSliderValue(min);
+      } else {
+        if (currentMin !== min) {
+          await this.config.entities.min.setSliderValue(min);
+        }
+        if (currentMax !== max) {
+          await this.config.entities.max.setSliderValue(max);
+        }
+      }
     } catch (error) {
-      console.error("Error occurred while updating slider values:", error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : `Error occurred while updating slider values: ${String(error)}`;
+      fireEvent(this, "hass-notification" as any, { message });
     } finally {
       this._isSyncing = false;
       if (this._userIsUpdating) return;
@@ -251,6 +281,7 @@ export class FlexSliderCardSlider extends LitElement {
   private _onEnd(): void {
     debuglog("slider end");
     this._userIsUpdating = false;
+    this._emitUserUpdateStateChanged(false);
     if (this._isSyncing) return;
     this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
   }

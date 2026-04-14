@@ -69,6 +69,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   private _firstUpdate: boolean = true;           // flag to indicate if it is the first update of the card
   private _config?: FlexSliderCardConfigMngr;        // reference to the card configuration
   private _dashboardType?: 'masonry' | 'sections'; // deduced from which sizing method HA calls
+  private _hasDeferredEntityUpdate: boolean = false;
 
   static override styles = css`
     * {
@@ -214,14 +215,34 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   /* Public methods - Lit Element                     */
   /****************************************************/
 
-  protected override willUpdate(changedProps: Map<string, unknown>): void {
-    if (!this._config || !this.hass) {
-      return;
+  protected override shouldUpdate(changedProps: Map<string, unknown>): boolean {
+    if (!this._config || 
+      !this.hass || 
+      !changedProps.has("hass")) { // if change does not come from hass change, we consider it is not an update triggered by HA and we do not check entities update to avoid blocking the update in case of error in the entities management
+      return true;
     }
 
-    if (this._firstUpdate || changedProps.has("hass")) {
+    this._config.update(this.hass);
+
+    if (!this._config.entitiesExist()) {
+      return true;
+    }
+
+    if (this._firstUpdate || !this._config.entitiesIsUpdated()) {
+      return this._firstUpdate;
+    }
+
+    if (this._slider?.isUserUpdating()) {
+      this._hasDeferredEntityUpdate = true;
+      return false;
+    }
+
+    return true;
+  }
+
+  protected override willUpdate(changedProps: Map<string, unknown>): void {
+    if (changedProps.has("hass")) {
       this._firstUpdate = false;
-      this._config.update(this.hass);
     }
   }
 
@@ -239,9 +260,17 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       return;
     }
-    if (changedProps.has("hass")) {
+
+    const hasRenderedEntityUpdate =
+      (changedProps.has("hass") || this._hasDeferredEntityUpdate) &&
+      this._config.entitiesExist() &&
+      !this._slider?.isUserUpdating();
+
+    if (hasRenderedEntityUpdate) {
       this._config.entitiesSetBaseline();
+      this._hasDeferredEntityUpdate = false;
     }
+
     const haCard = this.shadowRoot?.querySelector('ha-card');
     const borderHeight = haCard
       ? parseFloat(getComputedStyle(haCard).borderTopWidth) +
@@ -310,6 +339,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
                 .maxvalue=${maxValue}
                 .sliderClass=${sliderClass}
                 .forceHeight=${this._shallForceHeight()}
+                @user-update-state-changed=${this._handleUserUpdateStateChanged}
               ></flex-slider-card-slider>
             </div>
             ${hasValuesBar ? html`
@@ -332,6 +362,13 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   private _initPrivateDisplayData(): void {                           //parameters initialized by the constructor or when the card is disconnected
     this._firstUpdate = true;                                 // flag to indicate if it is the first update of the card
     this._dashboardType = undefined;
+    this._hasDeferredEntityUpdate = false;
+  }
+
+  private _handleUserUpdateStateChanged(event: CustomEvent<{ isUserUpdating: boolean }>): void {
+    if (!event.detail.isUserUpdating && this._hasDeferredEntityUpdate) {
+      this.requestUpdate();
+    }
   }
 
   private _applyCardMod(): void {
