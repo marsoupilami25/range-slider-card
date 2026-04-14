@@ -35,7 +35,7 @@ export const compactFlexSliderCardCss: string = `
     text-align: center;
     font-size: 0.9rem;
     color: var(--primary-text-color);
-     outline: 1px solid blue; /* Debugging border */
+     /* outline: 1px solid blue; /* Debugging border */
   }
 
   .container.compact .slider-with-values {
@@ -46,7 +46,7 @@ export const compactFlexSliderCardCss: string = `
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    outline: 1px solid blue; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
 
   /* ===== Vertical mode ===== */

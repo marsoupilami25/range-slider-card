@@ -35,7 +35,7 @@ export const stdFlexSliderCardCss: string = `
     text-align: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
-    outline: 1px solid blue; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
 
   .container.std .slider-with-values {
@@ -46,7 +46,7 @@ export const stdFlexSliderCardCss: string = `
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    outline: 1px solid blue; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
 
   /* ===== Vertical mode ===== */
