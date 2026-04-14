@@ -35,6 +35,8 @@ export class FlexSliderCardEntity {
         this._service = "set_value";
         break;
       case FlexSliderCardEntityType.TIME:
+        // TODO: We currently treat every input_datetime as a time-only entity.
+        // Either restrict the editor/docs to time-only inputs or add support for date/date-time values.
         this._datatype = FlexSliderCardDataType.TIME;
         this._service = "set_datetime";
         break;

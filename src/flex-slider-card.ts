@@ -96,8 +96,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   public setConfig(config: FlexSliderCardConfig): void {
     debuglog("setConfig");
-    assert(config, flexSliderCardConfigStruct);
     try {
+      assert(config, flexSliderCardConfigStruct);
       this._config = new FlexSliderCardConfigMngr(config);
       this._error = undefined;
       if (this._config.isStd) {
