@@ -6,6 +6,10 @@ You need to create the following entities:
 - `input_datetime.inputheuretestmin`
 - `input_datetime.inputheuretestmax`
 
+The `input_datetime` test entities must be configured as time-only:
+- `has_date: false`
+- `has_time: true`
+
 Create the views copy/pasting the yaml in the yaml editor
 
 Test files are prefixed to keep a stable directory order:
