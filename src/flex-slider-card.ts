@@ -61,6 +61,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   public hass!: HomeAssistant;
   @state()
   private _error?: string;
+  @state()
+  private _runtimeError?: string;
   @query('flex-slider-card-slider')
   private _slider!: FlexSliderCardSlider;
   @query('flex-slider-card-valuesbar')
@@ -97,6 +99,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   public setConfig(config: FlexSliderCardConfig): void {
     debuglog("setConfig");
+    this._runtimeError = undefined;
     try {
       assert(config, flexSliderCardConfigStruct);
       this._config = new FlexSliderCardConfigMngr(config);
@@ -222,7 +225,13 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return true;
     }
 
-    this._config.update(this.hass);
+    try {
+      this._config.update(this.hass);
+      this._runtimeError = undefined;
+    } catch (error) {
+      this._runtimeError = this._getErrorMessage(error);
+      return true;
+    }
 
     if (!this._config.entitiesExist()) {
       return true;
@@ -257,7 +266,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   }
 
   protected override updated(changedProps: Map<string, unknown>): void {
-    if (!this._config) {
+    if (!this._config || this._error || this._runtimeError) {
       return;
     }
 
@@ -287,9 +296,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   }
 
-    protected override render() {
-    if (this._error) {
-      return html`<ha-card><div class="card-content">${this._error}</div></ha-card>`;
+  protected override render() {
+    const errorMessage = this._error ?? this._runtimeError;
+    if (errorMessage) {
+      return html`<ha-card><div class="card-content">${errorMessage}</div></ha-card>`;
     }
 
     if (!this._config) {
@@ -363,6 +373,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     this._firstUpdate = true;                                 // flag to indicate if it is the first update of the card
     this._dashboardType = undefined;
     this._hasDeferredEntityUpdate = false;
+    this._runtimeError = undefined;
   }
 
   private _handleUserUpdateStateChanged(event: CustomEvent<{ isUserUpdating: boolean }>): void {
@@ -412,13 +423,14 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   private _setError(error: unknown): void {
     debuglog("ERROR");
+    this._error = this._getErrorMessage(error);
+  }
 
+  private _getErrorMessage(error: unknown): string {
     if (error instanceof Error) {
-      this._error = error.message;
-      return;
+      return error.message;
     }
-
-    this._error = "Unknown error " + String(error);
+    return "Unknown error " + String(error);
   }
 
 }

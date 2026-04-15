@@ -10,7 +10,8 @@ Supported domains:
 - `number`
 - `input_datetime`
 
-For `input_datetime`, the slider manages a single day from `00:00` to `23:59`.
+For `input_datetime`, only time-only entities are supported (`has_time: true`, `has_date: false`).
+The slider manages a single day from `00:00` to `23:59`.
 
 ![Example of a flex slider card](/assets/slider_example.png)
 
@@ -98,6 +99,8 @@ ticks:
   minorticks: 3
 ```
 
+Both `input_datetime` entities in this example must be configured as time-only (`has_time: true`, `has_date: false`).
+
 ### Number example
 
 ```yaml
@@ -174,7 +177,7 @@ ticks:
 | `entity_max` | string | Yes | - | Entity used for the maximum handle |
 | `min` | number | No | `0` | Minimum slider value for number entities only |
 | `max` | number | No | `100` | Maximum slider value for number entities only |
-| `step` | number | No | `1` | Slider step. For `input_datetime`, it is rounded to an integer number of minutes |
+| `step` | number | No | `1` | Slider step. For time-only `input_datetime`, it is rounded to an integer number of minutes |
 
 
 ### Domain behavior
@@ -183,9 +186,10 @@ ticks:
 |---|---|---|
 | `number` | Yes | Uses configured `min`, `max`, and `step` |
 | `input_number` | Yes | Uses configured `min`, `max`, and `step` |
-| `input_datetime` | Yes | Range is always `00:00` to `23:59`; `min` and `max` are ignored |
+| `input_datetime` | Yes | Only time-only entities are supported (`has_time: true`, `has_date: false`). Range is always `00:00` to `23:59`; `min` and `max` are ignored |
 
 `entity_min` and `entity_max` must use compatible domains.
+When using `input_datetime`, both entities must be time-only.
 
 ### `valuesbar` options
 

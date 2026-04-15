@@ -9,6 +9,7 @@ export enum FlexSliderCardDataType {
 }
 
 export type FlexSliderCardValueType = number | string;
+type FlexSliderCardState = HomeAssistant["states"][string];
 
 type FlexSliderCardService = "set_value" | "set_datetime";
 
@@ -35,8 +36,6 @@ export class FlexSliderCardEntity {
         this._service = "set_value";
         break;
       case FlexSliderCardEntityType.TIME:
-        // TODO: We currently treat every input_datetime as a time-only entity.
-        // Either restrict the editor/docs to time-only inputs or add support for date/date-time values.
         this._datatype = FlexSliderCardDataType.TIME;
         this._service = "set_datetime";
         break;
@@ -49,6 +48,10 @@ export class FlexSliderCardEntity {
   public update(hass: HomeAssistant): void {
     this._callService = hass.callService;
     this._states = hass.states;
+    const state = this._states[this.entityId];
+    if (state) {
+      this._assertSupportedInputDatetimeState(state);
+    }
   }
 
   /****************************************************/
@@ -76,13 +79,7 @@ export class FlexSliderCardEntity {
   }
 
   public get sliderValue(): number {
-    if (!this._states) {
-      throw new Error("Hass states not initialized");
-    }
-    const state = this._states[this.entityId];
-    if (!state) {
-      throw new Error(`Entity '${this.entityId}' not found`);
-    }
+    const state = this._getState();
     return this._fromEntity(state.state);
   }
 
@@ -128,6 +125,37 @@ export class FlexSliderCardEntity {
   /****************************************************/
   /* Utilities                                        */
   /****************************************************/
+
+  private _getState(): FlexSliderCardState {
+    if (!this._states) {
+      throw new Error("Hass states not initialized");
+    }
+    const state = this._states[this.entityId];
+    if (!state) {
+      throw new Error(`Entity '${this.entityId}' not found`);
+    }
+    this._assertSupportedInputDatetimeState(state);
+    return state;
+  }
+
+  private _assertSupportedInputDatetimeState(state: FlexSliderCardState): void {
+    if (this._domain !== "input_datetime") {
+      return;
+    }
+
+    const hasDate = state.attributes.has_date === true;
+    const hasTime = state.attributes.has_time === true;
+
+    if (hasTime && !hasDate) {
+      return;
+    }
+
+    throw new Error(
+      `Entity '${this.entityId}' must be a time-only input_datetime ` +
+      `(has_time: true, has_date: false); got has_time: ${String(state.attributes.has_time)}, ` +
+      `has_date: ${String(state.attributes.has_date)}`
+    );
+  }
   
   private _toEntity(sliderValue: number): FlexSliderCardValueType {
     if (this._entitytype === FlexSliderCardEntityType.NUMBER) {
