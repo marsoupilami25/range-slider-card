@@ -8,8 +8,10 @@
     "watch": "tsc --noEmit --watch",
     "typecheck": "tsc --noEmit",
     "build": "vite build",
+    "build:debug": "vite build --mode debug",
     "deploy": "scp -r dist/* ha:/root/config/www/community/flex-slider-card/",
     "all": "npm run typecheck && npm run build && npm run deploy",
+    "all:debug": "npm run typecheck && npm run build:debug && npm run deploy",
     "dev": "vite"
   },
   "repository": {

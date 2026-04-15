@@ -13,6 +13,7 @@ import { FlexSliderCardSlider } from "./flex-slider-card-slider";
 import { flexSliderCardConfigStub } from "./config/flex-slider-card-config-stub";
 import { assert } from "superstruct";
 import { getVersion } from "./utils/version";
+import { CARD_HEIGHT_BASE, INTER_CARD } from "./type/constants";
 
 // Styled console banner so your card is easy to spot in the browser console.
 // Stays visible in production — useful for version-mismatch debugging in HA.
@@ -26,16 +27,18 @@ console.info(
 // "Add Card" UI picker with a name and description. This array is shared by all
 // custom cards on the page, so we guard with `|| []` before pushing.
 interface WindowWithCustomCards extends Window {
-  customCards: Array<{ type: string; name: string; description: string; preview?: boolean }>;
+  customCards?: Array<{ type: string; name: string; description: string; preview?: boolean }>;
 }
 
-(window as unknown as WindowWithCustomCards).customCards =
-  (window as unknown as WindowWithCustomCards).customCards || [];
-(window as unknown as WindowWithCustomCards).customCards.push({
+const windowWithCustomCards = window as unknown as WindowWithCustomCards;
+windowWithCustomCards.customCards ??= [];
+if (!windowWithCustomCards.customCards.some((card) => card.type === "flex-slider-card")) {
+  windowWithCustomCards.customCards.push({
   type: 'flex-slider-card',
   name: 'Flex Slider Card',
   description: 'Card to adjust entities with a single slider',
-});
+  });
+}
 
 type GridOptions =
   {
@@ -65,6 +68,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   private _firstUpdate: boolean = true;           // flag to indicate if it is the first update of the card
   private _config?: FlexSliderCardConfigMngr;        // reference to the card configuration
+  private _dashboardType?: 'masonry' | 'sections'; // deduced from which sizing method HA calls
+  private _hasDeferredEntityUpdate: boolean = false;
 
   static override styles = css`
     * {
@@ -92,8 +97,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   public setConfig(config: FlexSliderCardConfig): void {
     debuglog("setConfig");
-    assert(config, flexSliderCardConfigStruct);
     try {
+      assert(config, flexSliderCardConfigStruct);
       this._config = new FlexSliderCardConfigMngr(config);
       this._error = undefined;
       if (this._config.isStd) {
@@ -134,12 +139,17 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   }
 
   public getCardSize(): number | Promise<number> {
+    debuglog("getCardSize");
+    this._dashboardType = 'masonry';
     if (!this._config) {
       return 1;
     }
-    const size = 1 + 
-      (this._config.hasTitle ? 1 : 0) + 
-      (this._config.hasValuesBar ? 1 : 0) + 
+    if (this._config.isVertical) {
+      return this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
+    }
+    const size = 1 +
+      (this._config.hasTitle ? 1 : 0) +
+      (this._config.hasValuesBar ? 1 : 0) +
       (this._config.hasBubbles ? 1 : 0)
       + (this._config.hasTicks ? 1 : 0);
 
@@ -153,29 +163,51 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   }
 
   public getGridOptions(): GridOptions {
+    debuglog("getGridOptions");
+    this._dashboardType = 'sections';
     if (!this._config) {
       return {};
     }
-    const size = 1 + 
-      (this._config.hasTitle ? 1 : 0) + 
-      (this._config.hasValuesBar ? 1 : 0) + 
-      (this._config.hasBubbles ? 1 : 0)+
-      (this._config.hasTicks ? 1 : 0);
 
-    if (this._config.isStd) {
-      return {
-        min_rows: Math.round(size / 2),
-        min_columns: 6,
-        max_columns: 12
-      };
-    } else if (this._config.isCompact) {
-      return {
-        min_rows: Math.round(size / 2.5),
-        min_columns: 2,
-        max_columns: 9
-      };
+    if (this._config.isVertical) {
+      if (this._shallForceHeight() || this._config.sliderVerticalHeight == null) {
+        return {
+          rows: 2,
+          min_rows: this._config.sliderVerticalHeightDefault,
+          max_columns: 12,
+          min_columns: 1,
+        };
+      } else {
+        const vh = this._config.sliderVerticalHeight;
+        return {
+          rows: vh,
+          min_rows: vh,
+          max_columns: 12,
+          min_columns: 1,
+        };
+      }
     } else {
-      throw new Error("Invalid format in getGridOptions");
+      const size = 1 +
+        (this._config.hasTitle ? 1 : 0) +
+        (this._config.hasValuesBar ? 1 : 0) +
+        (this._config.hasBubbles ? 1 : 0) +
+        (this._config.hasTicks ? 1 : 0);
+
+      if (this._config.isStd) {
+        return {
+          min_rows: Math.round(size / 2),
+          min_columns: 6,
+          max_columns: 12
+        };
+      } else if (this._config.isCompact) {
+        return {
+          min_rows: Math.round(size / 2.5),
+          min_columns: 2,
+          max_columns: 9
+        };
+      } else {
+        throw new Error("Invalid format in getGridOptions");
+      }
     }
   }
 
@@ -183,14 +215,34 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   /* Public methods - Lit Element                     */
   /****************************************************/
 
-  protected override willUpdate(changedProps: Map<string, unknown>): void {
-    if (!this._config || !this.hass) {
-      return;
+  protected override shouldUpdate(changedProps: Map<string, unknown>): boolean {
+    if (!this._config || 
+      !this.hass || 
+      !changedProps.has("hass")) { // if change does not come from hass change, we consider it is not an update triggered by HA and we do not check entities update to avoid blocking the update in case of error in the entities management
+      return true;
     }
 
-    if (this._firstUpdate || changedProps.has("hass")) {
+    this._config.update(this.hass);
+
+    if (!this._config.entitiesExist()) {
+      return true;
+    }
+
+    if (this._firstUpdate || !this._config.entitiesIsUpdated()) {
+      return this._firstUpdate;
+    }
+
+    if (this._slider?.isUserUpdating()) {
+      this._hasDeferredEntityUpdate = true;
+      return false;
+    }
+
+    return true;
+  }
+
+  protected override willUpdate(changedProps: Map<string, unknown>): void {
+    if (changedProps.has("hass")) {
       this._firstUpdate = false;
-      this._config.update(this.hass);
     }
   }
 
@@ -208,12 +260,34 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       return;
     }
-    if (changedProps.has("hass")) {
+
+    const hasRenderedEntityUpdate =
+      (changedProps.has("hass") || this._hasDeferredEntityUpdate) &&
+      this._config.entitiesExist() &&
+      !this._slider?.isUserUpdating();
+
+    if (hasRenderedEntityUpdate) {
       this._config.entitiesSetBaseline();
+      this._hasDeferredEntityUpdate = false;
     }
+
+    const haCard = this.shadowRoot?.querySelector('ha-card');
+    const borderHeight = haCard
+      ? parseFloat(getComputedStyle(haCard).borderTopWidth) +
+        parseFloat(getComputedStyle(haCard).borderBottomWidth)
+      : 0;
+    this.style.setProperty('--ha-card-border-total', `${borderHeight}px`);
+
+    if (this._config.isVertical && this._shallForceHeight()) {
+      const vh = this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
+      this.style.setProperty('--flex-slider-height', `${CARD_HEIGHT_BASE + (vh - 1) * (CARD_HEIGHT_BASE + INTER_CARD)}px`);
+    } else {
+      this.style.removeProperty('--flex-slider-height');
+    }
+
   }
 
-  protected override render() {
+    protected override render() {
     if (this._error) {
       return html`<ha-card><div class="card-content">${this._error}</div></ha-card>`;
     }
@@ -228,24 +302,44 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
     const hasValuesBar = this._config.hasValuesBar;
     const hasTitle = this._config.hasTitle;
+    const hasBubbles = this._config.hasBubbles;
+    const hasTicks = this._config.hasTicks;
     const name = this._config.title;
     const isStd = this._config.isStd;
-    const containerClass = `${isStd ? "std" : "compact"} ${hasTitle ? "" : "no-title"}`;
+    const isVertical = this._config.isVertical;
+    const containerClass =
+      `${isStd ? "std" : "compact"} ` +
+      `${hasTitle ? "" : "no-title"} ` +
+      `${hasValuesBar ? "" : "no-values"} ` +
+      `${hasBubbles ? "has-bubbles " : ""}` +
+      `${hasTicks ? "has-ticks " : ""}` +
+      `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
     const minValue = this._config.entities.min.sliderValue;
     const maxValue = this._config.entities.max.sliderValue;
+    const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
+    const verticalSliderContainerStyle =
+      isVertical && hasBubbles !== hasTicks
+        ? `width: 100%; justify-content: ${
+            hasBubbles
+              ? (this._config.verticalLayout === 'mirrored' ? 'flex-start' : 'flex-end')
+              : (this._config.verticalLayout === 'mirrored' ? 'flex-end' : 'flex-start')
+          };`
+        : "";
 
     return html`
       <ha-card>
         <div class="container ${containerClass}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
-          <div class="slider-with-values">
-            <div class="slider-container">
+          <div class="slider-with-values" style="${horizontalWidth}">
+            <div class="slider-container" style="${verticalSliderContainerStyle}">
               <flex-slider-card-slider
                 .config=${this._config}
                 .minvalue=${minValue}
                 .maxvalue=${maxValue}
                 .sliderClass=${sliderClass}
+                .forceHeight=${this._shallForceHeight()}
+                @user-update-state-changed=${this._handleUserUpdateStateChanged}
               ></flex-slider-card-slider>
             </div>
             ${hasValuesBar ? html`
@@ -267,6 +361,14 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
   private _initPrivateDisplayData(): void {                           //parameters initialized by the constructor or when the card is disconnected
     this._firstUpdate = true;                                 // flag to indicate if it is the first update of the card
+    this._dashboardType = undefined;
+    this._hasDeferredEntityUpdate = false;
+  }
+
+  private _handleUserUpdateStateChanged(event: CustomEvent<{ isUserUpdating: boolean }>): void {
+    if (!event.detail.isUserUpdating && this._hasDeferredEntityUpdate) {
+      this.requestUpdate();
+    }
   }
 
   private _applyCardMod(): void {
@@ -284,6 +386,24 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
         `type-${this.localName}`
       );
     });
+  }
+
+  private _shallForceHeight(): boolean {
+    if (!this._config) {
+      throw new Error("Invalid config in _shallForceHeight");
+    }
+    debuglog(`_shallForceHeight: dashboardType="${this._dashboardType}"`);
+    const needsForced =
+      this._config.isVertical && (
+        this._dashboardType === undefined ||  // dashboard type is unknown in masonry editor
+        this._dashboardType === 'masonry' ||
+        ( this._dashboardType === 'sections' && 
+          ( this._config.gridRows === null ||
+            typeof this._config.gridRows === 'string'
+          )
+        )
+      );
+    return needsForced;
   }
 
   /****************************************************/

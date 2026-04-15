@@ -1,48 +1,82 @@
+import { COMPACT_TITLE_HEIGHT, COMPACT_CONTAINER_PADDING } from "../type/constants";
+
 export const compactFlexSliderCardCss: string = `
- 
+
   :host([compact]) {
     display: block;
-    height: 100%;
+    height: var(--flex-slider-height, 100%);
     --flex-slider-card-barvalues-font-size: 0.8rem;
-    --flex-slider-card-barvalues-padding-bottom: 1px;
   }
-  
+
   .container.compact {
-    min-height: 100%;
-    padding-bottom: 3px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
   }
-  
+
   .container.compact.no-title {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: ${COMPACT_CONTAINER_PADDING}px;
     justify-content: center;
+  }
+
+  .container.compact.no-values {
+    padding-bottom: ${COMPACT_CONTAINER_PADDING}px;
   }
 
   .container.compact .title {
     display: flex;
-    height: 20px;
+    height: ${COMPACT_TITLE_HEIGHT}px;
+    min-height: ${COMPACT_TITLE_HEIGHT}px;
+    width: 100%;
     align-items: center;
     justify-content: center;
+    text-align: center;
     font-size: 0.9rem;
     color: var(--primary-text-color);
-    /* border: 1px solid blue; /* Debugging border */
+     /* outline: 1px solid blue; /* Debugging border */
   }
- 
+
   .container.compact .slider-with-values {
-    width: 90%;
+    width: var(--flex-slider-width, 90%);
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    /* border: 1px solid red; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
- 
-  .container.compact .slider {
-    width: 100%;
+
+  /* ===== Vertical mode ===== */
+
+  .container.compact.vertical .slider-with-values {
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
   }
-  
+
+  .container.compact.vertical .slider-container {
+    height: 100%;
+    width: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container.compact.vertical.has-ticks .slider-container,
+  .container.compact.vertical.has-bubbles .slider-container {
+    height: 95%;
+  }
+
+  .container.compact.vertical flex-slider-card-slider {
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+    
 `;

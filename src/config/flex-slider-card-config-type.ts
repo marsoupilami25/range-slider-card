@@ -35,6 +35,28 @@ export const flexSliderCardDirectionStruct = union([
   literal("ltr"),
 ]);
 
+export type FlexSliderCardOrientation = "horizontal" | "vertical";
+export function assertFlexSliderCardOrientation(value: any): asserts value is FlexSliderCardOrientation {
+  if (!["horizontal", "vertical"].includes(value)) {
+    throw new Error(`Invalid FlexSliderCardOrientation: ${value}`);
+  }
+}
+export const flexSliderCardOrientationStruct = union([
+  literal("horizontal"),
+  literal("vertical"),
+]);
+
+export type FlexSliderCardVerticalLayout = "standard" | "mirrored";
+export function assertFlexSliderCardVerticalLayout(value: any): asserts value is FlexSliderCardVerticalLayout {
+  if (!["standard", "mirrored"].includes(value)) {
+    throw new Error(`Invalid FlexSliderCardVerticalLayout: ${value}`);
+  }
+}
+export const flexSliderCardVerticalLayoutStruct = union([
+  literal("standard"),
+  literal("mirrored"),
+]);
+
 export type FlexSliderCardValuesBarConfig = {
   mintext?: string;
   maxtext?: string;
@@ -90,8 +112,12 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   valuesbar?: FlexSliderCardValuesBarConfig;
   bubbles?: FlexSliderCardBubblesConfig;
   direction?: FlexSliderCardDirection;
+  orientation?: FlexSliderCardOrientation;
+  verticallayout?: FlexSliderCardVerticalLayout;
   ticksactive?: boolean;
   ticks?: FlexSliderCardTicksConfig;
+  horizontalwidth?: number;
+  verticalheight?: number;
 
  /* bahavioral */
   entity_min: string;
@@ -114,9 +140,13 @@ export const flexSliderCardConfigStruct = assign(
     valuesbar: optional(flexSliderCardValuesBarConfigStruct),
     bubbles: optional(flexSliderCardBubblesConfigStruct),
     direction: optional(flexSliderCardDirectionStruct),
+    orientation: optional(flexSliderCardOrientationStruct),
+    verticallayout: optional(flexSliderCardVerticalLayoutStruct),
     ticksactive: optional(boolean()),
     ticks: optional(flexSliderCardTicksConfigStruct),
-    
+    horizontalwidth: optional(number()),
+    verticalheight: optional(number()),
+
     /* behavioral */
     entity_min: string(),
     entity_max: string(),

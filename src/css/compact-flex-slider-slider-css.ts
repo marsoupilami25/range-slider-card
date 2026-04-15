@@ -7,7 +7,8 @@ export const compactFlexSliderSliderCardCss: string = `
     justify-content: center;
     align-items: var(--align-items);
     padding-bottom: var(--padding);
-    /* border: 1px solid green; /* Debugging border */
+    margin-top: var(--margin-top);
+    /* outline: 1px solid green; /* Debugging border */
   }
     
   .slider.compact.noUi-target {
@@ -112,4 +113,115 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.noUi-horizontal .noUi-value-normal {
     display: none;
   }
+
+  /* ===== Vertical mode ===== */
+
+  .slider-container.compact.vertical {
+    height: var(--height, 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* outline: 1px solid green; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical {
+    width: 6px;
+    height: 100%;
+  }
+
+  .slider.compact.noUi-vertical.noUi-target {
+    width: 6px;
+    height: 100%;
+    border-radius: 6px / 4px;
+    background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
+    border: none;
+    box-shadow: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-base {
+    width: 6px;
+    height: 100%;
+  }
+
+  .slider.compact.noUi-vertical .noUi-connect {
+    width: 6px;
+    height: 100%;
+    background: color-mix(in srgb, var(--primary-color) 30%, transparent);
+  }
+
+  .slider.compact.noUi-vertical .noUi-handle {
+    width: 12px;
+    height: 12px;
+    left: -9px;
+    bottom: -6px;
+    right: auto;
+    top: auto;
+    background: var(--primary-color);
+    border-width: 0px;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-tooltip {
+    top: 6px;
+  }
+
+  .slider.compact.noUi-vertical.mirrored .noUi-tooltip {
+    left: 15px;
+    right: auto;
+    text-align: left;
+  }
+
+  .slider.compact.noUi-vertical .noUi-pips-vertical {
+    left: 100%;
+    padding-left: 5px;
+    width: max-content;
+    color: var(--primary-text-color);
+  }
+
+  .slider.compact.noUi-vertical.mirrored .noUi-pips-vertical {
+    left: auto;
+    right: 100%;
+    padding-right: 10px;
+  }
+
+  .slider.compact.noUi-vertical .noUi-marker-large {
+    background: var(--primary-color);
+    height: 2px;
+    width: 6px;
+    transform: translateY(-1px);
+  }
+
+  .slider.compact.noUi-vertical .noUi-marker-normal {
+    background: var(--divider-color);
+    height: 1px;
+    width: 4px;
+    transform: translateY(-1px);
+  }
+
+  .slider.compact.noUi-vertical .noUi-marker-sub {
+    display: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-value-vertical {
+    transform: translateY(-60%);
+    left: -12px;
+    line-height: 1;
+  }
+
+  .slider.compact.noUi-vertical.mirrored .noUi-value-vertical {
+    left: auto;
+    right: 12px;
+    text-align: right;
+  }
+
+  .slider.compact.noUi-vertical .noUi-value-large {
+    font-size: 0.7rem;
+    color: var(--primary-text-color);
+  }
+
+  .slider.compact.noUi-vertical .noUi-value-normal {
+    display: none;
+  }
+
 `;

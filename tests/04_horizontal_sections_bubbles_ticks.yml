@@ -10,16 +10,22 @@ sections:
           columns: 6
           rows: 1
       - type: heading
-        heading: Sans valuebar
+        heading: Std | Bul+Tk
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: inum | g off | 6/2
+        ticks:
+          digits: manual
+          nbdigits: 3
+          majorticks: 6
+          minorticks: 2
         grid_options:
           columns: null
           rows: null
@@ -27,14 +33,18 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         step: 10
-        name: Avec grid R1
+        name: inum | r1 | d1
+        ticks:
+          digits: manual
+          nbdigits: 1
         grid_options:
           columns: 9
           rows: 1
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Std | no tit. | g off
         heading_style: subtitle
         grid_options:
           columns: full
@@ -43,6 +53,7 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
@@ -51,7 +62,7 @@ sections:
           rows: null
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Std | no tit. | r1 | 4/1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -60,24 +71,29 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
+        ticks:
+          majorticks: 4
+          minorticks: 1
         grid_options:
           columns: 12
           rows: 1
       - type: heading
         icon: ""
-        heading: Avec valuesbar
+        heading: Std | Bul+Tk | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid reversed
+        name: inum | g off | RTL
         valuesbaractive: true
         grid_options:
           columns: null
@@ -95,15 +111,18 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         bubblesactive: true
+        ticksactive: true
         step: 10
-        name: Avec grid R2
+        name: time | r1 | 8/0
+        ticks:
+          majorticks: 8
         valuesbaractive: true
         grid_options:
           columns: 9
           rows: 1
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Std | no tit. | g off | d1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -112,6 +131,7 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
@@ -129,7 +149,7 @@ sections:
           unit: °C
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Std | no tit. | r1 | 5/4 | d1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -138,10 +158,14 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
         valuesbaractive: true
+        ticks:
+          majorticks: 5
+          minorticks: 4
         grid_options:
           columns: 12
           rows: 1
@@ -157,10 +181,11 @@ sections:
         entity_min: number.bureaucontrole_chauffagetempcftmin
         entity_max: number.bureaucontrole_chauffagetempcftmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
-        name: Avec Number
+        name: num
         valuesbaractive: true
         grid_options:
           columns: null
@@ -176,17 +201,21 @@ sections:
   - type: grid
     cards:
       - type: heading
-        heading: Sans values bar
+        heading: Cmp | Bul+Tk
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.25
-        name: Sans grid
+        name: inum | g off | 6/3
         format: compact
+        ticks:
+          majorticks: 6
+          minorticks: 3
         grid_options:
           columns: null
           rows: null
@@ -194,8 +223,9 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         bubblesactive: true
+        ticksactive: true
         step: 10
-        name: Avec grid R1 reversed
+        name: time | r1 | RTL
         format: compact
         grid_options:
           columns: 12
@@ -203,7 +233,7 @@ sections:
         direction: rtl
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Cmp | no tit. | g off
         heading_style: subtitle
         grid_options:
           columns: full
@@ -212,6 +242,7 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
@@ -221,7 +252,7 @@ sections:
           rows: null
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Cmp | no tit. | r1 | 4/2
         heading_style: subtitle
         grid_options:
           columns: full
@@ -230,25 +261,30 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
         format: compact
+        ticks:
+          majorticks: 4
+          minorticks: 2
         grid_options:
           columns: 12
           rows: 1
       - type: heading
         icon: ""
-        heading: Avec values bar
+        heading: Cmp | Bul+Tk | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: inum | g off
         format: compact
         valuesbaractive: true
         grid_options:
@@ -262,16 +298,19 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         bubblesactive: true
+        ticksactive: true
         step: 10
-        name: Avec grid R1
+        name: time | r1 | 8/0
         format: compact
+        ticks:
+          majorticks: 8
         valuesbaractive: true
         grid_options:
           columns: 12
           rows: 1
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Cmp | no tit. | g off | unit
         heading_style: subtitle
         grid_options:
           columns: full
@@ -280,6 +319,7 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.25
@@ -294,7 +334,7 @@ sections:
           unit: °C
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Cmp | no tit. | r1 | 5/4 | VB2
         heading_style: subtitle
         grid_options:
           columns: full
@@ -303,11 +343,17 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
         format: compact
         valuesbaractive: true
+        ticks:
+          digits: manual
+          nbdigits: 0
+          majorticks: 5
+          minorticks: 4
         grid_options:
           columns: 12
           rows: 1
@@ -320,6 +366,6 @@ sections:
           nbdigits: 2
           unit: °C
 max_columns: 4
-theme: Caule Black Coral
+theme: Caule Light Green
 cards: []
-title: Sections/basic
+title: Ticks & Bubbles

@@ -6,7 +6,9 @@ export const stdFlexSliderSliderCardCss: string = `
     display: flex;
     justify-content: center;
     align-items: var(--align-items);
-    /* border: 1px solid green; /* Debugging border */
+    padding-bottom: var(--padding);
+    margin-top: var(--margin-top);
+    /* outline: 1px solid green; /* Debugging border */
   }
 
   .slider.std.noUi-target {
@@ -15,21 +17,20 @@ export const stdFlexSliderSliderCardCss: string = `
     border-radius: 10px / 16px;
     border: none;
     box-shadow: none;
-    margin-top: var(--margin-top);
-    /* border: 1px solid blue; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
   
   .slider.std .noUi-base {
     height: 16px;
-    /* border: 1px solid green; /* Debugging border */
+    /* outline: 1px solid green; /* Debugging border */
   }
-  
+
   .slider.std .noUi-connect {
     height: 16px;
     background: color-mix(in srgb, var(--primary-color) 30%, transparent);
-    /* border: 1px solid red; /* Debugging border */
+    /* outline: 1px solid red; /* Debugging border */
   }
-  
+
   .slider.std.noUi-horizontal .noUi-handle {
     width: 18px;
     height: 18px;
@@ -117,4 +118,121 @@ export const stdFlexSliderSliderCardCss: string = `
   .slider.std.noUi-horizontal .noUi-value-normal {
     display: none;
   }
+
+  /* ===== Vertical mode ===== */
+
+  .slider-container.std.vertical {
+    height: var(--height, 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* outline: 1px solid green; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical {
+    width: 16px;
+    height: 100%;
+  }
+
+  .slider.std.noUi-vertical.noUi-target {
+    width: 16px;
+    height: 100%;
+    background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
+    border-radius: 16px / 10px;
+    border: none;
+    box-shadow: none;
+    /* outline: 1px solid blue; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical .noUi-base {
+    width: 16px;
+    height: 100%;
+    /* outline: 1px solid green; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical .noUi-connect {
+    width: 16px;
+    height: 100%;
+    background: color-mix(in srgb, var(--primary-color) 30%, transparent);
+    /* outline: 1px solid red; /* Debugging border */
+  }
+
+  .slider.std.noUi-vertical .noUi-handle {
+    width: 18px;
+    height: 18px;
+    left: -17px;
+    bottom: -10px;
+    right: auto;
+    top: auto;
+    background: var(--primary-text-color);
+    border-width: 3px;
+    border-style: solid;
+    border-color: var(--primary-color);
+    border-radius: 15px;
+    box-shadow: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-tooltip{
+    top: 7px;
+    translate: -3px;
+  }
+
+  .slider.std.noUi-vertical.mirrored .noUi-tooltip {
+    left: 22px;
+    right: auto;
+    text-align: left;
+  }
+
+  .slider.std.noUi-vertical .noUi-pips-vertical {
+    left: 100%;
+    padding-left: 5px;
+    width: max-content;
+    color: var(--primary-text-color);
+  }
+
+  .slider.std.noUi-vertical.mirrored .noUi-pips-vertical {
+    left: auto;
+    right: 100%;
+    padding-right: 12px;
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-large {
+    background: var(--primary-color);
+    height: 3px;
+    width: 8px;
+    transform: translateY(-1px);
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-normal {
+    background: var(--divider-color);
+    height: 2px;
+    width: 5px;
+    transform: translateY(-1px);
+  }
+
+  .slider.std.noUi-vertical .noUi-marker-sub {
+    display: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-value-vertical {
+    transform: translateY(-50%);
+    left: -8px;
+    line-height: 1;
+  }
+
+  .slider.std.noUi-vertical.mirrored .noUi-value-vertical {
+    left: auto;
+    right: 16px;
+    text-align: right;
+  }
+
+  .slider.std.noUi-vertical .noUi-value-large {
+    font-size: 1rem;
+    color: var(--primary-text-color);
+  }
+
+  .slider.std.noUi-vertical .noUi-value-normal {
+    display: none;
+  }
+
 `;

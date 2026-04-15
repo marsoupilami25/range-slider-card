@@ -1,7 +1,15 @@
 import memoizeOne from "memoize-one";
 import { HaFormSchema } from "../type/ha";
 
-const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
+// The form only supports an inclusive minimum, while runtime validation requires step > 0.
+const MIN_POSITIVE_STEP_FOR_FORM = 0.000001;
+
+const baseSchema = memoizeOne((
+  isNumber: boolean,
+  isVertical: boolean,
+  isCompact: boolean,
+  showVerticalLayout: boolean,
+): HaFormSchema[] => [
   {
     name: "name",
     selector: { text: {} },
@@ -25,9 +33,52 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
     name: "",
     schema: [
       {
+        name: "orientation",
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "horizontal", label: "Horizontal" },
+              { value: "vertical", label: "Vertical" },
+            ],
+          },
+        },
+        required: false,
+      },
+      ...(!isVertical ? [{
+        name: "horizontalwidth",
+        selector: {
+          number: {
+            mode: "slider",
+            min: 10,
+            max: 100,
+            step: 5,
+          },
+        },
+        required: false,
+      }] : [{
+        name: "verticalheight",
+        selector: {
+          number: {
+            mode: "slider",
+            min: isCompact ? 1 : 2,
+            max: 12,
+            step: 1,
+          },
+        },
+        required: false,
+      }]),
+    ],
+  },
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      {
         name: "valuesbaractive",
         selector: { boolean: {} },
         required: false,
+        disabled: isVertical,
       },
       {
         name: "bubblesactive",
@@ -39,6 +90,19 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
         selector: { boolean: {} },
         required: false,
       },
+      ...(showVerticalLayout ? [{
+        name: "verticallayout",
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "standard", label: "Standard" },
+              { value: "mirrored", label: "Mirrored" },
+            ],
+          },
+        },
+        required: false,
+      }] : []),
     ],
   },
   {
@@ -53,7 +117,7 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
         schema: [
           {
             name: "entity_min",
-            required: true,
+            required: false,
             selector: {
               entity: {
                 domain: ["number", "input_number", "input_datetime"],
@@ -62,7 +126,7 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
           },
           {
             name: "entity_max",
-            required: true,
+            required: false,
             selector: {
               entity: {
                 domain: ["number", "input_number", "input_datetime"],
@@ -95,7 +159,7 @@ const baseSchema = memoizeOne((isNumber: boolean): HaFormSchema[] => [
               number: {
                 mode: "box",
                 step: "any",
-                min: 0,
+                min: MIN_POSITIVE_STEP_FOR_FORM,
               },
             },
             disabled: !isNumber,
@@ -301,9 +365,12 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   digitsValuesBar: string,
   digitsBubbles: string,
   digitsTicks: string,
-  isNumber: boolean): HaFormSchema[] => {
+  isNumber: boolean,
+  isVertical: boolean,
+  isCompact: boolean): HaFormSchema[] => {
+  const showVerticalLayout = isVertical && (hasBubbles || hasTicks);
 
-  const schema = [...baseSchema(isNumber)];
+  const schema = [...baseSchema(isNumber, isVertical, isCompact, showVerticalLayout)];
   if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
   if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
   if (hasTicks) schema.push(...ticksSchema(digitsTicks));

@@ -7,10 +7,11 @@ export function debuglog(message: unknown): void {
 }
 
 export function minutesToTime(minutes: number): string {
-  const hours: string = Math.floor(minutes / 60)
+  const normalizedMinutes = Math.min(23 * 60 + 59, Math.max(0, Math.round(minutes)));
+  const hours: string = Math.floor(normalizedMinutes / 60)
     .toString()
     .padStart(2, "0");
-  const mins: string = Math.round(minutes % 60)
+  const mins: string = (normalizedMinutes % 60)
     .toString()
     .padStart(2, "0");
   return `${hours}:${mins}`;

@@ -24,12 +24,12 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       return nothing;
     }
 
-    let isNumber = undefined;
-    try {
-      isNumber = getEntityType(this._config.entity_min) === FlexSliderCardEntityType.NUMBER;
-    } catch (e) {
-      isNumber = true;
-    }
+    const minEntityType = this._getEntityType(this._config.entity_min);
+    const maxEntityType = this._getEntityType(this._config.entity_max);
+    const selectedEntityType = minEntityType ?? maxEntityType;
+    const isNumber = selectedEntityType !== FlexSliderCardEntityType.TIME;
+    const isVertical = this._config.orientation === "vertical";
+    const isCompact = this._config.format === "compact";
     const schema: HaFormSchema[] = computeSchema(
       this._config.valuesbaractive === true,
       this._config.bubblesactive === true,
@@ -38,6 +38,8 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.bubbles?.digits ?? "",
       this._config.ticks?.digits ?? "",
       isNumber,
+      isVertical,
+      isCompact,
     );
 
     return html`
@@ -59,8 +61,47 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
 
   private _handleValueChanged(ev: CustomEvent): void {
     ev.stopPropagation();
-    const newConfig = ev.detail.value as FlexSliderCardConfig;
+    const newConfig = { ...(ev.detail.value as FlexSliderCardConfig) };
+    if (newConfig.orientation === "vertical") {
+      newConfig.valuesbaractive = false;
+    }
+    this._normalizeEntityConfig(newConfig);
     this._config = newConfig;
     fireEvent(this, "config-changed", { config: this._config });
+  }
+
+  private _getEntityType(entityId?: string): FlexSliderCardEntityType | undefined {
+    if (!entityId) {
+      return undefined;
+    }
+
+    try {
+      return getEntityType(entityId);
+    } catch {
+      return undefined;
+    }
+  }
+
+  private _normalizeEntityConfig(config: FlexSliderCardConfig): void {
+    const previousMinType = this._getEntityType(this._config?.entity_min);
+    const previousMaxType = this._getEntityType(this._config?.entity_max);
+    const minType = this._getEntityType(config.entity_min);
+    const maxType = this._getEntityType(config.entity_max);
+
+    if (!minType || !maxType || minType === maxType) {
+      return;
+    }
+
+    const minTypeChanged = previousMinType !== minType;
+    const maxTypeChanged = previousMaxType !== maxType;
+
+    if (minTypeChanged && !maxTypeChanged) {
+      config.entity_max = "";
+      return;
+    }
+
+    if (maxTypeChanged && !minTypeChanged) {
+      config.entity_min = "";
+    }
   }
 }

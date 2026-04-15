@@ -20,6 +20,8 @@ For `input_datetime`, the slider manages a single day from `00:00` to `23:59`.
 - Standard and compact layouts   
 ![Standard format](/assets/standard.png)   
 ![Compact format](/assets/compact.png)   
+- Horizontal and vertical orientations
+![vertical orientation](/assets/vertical.png)![vertical orientation](/assets/vertical2.png)   
 - Optional title   
 ![With title](/assets/title.png)   
 - Optional values bar   
@@ -27,10 +29,11 @@ For `input_datetime`, the slider manages a single day from `00:00` to `23:59`.
 - Optional bubbles   
 ![With bubbles](/assets/bubbles.png)   
 - Optional tick marks   
-![With title](/assets/ticks.png)   
+![With ticks mark](/assets/ticks.png)   
 - Left-to-right or right-to-left direction   
 ![Reversed direction](/assets/direction.png)   
 - Uses the active Home Assistant theme
+![Home Assistant Theme](/assets/theme.png)
 - Visual editor support   
 ![Visual editor](/assets/configuration.png)   
 - `card-mod` compatible
@@ -115,6 +118,30 @@ bubbles:
   digits: auto
 ```
 
+### Vertical example
+
+```yaml
+type: custom:flex-slider-card
+name: Temperature band
+entity_min: input_number.temperature_min
+entity_max: input_number.temperature_max
+min: 18
+max: 30
+step: 0.5
+orientation: vertical
+verticalheight: 3
+verticallayout: mirrored
+bubblesactive: true
+ticksactive: true
+bubbles:
+  unit: C
+  mintext: Min
+  maxtext: Max
+ticks:
+  majorticks: 5
+  minorticks: 2
+```
+
 ## Options
 
 ### Main options
@@ -123,10 +150,21 @@ bubbles:
 |---|---|---|---|---|
 | `name` | string | No | hidden | Card title. If omitted, no title is shown |
 | `format` | `std` \| `compact` | No | `std` | Card layout |
-| `valuesbaractive` | boolean | No | `false` | Shows the values bar under the slider |
+| `orientation` | `horizontal` \| `vertical` | No | `horizontal` | Slider orientation |
+| `horizontalwidth` | number | No | `90` | Horizontal slider width in percent. Horizontal mode only. Min `10`, max `100` |
+| `verticalheight` | number | No | `2` for `std`, `1` for `compact` | Vertical card height in dashboard rows. Vertical mode only. Min `2` for `std`, `1` for `compact`, max `12` |
+| `verticallayout` | `standard` \| `mirrored` | No | `standard` | In vertical mode, places bubbles and tick labels on the default side or mirrored side |
+| `valuesbaractive` | boolean | No | `false` | Shows the values bar under the slider. Ignored in vertical mode |
 | `bubblesactive` | boolean | No | `false` | Shows value bubbles on slider handles |
 | `ticksactive` | boolean | No | `false` | Shows tick marks under the slider |
 | `direction` | `ltr` \| `rtl` | No | `ltr` | Slider direction |
+
+### Vertical mode
+
+- Set `orientation: vertical` to render the slider vertically.
+- `valuesbaractive` is automatically disabled in vertical mode.
+- Use `verticalheight` to control the card height. If omitted, the default is `2` rows for `std` and `1` row for `compact`.
+- Use `verticallayout: mirrored` to move vertical bubbles and tick labels to the opposite side of the slider.
 
 ### Entities Management
 

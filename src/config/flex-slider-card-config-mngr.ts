@@ -5,7 +5,11 @@ import {
   assertFlexSliderCardFormat,
   assertFlexSliderCardDigits,
   assertFlexSliderCardDirection,
-  FlexSliderCardDirection
+  FlexSliderCardDirection,
+  assertFlexSliderCardOrientation,
+  FlexSliderCardOrientation,
+  assertFlexSliderCardVerticalLayout,
+  FlexSliderCardVerticalLayout,
 } from "./flex-slider-card-config-type";
 import {
   assertOptionalString,
@@ -110,7 +114,9 @@ export class FlexSliderCardConfigMngr {
 
   protected _checkValuesBar(): void {
     assertOptionalBoolean(this._config.valuesbaractive, "valuesbar");
-    if (this._config.valuesbaractive == null) {
+    if (this._config.orientation === "vertical") {
+      this._config.valuesbaractive = false;
+    } else if (this._config.valuesbaractive == null) {
       this._config.valuesbaractive = false;
     }
 
@@ -398,6 +404,34 @@ export class FlexSliderCardConfigMngr {
       this._config.direction = "ltr";
     }
     assertFlexSliderCardDirection(this._config.direction);
+
+    if (this._config.orientation == null) {
+      this._config.orientation = "horizontal";
+    }
+    assertFlexSliderCardOrientation(this._config.orientation);
+
+    if (this._config.verticallayout == null) {
+      this._config.verticallayout = "standard";
+    }
+    assertFlexSliderCardVerticalLayout(this._config.verticallayout);
+
+    if (this._config.orientation === "horizontal") {
+      assertOptionalNumber(this._config.horizontalwidth, "horizontalwidth");
+      this._config.horizontalwidth ??= 90;
+      if (this._config.horizontalwidth < 10 || this._config.horizontalwidth > 100) {
+        throw new Error("horizontalwidth must be between 10 and 100");
+      }
+      this._config.verticalheight = undefined;
+    } else {
+      this._config.horizontalwidth = undefined;
+      assertOptionalNumber(this._config.verticalheight, "verticalheight");
+      if (this._config.verticalheight != null) {
+        const minVerticalHeight = this.isCompact ? 1 : 2;
+        if (this._config.verticalheight < minVerticalHeight || this._config.verticalheight > 12) {
+          throw new Error(`verticalheight must be between ${minVerticalHeight} and 12`);
+        }
+      }
+    }
   }
 
   protected _updateSlider(hass: HomeAssistant): void { }
@@ -422,7 +456,44 @@ export class FlexSliderCardConfigMngr {
     }
     return this._config.direction;
   }
-  
+
+  public get orientation(): FlexSliderCardOrientation {
+    if (this._config.orientation == null) {
+      throw new Error("Orientation is not defined in config");
+    }
+    return this._config.orientation;
+  }
+
+  public get isVertical(): boolean {
+    return this._config.orientation === "vertical";
+  }
+
+  public get verticalLayout(): FlexSliderCardVerticalLayout {
+    if (this._config.verticallayout == null) {
+      throw new Error("Vertical layout is not defined in config");
+    }
+    return this._config.verticallayout;
+  }
+
+  public get gridRows(): number | string | undefined {
+    return this._config.grid_options?.rows;
+  }
+
+  public get sliderHorizontalWidth(): number {
+    if (this._config.horizontalwidth == null) {
+      throw new Error("Size is not defined in config");
+    }
+    return this._config.horizontalwidth;
+  }
+
+  public get sliderVerticalHeight(): number | undefined {
+    return this._config.verticalheight ?? undefined;
+  }
+
+  public get sliderVerticalHeightDefault(): number {
+    return this.isCompact ? 1 : 2;
+  }
+
   /****************************************************/
   /* entities                                         */
   /****************************************************/

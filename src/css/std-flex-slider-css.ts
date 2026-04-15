@@ -1,52 +1,82 @@
+import { STD_TITLE_HEIGHT, STD_CONTAINER_PADDING } from "../type/constants";
+
 export const stdFlexSliderCardCss: string = `
-  
+
   :host([std]) {
     display: block;
-    height: 100%;
+    height: var(--flex-slider-height, 100%);
     --flex-slider-card-barvalues-font-size: 1rem;
-    --flex-slider-card-barvalues-padding-bottom: 2px;
   }
-  
+
   .container.std {
-    min-height: 100%;
-    padding-bottom: 5px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
   }
-  
+
   .container.std.no-title {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: ${STD_CONTAINER_PADDING}px;
     justify-content: center;
+  }
+
+  .container.std.no-values {
+    padding-bottom: ${STD_CONTAINER_PADDING}px;
   }
 
   .container.std .title {
     display: flex;
-    height: 30px;
+    height: ${STD_TITLE_HEIGHT}px;
+    min-height: ${STD_TITLE_HEIGHT}px;
+    width: 100%;
     align-items: center;
     justify-content: center;
+    text-align: center;
     font-size: 1.2rem;
     color: var(--primary-text-color);
-    /* border: 1px solid green; /* Debugging border */
+    /* outline: 1px solid blue; /* Debugging border */
   }
 
   .container.std .slider-with-values {
-    width: 90%;
+    width: var(--flex-slider-width, 90%);
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
     margin-block: auto;
-    /* border: 1px solid red; /* Debugging border */
-  }
-  
-  .container.std .slider {
-    width: 100%;
+    /* outline: 1px solid blue; /* Debugging border */
   }
 
-  .container.std.no-title .values {
-    font-size: 0.9rem;
+  /* ===== Vertical mode ===== */
+
+  .container.std.vertical .slider-with-values {
+    width: 80%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container.std.vertical .slider-container {
+    height: 100%;
+    width: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container.std.vertical.has-ticks .slider-container,
+  .container.std.vertical.has-bubbles .slider-container {
+    height: 95%;
+  }
+
+  .container.std.vertical flex-slider-card-slider {
+    height: 100%;
+    width: auto;
+    display: flex;
+    align-items: center;
   }
 
 `;

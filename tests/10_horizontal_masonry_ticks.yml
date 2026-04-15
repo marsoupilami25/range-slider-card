@@ -12,7 +12,7 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: Standard avec titre
+    name: Std | 6/2
     ticksactive: true
     ticks:
       digits: manual
@@ -30,7 +30,7 @@ cards:
     min: 18
     max: 30
     step: 0.5
-    name: Standard avec titre et valuesbar
+    name: Std | VB
     ticksactive: true
     valuesbaractive: true
     valuesbar:
@@ -41,7 +41,7 @@ cards:
     cards:
       - type: heading
         icon: ""
-        heading: Std sans titre
+        heading: Std | no tit. | 4/1
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -57,7 +57,7 @@ cards:
     cards:
       - type: heading
         icon: ""
-        heading: Std sans titre et valuesbar
+        heading: Std | no tit. | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -75,7 +75,7 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre
+    name: Cmp | 7/0
     format: compact
     ticksactive: true
     ticks:
@@ -86,7 +86,7 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Compact avec titre et valuesbar reversed
+    name: Cmp | VB | RTL
     format: compact
     ticksactive: true
     valuesbaractive: true
@@ -99,7 +99,7 @@ cards:
     cards:
       - type: heading
         icon: ""
-        heading: Compact sans titre
+        heading: Cmp | no tit. | 5/4
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -116,7 +116,7 @@ cards:
     cards:
       - type: heading
         icon: ""
-        heading: Compact sans titre et valuesbar
+        heading: Cmp | no tit. | d2 | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -132,5 +132,5 @@ cards:
         ticks:
           digits: manual
           nbdigits: 2
-theme: Caule Light Green
-title: Masonry/basic
+theme: Caule Light Gray
+title: Ticks

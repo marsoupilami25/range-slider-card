@@ -10,7 +10,7 @@ sections:
           columns: 6
           rows: 1
       - type: heading
-        heading: Sans valuebar
+        heading: Std
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -18,7 +18,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: inum | g off
         grid_options:
           columns: null
           rows: null
@@ -26,13 +26,13 @@ sections:
         entity_min: input_number.inputnumbertestmin
         entity_max: input_number.inputnumbertestmax
         step: 10
-        name: Avec grid R1
+        name: inum | r1
         grid_options:
           columns: 9
           rows: 1
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Std | no tit. | g off
         heading_style: subtitle
         grid_options:
           columns: full
@@ -48,7 +48,7 @@ sections:
           rows: null
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Std | no tit. | r1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -64,7 +64,7 @@ sections:
           rows: 1
       - type: heading
         icon: ""
-        heading: Avec valuesbar
+        heading: Std | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -72,7 +72,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid
+        name: inum | g off
         valuesbaractive: true
         grid_options:
           columns: null
@@ -85,7 +85,7 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         step: 10
-        name: Avec grid R2 reversed
+        name: time | r2 | RTL
         valuesbaractive: true
         grid_options:
           columns: 9
@@ -93,7 +93,7 @@ sections:
         direction: rtl
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Std | no tit. | g off | d1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -114,7 +114,7 @@ sections:
           unit: °C
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Std | no tit. | r1 | d1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -139,7 +139,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Avec Number
+        name: num
         valuesbaractive: true
         grid_options:
           columns: null
@@ -151,7 +151,7 @@ sections:
   - type: grid
     cards:
       - type: heading
-        heading: Sans values bar
+        heading: Cmp
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -159,7 +159,7 @@ sections:
         min: 18
         max: 30
         step: 0.25
-        name: Sans grid
+        name: inum | g off
         format: compact
         grid_options:
           columns: null
@@ -168,14 +168,14 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         step: 10
-        name: Avec grid R1
+        name: time | r1
         format: compact
         grid_options:
           columns: 12
           rows: 1
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Cmp | no tit. | g off
         heading_style: subtitle
         grid_options:
           columns: full
@@ -192,7 +192,7 @@ sections:
           rows: null
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Cmp | no tit. | r1
         heading_style: subtitle
         grid_options:
           columns: full
@@ -209,7 +209,7 @@ sections:
           rows: 1
       - type: heading
         icon: ""
-        heading: Avec values bar
+        heading: Cmp | VB
         heading_style: title
       - type: custom:flex-slider-card
         entity_min: input_number.inputnumbertestmin
@@ -217,7 +217,7 @@ sections:
         min: 18
         max: 30
         step: 0.5
-        name: Sans grid reversed
+        name: inum | g off | RTL
         format: compact
         valuesbaractive: true
         grid_options:
@@ -230,7 +230,7 @@ sections:
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
         step: 10
-        name: Avec grid R1
+        name: time | r1
         format: compact
         valuesbaractive: true
         grid_options:
@@ -238,7 +238,7 @@ sections:
           rows: 1
       - type: heading
         icon: ""
-        heading: Sans grid sans titre
+        heading: Cmp | no tit. | g off | unit
         heading_style: subtitle
         grid_options:
           columns: full
@@ -258,7 +258,7 @@ sections:
           unit: °C
       - type: heading
         icon: ""
-        heading: Avec grid R1 sans titre
+        heading: Cmp | no tit. | r1 | d2
         heading_style: subtitle
         grid_options:
           columns: full
@@ -279,6 +279,5 @@ sections:
           nbdigits: 2
           unit: °C
 max_columns: 4
-theme: Caule Black Coral
 cards: []
-title: Sections/basic
+title: Basic
