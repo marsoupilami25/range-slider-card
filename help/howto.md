@@ -8,8 +8,7 @@ Checkout on main branch `git checkout main`
 Do not forget `git pull`
 Preferably reinstall `npm ci`
 `npm version major/minor/patch`
-`git push`
-`git push --tags`
+`git push --follow-tags`
 
 For debug:
 ==========
