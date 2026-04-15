@@ -21,7 +21,7 @@ The slider manages a single day from `00:00` to `23:59`.
 - Standard and compact layouts   
 ![Standard format](/assets/standard.png)   
 ![Compact format](/assets/compact.png)   
-- Horizontal and vertical orientations
+- Horizontal and vertical orientations   
 ![vertical orientation](/assets/vertical.png)![vertical orientation](/assets/vertical2.png)   
 - Optional title   
 ![With title](/assets/title.png)   
