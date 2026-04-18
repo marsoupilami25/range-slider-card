@@ -554,7 +554,7 @@ export class FlexSliderCardConfigMngr {
       if (!this._isValidEntityId(handleConfig.entity)) {
         throw new Error(`Invalid entity format for handle #${index + 1}. Expected domain.object_id`);
       }
-      return new FlexSliderCardEntity(this, String(index));
+      return new FlexSliderCardEntity(handleConfig.entity);
     });
 
     this._entitytype = this._entities[0].entitytype;
@@ -575,22 +575,6 @@ export class FlexSliderCardConfigMngr {
     }
   }
 
-  public getEntityConfig(suffix: string): string {
-    if (suffix === "min") {
-      return this._getEntityConfigAt(0);
-    }
-    if (suffix === "max") {
-      return this._getEntityConfigAt(1);
-    }
-
-    const index = Number(suffix);
-    if (!Number.isInteger(index)) {
-      throw new Error(`Invalid entity suffix '${suffix}'`);
-    }
-
-    return this._getEntityConfigAt(index);
-  }
-
   public get entitytype(): FlexSliderCardEntityType {
     if (this._entitytype === undefined) {
       throw new Error("Entity type is not defined in config");
@@ -598,15 +582,8 @@ export class FlexSliderCardConfigMngr {
     return this._entitytype;
   }
 
-  public get entities(): { [suffix: string]: FlexSliderCardEntity } {
-    const entities: { [suffix: string]: FlexSliderCardEntity } = {};
-    if (this._entities[0]) {
-      entities.min = this._entities[0];
-    }
-    if (this._entities[1]) {
-      entities.max = this._entities[1];
-    }
-    return entities;
+  public get entities(): FlexSliderCardEntity[] {
+    return this._entities;
   }
 
   public get entityCount(): number {
@@ -632,13 +609,4 @@ export class FlexSliderCardConfigMngr {
   public entitiesIsUpdated(): boolean {
     return this._entities.some((entity) => entity.isUpdated());
   }
-
-  private _getEntityConfigAt(index: number): string {
-    const entityConfig = this._config.entities?.[index]?.entity;
-    if (!entityConfig) {
-      throw new Error(`Entity handle #${index + 1} is not available`);
-    }
-    return entityConfig;
-  }
-
 }

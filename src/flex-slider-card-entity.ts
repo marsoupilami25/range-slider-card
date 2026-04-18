@@ -1,6 +1,5 @@
 import { timeToMinutes, minutesToTime } from "./utils/utils";
 import { HomeAssistant } from "custom-card-helpers";
-import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { FlexSliderCardEntityType, FlexSliderEntityDomain, getEntityDomain, getEntityType} from "./utils/entity-management";
 
 export enum FlexSliderCardDataType {
@@ -15,19 +14,17 @@ type FlexSliderCardService = "set_value" | "set_datetime";
 
 export class FlexSliderCardEntity {
   
-  private _suffix: string;
-  private _domain: FlexSliderEntityDomain;
-  private _entitytype: FlexSliderCardEntityType;
-  private _service: FlexSliderCardService;
-  private _entityid: string;
+  private _domain!: FlexSliderEntityDomain;
+  private _entitytype!: FlexSliderCardEntityType;
+  private _service!: FlexSliderCardService;
+  private _entityid!: string;
   private _baselineValue: number | undefined = undefined;
   private _callService: HomeAssistant["callService"] | null = null;
-  private _states: HomeAssistant["states"] | null = null;
-  private _datatype: FlexSliderCardDataType;
+  private _state: FlexSliderCardState | undefined;
+  private _datatype!: FlexSliderCardDataType;
 
-  constructor(config: FlexSliderCardConfigMngr, suffix: string) {
-    this._suffix = suffix;
-    this._entityid = config.getEntityConfig(suffix);
+  constructor(entityId: string) {
+    this._entityid = entityId;
     this._domain = getEntityDomain(this._entityid);
     this._entitytype = getEntityType(this._entityid);
     switch (this._entitytype) {
@@ -40,17 +37,16 @@ export class FlexSliderCardEntity {
         this._service = "set_datetime";
         break;
       default:
-        throw new Error(`Unexpected 'entity_${suffix}' domain`);
+        throw new Error(`Unexpected entity domain for '${this._entityid}'`);
     }
     this.resetBaseline();
   }
 
   public update(hass: HomeAssistant): void {
     this._callService = hass.callService;
-    this._states = hass.states;
-    const state = this._states[this.entityId];
-    if (state) {
-      this._assertSupportedInputDatetimeState(state);
+    this._state = hass.states[this.entityId];
+    if (this._state) {
+      this._assertSupportedInputDatetimeState(this._state);
     }
   }
 
@@ -84,7 +80,7 @@ export class FlexSliderCardEntity {
   }
 
   public exists(): boolean {
-    return !!this._states?.[this.entityId];
+    return this._state !== undefined;
   }
 
   /****************************************************/
@@ -127,15 +123,10 @@ export class FlexSliderCardEntity {
   /****************************************************/
 
   private _getState(): FlexSliderCardState {
-    if (!this._states) {
-      throw new Error("Hass states not initialized");
-    }
-    const state = this._states[this.entityId];
-    if (!state) {
+    if (!this._state) {
       throw new Error(`Entity '${this.entityId}' not found`);
     }
-    this._assertSupportedInputDatetimeState(state);
-    return state;
+    return this._state;
   }
 
   private _assertSupportedInputDatetimeState(state: FlexSliderCardState): void {

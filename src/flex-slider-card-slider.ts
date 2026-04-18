@@ -236,8 +236,8 @@ export class FlexSliderCardSlider extends LitElement {
     // noUiSlider renvoie souvent des strings → conversion recommandée
     const min = Number(values[0]);
     const max = Number(values[1]);
-    const currentMin = this.config.entities.min.sliderValue;
-    const currentMax = this.config.entities.max.sliderValue;
+    const currentMin = this.config.entities[0].sliderValue;
+    const currentMax = this.config.entities[1].sliderValue;
 
     if (currentMin === min && currentMax === max) {
       this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
@@ -248,15 +248,15 @@ export class FlexSliderCardSlider extends LitElement {
     try {
       if (currentMin !== min && min > currentMax) {
         if (currentMax !== max) {
-          await this.config.entities.max.setSliderValue(max);
+          await this.config.entities[1].setSliderValue(max);
         }
-        await this.config.entities.min.setSliderValue(min);
+        await this.config.entities[0].setSliderValue(min);
       } else {
         if (currentMin !== min) {
-          await this.config.entities.min.setSliderValue(min);
+          await this.config.entities[0].setSliderValue(min);
         }
         if (currentMax !== max) {
-          await this.config.entities.max.setSliderValue(max);
+          await this.config.entities[1].setSliderValue(max);
         }
       }
     } catch (error) {
