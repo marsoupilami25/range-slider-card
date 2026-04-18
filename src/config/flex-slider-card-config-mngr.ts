@@ -170,10 +170,6 @@ export class FlexSliderCardConfigMngr {
     return this._config.valuesbar.unit;
   }
 
-  public getValuesBarTextStub(handle: number): string {
-    return this._getLegacyMinMaxTextStub(handle, "valuesbar");
-  }
-
   /****************************************************/
   /* bubbles                                          */
   /****************************************************/
@@ -237,10 +233,6 @@ export class FlexSliderCardConfigMngr {
       throw new Error("Unit is not defined in config");
     }
     return this._config.bubbles.unit;
-  }
-
-  public getBubbleTextStub(handle: number): string {
-    return this._getLegacyMinMaxTextStub(handle, "bubbles");
   }
 
   public get isDragOnlyBubbles(): boolean {
@@ -510,7 +502,7 @@ export class FlexSliderCardConfigMngr {
       if (!this._isValidEntityId(handleConfig.entity)) {
         throw new Error(`Invalid entity format for handle #${index + 1}. Expected domain.object_id`);
       }
-      return new FlexSliderCardEntity(handleConfig.entity);
+      return new FlexSliderCardEntity(handleConfig.entity, handleConfig.text ?? "");
     });
 
     this._entitytype = this._entities[0].entitytype;
@@ -562,12 +554,4 @@ export class FlexSliderCardConfigMngr {
     return this._entities.some((entity) => entity.isUpdated());
   }
 
-  private _getLegacyMinMaxTextStub(handle: number, section: "valuesbar" | "bubbles"): string {
-    if (handle < 0 || handle >= this.entityCount) {
-      throw new Error(`Handle index ${handle} is out of bounds for ${section}`);
-    }
-
-    // TODO: Replace this stub with per-handle labels if a new label API is added later.
-    return "";
-  }
 }
