@@ -319,6 +319,11 @@ export const handleSchema: HaFormSchema[] = [
       }
     },
   },
+  {
+    name: "text",
+    required: false,
+    selector: { text: {} },
+  },
 ];
 
 export const computeSchema = memoizeOne((hasValuesBar: boolean,

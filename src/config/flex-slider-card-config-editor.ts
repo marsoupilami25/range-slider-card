@@ -311,6 +311,9 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     if (schema.name === "entity") {
       return `Entity ${index + 1}`;
     }
+    if (schema.name === "text") {
+      return `Text ${index + 1}`;
+    }
 
     return this._computeLabel(schema);
   };
@@ -395,11 +398,12 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
   private _normalizeHandle(handle?: FlexSliderCardHandleConfig): FlexSliderCardHandleConfig {
     return {
       entity: handle?.entity ?? "",
+      text: handle?.text ?? "",
     };
   }
 
   private _createEmptyHandle(): FlexSliderCardHandleConfig {
-    return { entity: "" };
+    return { entity: "", text: "" };
   }
 
   /****************************************************/

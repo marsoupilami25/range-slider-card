@@ -108,9 +108,11 @@ export const flexSliderCardTicksConfigStruct = object({
 
 export type FlexSliderCardHandleConfig = {
   entity: string;
+  text?: string;
 };
 export const flexSliderCardHandleConfigStruct = object({
   entity: string(),
+  text: optional(string()),
 });
 
 export type FlexSliderCardConfig = LovelaceCardConfig &
