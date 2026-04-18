@@ -116,30 +116,6 @@ const baseSchema = memoizeOne((
         name: "",
         schema: [
           {
-            name: "entity_min",
-            required: false,
-            selector: {
-              entity: {
-                domain: ["number", "input_number", "input_datetime"],
-              }
-            },
-          },
-          {
-            name: "entity_max",
-            required: false,
-            selector: {
-              entity: {
-                domain: ["number", "input_number", "input_datetime"],
-              }
-            },
-          },
-        ],
-      },
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          {
             name: "min",
             selector: {
               number: { mode: "box" },
@@ -358,6 +334,18 @@ const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
     ],
   }
 ]);
+
+export const handleSchema: HaFormSchema[] = [
+  {
+    name: "entity",
+    required: false,
+    selector: {
+      entity: {
+        domain: ["number", "input_number", "input_datetime"],
+      }
+    },
+  },
+];
 
 export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,

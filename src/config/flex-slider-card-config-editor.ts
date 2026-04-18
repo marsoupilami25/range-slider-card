@@ -1,32 +1,175 @@
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
-import { html, LitElement, nothing } from "lit";
+import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { FlexSliderCardConfig } from "./flex-slider-card-config-type";
+import {
+  FlexSliderCardConfig,
+  FlexSliderCardHandleConfig,
+} from "./flex-slider-card-config-type";
 import { HaFormSchema } from "../type/ha";
-import { computeSchema } from "./flex-slider-card-config-form";
+import { computeSchema, handleSchema } from "./flex-slider-card-config-form";
 import { flexSliderCardConfigLabels } from "./flex-slider-card-config-labels";
 import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
 
 @customElement("flex-slider-card-config-editor")
 export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCardEditor {
 
+  /****************************************************/
+  /* attributes                                       */
+  /****************************************************/
+
   @state()
-  private _config?: FlexSliderCardConfig;
+  private _config!: FlexSliderCardConfig;
+
+  @state()
+  private _error?: string;
+
+  @state()
+  private _activeTab: "config" | "entities" = "config";
+
   @property({ attribute: false })
   public hass!: HomeAssistant;
 
-  public setConfig(config: FlexSliderCardConfig): void {
-    this._config = config;
-  }
+  /****************************************************/
+  /* CSS                                              */
+  /****************************************************/
 
-  protected render() {
+  static override styles = css`
+    :host {
+      display: block;
+    }
+
+    .editor {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding: 0 12px;
+    }
+
+    .tab {
+      border: 1px solid var(--divider-color);
+      border-bottom: none;
+      border-radius: 14px 14px 0 0;
+      padding: 10px 16px 9px;
+      background: var(--secondary-background-color);
+      color: var(--secondary-text-color);
+      font: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms ease;
+      margin-bottom: -1px;
+      position: relative;
+      z-index: 0;
+    }
+
+    .tab[selected] {
+      background: var(--card-background-color, var(--ha-card-background, white));
+      color: var(--primary-text-color);
+      border-color: var(--primary-color);
+      z-index: 2;
+    }
+
+    .panel {
+      border: 1px solid var(--divider-color);
+      border-radius: 14px;
+      padding: 16px;
+      background: var(--card-background-color, var(--ha-card-background, white));
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-description {
+      margin: 0;
+      color: var(--secondary-text-color);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .handle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .handle-card {
+      padding: 0;
+    }
+
+    .action-button {
+      border: 1px solid var(--divider-color);
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: transparent;
+      color: var(--primary-text-color);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .icon-button {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .action-button[disabled] {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .error {
+      color: var(--error-color);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  `;
+
+  /****************************************************/
+  /* Public methods - Lit Element                     */
+  /****************************************************/
+
+  protected override render() {
     if (!this.hass || !this._config) {
       return nothing;
     }
 
-    const minEntityType = this._getEntityType(this._config.entity_min);
-    const maxEntityType = this._getEntityType(this._config.entity_max);
-    const selectedEntityType = minEntityType ?? maxEntityType;
+    if (this._error) {
+      return html`
+        <div class="panel">
+          <div class="error">${this._error}</div>
+        </div>
+      `;
+    }
+
+    const entities = this._config.entities ?? [];
+    const selectedEntityType = this._getSelectedEntityType(entities);
     const isNumber = selectedEntityType !== FlexSliderCardEntityType.TIME;
     const isVertical = this._config.orientation === "vertical";
     const isCompact = this._config.format === "compact";
@@ -43,15 +186,119 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     );
 
     return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${schema}
-        .computeLabel=${this._computeLabel}
-        @value-changed=${this._handleValueChanged}
-      ></ha-form>
+      <div class="editor">
+        <div class="tabs" role="tablist" aria-label="Editor sections">
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            ?selected=${this._activeTab === "config"}
+            aria-selected=${String(this._activeTab === "config")}
+            @click=${() => this._selectTab("config")}
+          >
+            Config
+          </button>
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            ?selected=${this._activeTab === "entities"}
+            aria-selected=${String(this._activeTab === "entities")}
+            @click=${() => this._selectTab("entities")}
+          >
+            Entities (${entities.length})
+          </button>
+        </div>
+
+        <div class="panel">
+          ${this._activeTab === "config"
+            ? html`
+                <section class="section">
+                  <ha-form
+                    .hass=${this.hass}
+                    .data=${this._config}
+                    .schema=${schema}
+                    .computeLabel=${this._computeLabel}
+                    @value-changed=${this._handleConfigChanged}
+                  ></ha-form>
+                </section>
+              `
+            : html`
+                <section class="section">
+                  <div class="section-header">
+                    <p class="section-description">
+                      Configure one or more entities. Every handle must use a compatible domain.
+                    </p>
+                    <div class="section-actions">
+                      <button
+                        class="action-button icon-button"
+                        type="button"
+                        aria-label="Remove last entity"
+                        ?disabled=${entities.length === 1}
+                        @click=${this._removeLastHandle}
+                      >
+                        -
+                      </button>
+                      <button
+                        class="action-button icon-button"
+                        type="button"
+                        aria-label="Add entity"
+                        @click=${this._addHandle}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="handle-list">
+                    ${entities.map((handleConfig, index) => html`
+                      <div class="handle-card">
+                        <ha-form
+                          .hass=${this.hass}
+                          .data=${handleConfig}
+                          .schema=${handleSchema}
+                          .computeLabel=${this._computeHandleLabel(index)}
+                          @value-changed=${(ev: CustomEvent) => this._handleHandleChanged(ev, index)}
+                        ></ha-form>
+                      </div>
+                    `)}
+                  </div>
+                </section>
+              `}
+        </div>
+      </div>
     `;
   }
+
+  /****************************************************/
+  /* Public methods - Config Management               */
+  /****************************************************/
+
+  public setConfig(config: FlexSliderCardConfig): void {
+    // legacy entities configuration start
+    const hasLegacyEntityConfig = this._hasLegacyEntityConfig(config);
+    const legacyEntityConflictError = this._getLegacyEntityConflictError(config);
+
+    if (legacyEntityConflictError) {  
+      this._error = legacyEntityConflictError;
+      this._config = config;
+      return;
+    }
+    this._error = undefined;
+
+    if (hasLegacyEntityConfig) {
+      const normalizedConfig = this._normalizeConfig(config);
+      this._config = normalizedConfig;
+      fireEvent(this, "config-changed", { config: normalizedConfig });
+      return;
+    }
+    // legacy entities configuration end
+    this._config = config;
+  }
+
+  /****************************************************/
+  /* Private methods - rendering                      */
+  /****************************************************/
 
   private _computeLabel = (schema: HaFormSchema): string | undefined => {
     if (!("name" in schema)) return undefined;
@@ -59,16 +306,105 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     return flexSliderCardConfigLabels[schema.name];
   };
 
-  private _handleValueChanged(ev: CustomEvent): void {
-    ev.stopPropagation();
-    const newConfig = { ...(ev.detail.value as FlexSliderCardConfig) };
-    if (newConfig.orientation === "vertical") {
-      newConfig.valuesbaractive = false;
+  private _computeHandleLabel = (index: number) => (schema: HaFormSchema): string | undefined => {
+    if (!("name" in schema)) return undefined;
+    if (schema.name === "entity") {
+      return `Entity ${index + 1}`;
     }
-    this._normalizeEntityConfig(newConfig);
-    this._config = newConfig;
-    fireEvent(this, "config-changed", { config: this._config });
+
+    return this._computeLabel(schema);
+  };
+
+  private _selectTab(tab: "config" | "entities"): void {
+    this._activeTab = tab;
   }
+
+  /****************************************************/
+  /* Private methods - config in rendering            */
+  /****************************************************/
+
+  private _handleConfigChanged = (ev: CustomEvent): void => {
+    ev.stopPropagation();
+    if (!this._config) {
+      return;
+    }
+
+    const nextConfig = structuredClone(ev.detail.value as FlexSliderCardConfig);
+    if (nextConfig.orientation === "vertical") {
+      nextConfig.valuesbaractive = false;
+    }
+    this._applyConfig(nextConfig);
+  };
+
+  private _handleHandleChanged(ev: CustomEvent, index: number): void {
+    ev.stopPropagation();
+    if (!this._config) {
+      return;
+    }
+
+    const nextConfig = this._cloneConfig();
+    const entities = nextConfig.entities ?? [];
+    entities[index] = this._normalizeHandle(ev.detail.value as FlexSliderCardHandleConfig);
+    nextConfig.entities = entities;
+    this._applyConfig(nextConfig);
+  }
+
+  private _addHandle = (): void => {
+    if (!this._config) {
+      return;
+    }
+
+    const nextConfig = this._cloneConfig();
+    const entities = nextConfig.entities ?? [];
+    nextConfig.entities = [...entities, this._createEmptyHandle()];
+    this._applyConfig(nextConfig);
+  };
+
+  private _removeLastHandle = (): void => {
+    const currentEntities = this._config?.entities ?? [];
+    if (!this._config || currentEntities.length === 1) {
+      return;
+    }
+
+    const nextConfig = this._cloneConfig();
+    nextConfig.entities = (nextConfig.entities ?? []).slice(0, -1);
+    this._applyConfig(nextConfig);
+  };
+
+  /****************************************************/
+  /* Private methods - config management              */
+  /****************************************************/
+
+  private _applyConfig(config: FlexSliderCardConfig): void {
+    this._config = config;
+    fireEvent(this, "config-changed", { config });
+  }
+
+  private _cloneConfig(): FlexSliderCardConfig {
+    if (!this._config) {
+      throw new Error("Editor config is not initialized");
+    }
+
+    return structuredClone(this._config);
+  }
+
+  /****************************************************/
+  /* Private methods - handles management             */
+  /****************************************************/
+
+  private _normalizeHandle(handle?: FlexSliderCardHandleConfig): FlexSliderCardHandleConfig {
+    return {
+      entity: handle?.entity ?? "",
+    };
+  }
+
+  private _createEmptyHandle(): FlexSliderCardHandleConfig {
+    return { entity: "" };
+  }
+
+  /****************************************************/
+  /* Private methods - entities management            */
+  /****************************************************/
 
   private _getEntityType(entityId?: string): FlexSliderCardEntityType | undefined {
     if (!entityId) {
@@ -82,26 +418,75 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     }
   }
 
-  private _normalizeEntityConfig(config: FlexSliderCardConfig): void {
-    const previousMinType = this._getEntityType(this._config?.entity_min);
-    const previousMaxType = this._getEntityType(this._config?.entity_max);
-    const minType = this._getEntityType(config.entity_min);
-    const maxType = this._getEntityType(config.entity_max);
-
-    if (!minType || !maxType || minType === maxType) {
-      return;
+  private _getSelectedEntityType(handles: FlexSliderCardHandleConfig[]): FlexSliderCardEntityType | undefined {
+    for (const handle of handles) {
+      const entityType = this._getEntityType(handle.entity);
+      if (entityType !== undefined) {
+        return entityType;
+      }
     }
-
-    const minTypeChanged = previousMinType !== minType;
-    const maxTypeChanged = previousMaxType !== maxType;
-
-    if (minTypeChanged && !maxTypeChanged) {
-      config.entity_max = "";
-      return;
-    }
-
-    if (maxTypeChanged && !minTypeChanged) {
-      config.entity_min = "";
-    }
+    return undefined;
   }
+
+  /****************************************************/
+  /* Private methods - legacy config management       */
+  /****************************************************/
+
+  private _hasLegacyEntityConfig(config?: FlexSliderCardConfig): boolean {
+    // legacy entities configuration start
+    return config?.entity_min !== undefined || config?.entity_max !== undefined;
+    // legacy entities configuration end
+  }
+
+  private _getLegacyEntityConflictError(config?: FlexSliderCardConfig): string | undefined {
+    // legacy entities configuration start
+    if (config?.entity_min !== undefined && config?.entity_max === undefined) {
+      return "Cannot use 'entity_min' without 'entity_max' in the editor configuration";
+    }
+
+    if (config?.entity_max !== undefined && config?.entity_min === undefined) {
+      return "Cannot use 'entity_max' without 'entity_min' in the editor configuration";
+    }
+
+    if (config?.entity_min !== undefined && config.entities?.[0] !== undefined) {
+      return "Cannot use both 'entity_min/entity_max' and 'entities' in the editor configuration";
+    }
+
+    return undefined;
+    // legacy entities configuration end
+  }
+
+  private _normalizeConfig(config?: FlexSliderCardConfig): FlexSliderCardConfig {
+    const {
+      // legacy entities configuration start
+      entity_min,
+      entity_max,
+      // legacy entities configuration end
+      ...rest
+    } = (config ?? { type: "custom:flex-slider-card" }) as FlexSliderCardConfig;
+
+    const entities = Array.isArray(config?.entities)
+      ? config.entities.map((handle) => this._normalizeHandle(handle))
+      : [];
+
+    // legacy entities configuration start
+    if (entity_min !== undefined) {
+      entities[0] = { entity: entity_min };
+    }
+
+    if (entity_max !== undefined) {
+      entities[1] = { entity: entity_max };
+    }
+    // legacy entities configuration end
+
+    if (entities.length === 0) {
+      entities.push(this._createEmptyHandle());
+    }
+
+    return {
+      ...rest,
+      entities,
+    };
+  }
+
 }
