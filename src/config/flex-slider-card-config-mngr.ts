@@ -590,10 +590,6 @@ export class FlexSliderCardConfigMngr {
     return this._entities.length;
   }
 
-  public get supportsLegacyTwoHandleRuntime(): boolean {
-    return this._entities.length === 2;
-  }
-
   public entitiesExist(): boolean {
     return this._entities.every((entity) => entity.exists());
   }

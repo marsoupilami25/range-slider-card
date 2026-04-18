@@ -259,10 +259,6 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       return;
     }
-    if (!this._config.supportsLegacyTwoHandleRuntime) {
-      this._applyCardMod();
-      return;
-    }
     if (this._config.hasValuesBar) {
       this._slider.setCallbacks(this._valuesBar!.setMode, this._valuesBar!.setValue);
     }
@@ -314,16 +310,6 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return html`<ha-card><div class="card-content">Entities not found</div></ha-card>`;
     }
 
-    if (!this._config.supportsLegacyTwoHandleRuntime) {
-      return html`
-        <ha-card>
-          <div class="card-content">
-            Multi-handle runtime is not implemented yet. The editor supports ${this._config.entityCount} handles, but rendering still expects exactly 2.
-          </div>
-        </ha-card>
-      `;
-    }
-
     const hasValuesBar = this._config.hasValuesBar;
     const hasTitle = this._config.hasTitle;
     const hasBubbles = this._config.hasBubbles;
@@ -339,8 +325,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       `${hasTicks ? "has-ticks " : ""}` +
       `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
-    const minValue = this._config.entities[0].sliderValue;
-    const maxValue = this._config.entities[1].sliderValue;
+    const values = this._config.entities.map((entity) => entity.sliderValue);
     const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
     const verticalSliderContainerStyle =
       isVertical && hasBubbles !== hasTicks
@@ -359,8 +344,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
             <div class="slider-container" style="${verticalSliderContainerStyle}">
               <flex-slider-card-slider
                 .config=${this._config}
-                .minvalue=${minValue}
-                .maxvalue=${maxValue}
+                .values=${values}
                 .sliderClass=${sliderClass}
                 .forceHeight=${this._shallForceHeight()}
                 @user-update-state-changed=${this._handleUserUpdateStateChanged}
@@ -369,8 +353,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
             ${hasValuesBar ? html`
                 <flex-slider-card-valuesbar
                   .config=${this._config}
-                  .minvalue=${minValue}
-                  .maxvalue=${maxValue}
+                  .values=${values}
                 ></flex-slider-card-valuesbar>
               ` : nothing}
           </div>

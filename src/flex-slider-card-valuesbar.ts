@@ -21,10 +21,8 @@ export class FlexSliderCardValuesBar extends LitElement {
 
   @property({ attribute: false }) 
   public config?: FlexSliderCardConfigMngr;
-  @property({ type: Number })
-  public minvalue = 0;
-  @property({ type: Number })
-  public maxvalue = 100;
+  @property({ attribute: false })
+  public values: number[] = [0, 100];
 
   private _mode: FlexSliderCardValuesBarMode = FlexSliderCardValuesBarMode.DEFAULT;   // mode of the values bar, either "default" or "userupdate"
   private _handle: number | null = null;                                                      // index of the handle currently being updated by the user, null if no handle is being updated
@@ -152,7 +150,7 @@ export class FlexSliderCardValuesBar extends LitElement {
       this._handle === 0) {
       return this._sliderToDisplay(this._userModifiedValue);  // min value is always the first handle (0)
     }  
-    return this._sliderToDisplay(this.minvalue);
+    return this._sliderToDisplay(this.values[0]);
   }
 
   private get _maxValue(): string {
@@ -161,7 +159,7 @@ export class FlexSliderCardValuesBar extends LitElement {
       this._handle === 1) {
       return this._sliderToDisplay(this._userModifiedValue);
     }
-    return this._sliderToDisplay(this.maxvalue);
+    return this._sliderToDisplay(this.values[1]);
   }
 
   private _sliderToDisplay(value: number): string {
