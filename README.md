@@ -89,9 +89,6 @@ bubblesactive: true
 ticksactive: true
 direction: ltr
 step: 15
-valuesbar:
-  mintext: Start
-  maxtext: End
 bubbles:
   dragonly: true
 ticks:
@@ -138,8 +135,6 @@ bubblesactive: true
 ticksactive: true
 bubbles:
   unit: C
-  mintext: Min
-  maxtext: Max
 ticks:
   majorticks: 5
   minorticks: 2
@@ -197,11 +192,11 @@ Available when `valuesbaractive: true`.
 
 | Option | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `mintext` | string | No | `""` | Text shown before the minimum value |
-| `maxtext` | string | No | `""` | Text shown before the maximum value |
 | `digits` | `auto` \| `manual` | No | `auto` | Number formatting mode for number entities |
 | `nbdigits` | number | No | derived from `step` or `0` | Number of decimals when `digits: manual` |
 | `unit` | string | No | `""` | Unit suffix |
+
+Legacy `mintext` and `maxtext` keys are accepted for backward compatibility but ignored.
 
 ### `bubbles` options
 
@@ -209,12 +204,12 @@ Available when `bubblesactive: true`.
 
 | Option | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `mintext` | string | No | `""` | Text shown before the minimum bubble value |
-| `maxtext` | string | No | `""` | Text shown before the maximum bubble value |
 | `digits` | `auto` \| `manual` | No | `auto` | Number formatting mode for number entities |
 | `nbdigits` | number | No | derived from `step` or `0` | Number of decimals when `digits: manual` |
 | `unit` | string | No | `""` | Unit suffix |
 | `dragonly` | boolean | No | `false` | Shows bubbles only while dragging |
+
+Legacy `mintext` and `maxtext` keys are accepted for backward compatibility but ignored.
 
 ### `ticks` options
 

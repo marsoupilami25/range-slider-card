@@ -322,16 +322,9 @@ export class FlexSliderCardSlider extends LitElement {
 
   private _sliderToBubble(value: number, handle: number): string {
     const valueToDisplay = this._sliderToBubbleValue(value);
+    const labelStub = this.config.getBubbleTextStub(handle);
 
-    if (handle === 0) {
-      return this.config.mintextBubbles + valueToDisplay + this.config.unitBubbles;
-    }
-    if (handle === this.config.entityCount - 1) {
-      return this.config.maxtextBubbles + valueToDisplay + this.config.unitBubbles;
-    }
-
-    // TODO: define dedicated labels/prefixes for intermediate handles.
-    return valueToDisplay + this.config.unitBubbles;
+    return labelStub + valueToDisplay + this.config.unitBubbles;
   }
 
   private _sliderToBubbleValue(value: number): string {

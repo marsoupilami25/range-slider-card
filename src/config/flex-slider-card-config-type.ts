@@ -58,7 +58,9 @@ export const flexSliderCardVerticalLayoutStruct = union([
 ]);
 
 export type FlexSliderCardValuesBarConfig = {
+  // Legacy config kept for backward compatibility. Ignored at runtime.
   mintext?: string;
+  // Legacy config kept for backward compatibility. Ignored at runtime.
   maxtext?: string;
   digits?: FlexSliderCardDigits;
   nbdigits?: number;
@@ -73,7 +75,9 @@ export const flexSliderCardValuesBarConfigStruct = object({
 });
 
 export type FlexSliderCardBubblesConfig = {
+  // Legacy config kept for backward compatibility. Ignored at runtime.
   mintext?: string;
+  // Legacy config kept for backward compatibility. Ignored at runtime.
   maxtext?: string;
   digits?: FlexSliderCardDigits;
   nbdigits?: number;

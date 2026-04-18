@@ -62,46 +62,23 @@ export class FlexSliderCardValuesBar extends LitElement {
       return nothing;
     }
 
-    let minText: string;
-    let minValue: string;
-    let minIndex: number;
-    let maxText: string;
-    let maxValue: string;
-    let maxIndex: number;
-
-    if (this.config.direction === "ltr") {
-      minText = this.config?.mintextValuesBar || ""; 
-      minValue = this._minValue;
-      minIndex = 0;
-      maxText = this.config?.maxtextValuesBar || "";
-      maxValue = this._maxValue;
-      maxIndex = 1;
-    } else {
-      minText = this.config?.maxtextValuesBar || "";
-      minValue = this._maxValue;
-      minIndex = 1;
-      maxText = this.config?.mintextValuesBar || "";
-      maxValue = this._minValue;
-      maxIndex = 0;
-    }
+    const handlesToDisplay = this.config.entityCount <= 1
+      ? [0]
+      : this.config.direction === "ltr"
+        ? [0, this.config.entityCount - 1]
+        : [this.config.entityCount - 1, 0];
 
     return html`
       <div class="valuesbar">
-        <span>
-          ${minText}
-          <span class=${this._isEditing(minIndex) ? "editing" : ""}>
-            ${minValue}
+        ${handlesToDisplay.map((handle) => html`
+          <span>
+            ${this.config?.getValuesBarTextStub(handle) || ""}
+            <span class=${this._isEditing(handle) ? "editing" : ""}>
+              ${this._getHandleValue(handle)}
+            </span>
+            ${this.config?.unitValuesBar || ""}
           </span>
-          ${this.config?.unitValuesBar || ""}
-        </span>
-
-        <span>
-          ${maxText}
-          <span class=${this._isEditing(maxIndex) ? "editing" : ""}>
-            ${maxValue}
-          </span>
-          ${this.config?.unitValuesBar || ""}
-        </span>
+        `)}
       </div>
     `;
     
@@ -144,22 +121,13 @@ export class FlexSliderCardValuesBar extends LitElement {
       this._handle === handle
     );
   }
-  private get _minValue(): string {
-    if (this._mode === FlexSliderCardValuesBarMode.USERUPDATE && 
-      this._userModifiedValue != undefined && 
-      this._handle === 0) {
-      return this._sliderToDisplay(this._userModifiedValue);  // min value is always the first handle (0)
-    }  
-    return this._sliderToDisplay(this.values[0]);
-  }
-
-  private get _maxValue(): string {
-    if (this._mode === FlexSliderCardValuesBarMode.USERUPDATE && 
-      this._userModifiedValue != undefined && 
-      this._handle === 1) {
+  private _getHandleValue(handle: number): string {
+    if (this._mode === FlexSliderCardValuesBarMode.USERUPDATE &&
+      this._userModifiedValue != undefined &&
+      this._handle === handle) {
       return this._sliderToDisplay(this._userModifiedValue);
     }
-    return this._sliderToDisplay(this.values[1]);
+    return this._sliderToDisplay(this.values[handle]);
   }
 
   private _sliderToDisplay(value: number): string {
