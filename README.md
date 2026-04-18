@@ -33,7 +33,7 @@ The slider manages a single day from `00:00` to `23:59`.
 ![With ticks mark](/assets/ticks.png)   
 - Left-to-right or right-to-left direction   
 ![Reversed direction](/assets/direction.png)   
-- Uses the active Home Assistant theme
+- Uses the active Home Assistant theme   
 ![Home Assistant Theme](/assets/theme.png)
 - Visual editor support   
 ![Visual editor](/assets/configuration.png)   
