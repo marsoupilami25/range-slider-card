@@ -321,24 +321,11 @@ export class FlexSliderCardSlider extends LitElement {
   }
 
   private _sliderToBubble(value: number, handle: number): string {
-    const valueToDisplay = this._sliderToBubbleValue(value);
-    const labelStub = this.config.getBubbleTextStub(handle);
-
-    return labelStub + valueToDisplay + this.config.unitBubbles;
-  }
-
-  private _sliderToBubbleValue(value: number): string {
-    let valueToDisplay: string = "";
-
-    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
-    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
-      valueToDisplay = minutesToTime(value);
-    } else {
-      throw new Error("Unsupported entity type");
-    }
-
-    return valueToDisplay;
+    return this.config.entities[handle].toText(
+      value,
+      this.config.nbdigitsBubbles,
+      this.config.unitBubbles,
+    );
   }
   
 }

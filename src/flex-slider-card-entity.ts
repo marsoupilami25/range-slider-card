@@ -18,13 +18,15 @@ export class FlexSliderCardEntity {
   private _entitytype!: FlexSliderCardEntityType;
   private _service!: FlexSliderCardService;
   private _entityid!: string;
+  private _text!: string;
   private _baselineValue: number | undefined = undefined;
   private _callService: HomeAssistant["callService"] | null = null;
   private _state: FlexSliderCardState | undefined;
   private _datatype!: FlexSliderCardDataType;
 
-  constructor(entityId: string) {
+  constructor(entityId: string, text = "") {
     this._entityid = entityId;
+    this._text = text;
     this._domain = getEntityDomain(this._entityid);
     this._entitytype = getEntityType(this._entityid);
     switch (this._entitytype) {
@@ -72,6 +74,22 @@ export class FlexSliderCardEntity {
 
   public get datatype(): FlexSliderCardDataType {
     return this._datatype
+  }
+
+  public toText(sliderValue: number, nbdigits: number, unit = ""): string {
+    const value = this.toDisplay(sliderValue, nbdigits);
+
+    return this._text ? `${this._text}: ${value}${unit}` : `${value}${unit}`;
+  }
+
+  public toDisplay(sliderValue: number, nbdigits: number): string {
+    if (this._entitytype === FlexSliderCardEntityType.NUMBER) {
+      return Number(sliderValue).toFixed(nbdigits);
+    }
+    if (this._entitytype === FlexSliderCardEntityType.TIME) {
+      return minutesToTime(sliderValue);
+    }
+    throw new Error(`Unexpected entity type '${this._entitytype}'`);
   }
 
   public get sliderValue(): number {

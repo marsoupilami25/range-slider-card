@@ -1,8 +1,7 @@
-import { debuglog, minutesToTime } from "./utils/utils";
+import { debuglog } from "./utils/utils";
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { FlexSliderCardEntityType } from "./utils/entity-management";
 
 export enum FlexSliderCardValuesBarMode {
   DEFAULT = "default",
@@ -72,11 +71,9 @@ export class FlexSliderCardValuesBar extends LitElement {
       <div class="valuesbar">
         ${handlesToDisplay.map((handle) => html`
           <span>
-            ${this.config?.getValuesBarTextStub(handle) || ""}
             <span class=${this._isEditing(handle) ? "editing" : ""}>
               ${this._getHandleValue(handle)}
             </span>
-            ${this.config?.unitValuesBar || ""}
           </span>
         `)}
       </div>
@@ -122,22 +119,24 @@ export class FlexSliderCardValuesBar extends LitElement {
     );
   }
   private _getHandleValue(handle: number): string {
+    if (!this.config) {
+      throw new Error("Config not initialized");
+    }
+
     if (this._mode === FlexSliderCardValuesBarMode.USERUPDATE &&
       this._userModifiedValue != undefined &&
       this._handle === handle) {
-      return this._sliderToDisplay(this._userModifiedValue);
+      return this.config.entities[handle].toText(
+        this._userModifiedValue,
+        this.config.nbdigitsValuesBar,
+        this.config.unitValuesBar,
+      );
     }
-    return this._sliderToDisplay(this.values[handle]);
-  }
-
-  private _sliderToDisplay(value: number): string {
-    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      return Number(value).toFixed(Number(this.config.nbdigitsValuesBar));
-    }
-    if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
-      return minutesToTime(value);
-    }
-    throw new Error("Unsupported entity type");
+    return this.config.entities[handle].toText(
+      this.values[handle],
+      this.config.nbdigitsValuesBar,
+      this.config.unitValuesBar,
+    );
   }
 
 }
