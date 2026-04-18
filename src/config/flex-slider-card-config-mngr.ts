@@ -144,21 +144,8 @@ export class FlexSliderCardConfigMngr {
       this._config.valuesbar.unit = "";
     }
 
-    assertOptionalString(this._config.valuesbar.mintext, "mintext");
-    if (this._config.valuesbar.mintext == null) {
-      this._config.valuesbar.mintext = "";
-    }
-    if (this._config.valuesbar.mintext !== "") {
-      this._config.valuesbar.mintext = this._config.valuesbar.mintext + ":";
-    }
-
-    assertOptionalString(this._config.valuesbar.maxtext, "maxtext");
-    if (this._config.valuesbar.maxtext == null) {
-      this._config.valuesbar.maxtext = "";
-    }
-    if (this._config.valuesbar.maxtext !== "") {
-      this._config.valuesbar.maxtext = this._config.valuesbar.maxtext + ":";
-    }
+    delete this._config.valuesbar.mintext;
+    delete this._config.valuesbar.maxtext;
   }
 
   protected _updateValuesBar(hass: HomeAssistant): void { }
@@ -183,18 +170,8 @@ export class FlexSliderCardConfigMngr {
     return this._config.valuesbar.unit;
   }
 
-  public get mintextValuesBar(): string {
-    if (this._config.valuesbar?.mintext == null) {
-      throw new Error("Min text is not defined in config");
-    }
-    return this._config.valuesbar.mintext;
-  }
-
-  public get maxtextValuesBar(): string {
-    if (this._config.valuesbar?.maxtext == null) {
-      throw new Error("Max text is not defined in config");
-    }
-    return this._config.valuesbar.maxtext;
+  public getValuesBarTextStub(handle: number): string {
+    return this._getLegacyMinMaxTextStub(handle, "valuesbar");
   }
 
   /****************************************************/
@@ -231,21 +208,8 @@ export class FlexSliderCardConfigMngr {
       this._config.bubbles.unit = "";
     }
 
-    assertOptionalString(this._config.bubbles.mintext, "mintext");
-    if (this._config.bubbles.mintext == null) {
-      this._config.bubbles.mintext = "";
-    }
-    if (this._config.bubbles.mintext !== "") {
-      this._config.bubbles.mintext = this._config.bubbles.mintext + ":";
-    }
-
-    assertOptionalString(this._config.bubbles.maxtext, "maxtext");
-    if (this._config.bubbles.maxtext == null) {
-      this._config.bubbles.maxtext = "";
-    }
-    if (this._config.bubbles.maxtext !== "") {
-      this._config.bubbles.maxtext = this._config.bubbles.maxtext + ":";
-    }
+    delete this._config.bubbles.mintext;
+    delete this._config.bubbles.maxtext;
 
     assertOptionalBoolean(this._config.bubbles.dragonly, "dragonly");
     if (this._config.bubbles.dragonly == null) {
@@ -275,18 +239,8 @@ export class FlexSliderCardConfigMngr {
     return this._config.bubbles.unit;
   }
 
-  public get mintextBubbles(): string {
-    if (this._config.bubbles?.mintext == null) {
-      throw new Error("Min text is not defined in config");
-    }
-    return this._config.bubbles.mintext;
-  }
-
-  public get maxtextBubbles(): string {
-    if (this._config.bubbles?.maxtext == null) {
-      throw new Error("Max text is not defined in config");
-    }
-    return this._config.bubbles.maxtext;
+  public getBubbleTextStub(handle: number): string {
+    return this._getLegacyMinMaxTextStub(handle, "bubbles");
   }
 
   public get isDragOnlyBubbles(): boolean {
@@ -604,5 +558,14 @@ export class FlexSliderCardConfigMngr {
 
   public entitiesIsUpdated(): boolean {
     return this._entities.some((entity) => entity.isUpdated());
+  }
+
+  private _getLegacyMinMaxTextStub(handle: number, section: "valuesbar" | "bubbles"): string {
+    if (handle < 0 || handle >= this.entityCount) {
+      throw new Error(`Handle index ${handle} is out of bounds for ${section}`);
+    }
+
+    // TODO: Replace this stub with per-handle labels if a new label API is added later.
+    return "";
   }
 }

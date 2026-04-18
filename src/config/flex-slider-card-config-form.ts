@@ -194,19 +194,6 @@ const valuesBarSchema = memoizeOne((digitsValuesBar: string): HaFormSchema[] => 
           },
         ],
       },
-      {
-        type: "grid",
-        schema: [
-          {
-            name: "mintext",
-            selector: { text: {} },
-          },
-          {
-            name: "maxtext",
-            selector: { text: {} },
-          },
-        ],
-      },
     ],
   }
 ]);
@@ -253,19 +240,6 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
               number: { mode: "box", min: 0 },
             },
             disabled: digitsBubbles !== "manual",
-          },
-        ],
-      },
-      {
-        type: "grid",
-        schema: [
-          {
-            name: "mintext",
-            selector: { text: {} },
-          },
-          {
-            name: "maxtext",
-            selector: { text: {} },
           },
         ],
       },
