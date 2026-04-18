@@ -466,6 +466,7 @@ export class FlexSliderCardConfigMngr {
     const entities = Array.isArray(this._config.entities)
       ? this._config.entities.map((handleConfig) => ({
           entity: handleConfig?.entity ?? "",
+          text: handleConfig?.text ?? "",
         }))
       : [];
 
@@ -482,14 +483,14 @@ export class FlexSliderCardConfigMngr {
       if (this._config.entities?.[0] !== undefined) {
         throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
       }
-      entities[0] = { entity: this._config.entity_min };
+      entities[0] = { entity: this._config.entity_min, text: "" };
     }
 
     if (this._config.entity_max !== undefined) {
       if (this._config.entities?.[1] !== undefined) {
         throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
       }
-      entities[1] = { entity: this._config.entity_max };
+      entities[1] = { entity: this._config.entity_max, text: "" };
     }
 
     this._config.entities = entities;
@@ -505,6 +506,7 @@ export class FlexSliderCardConfigMngr {
       if (!handleConfig?.entity) {
         throw new Error(`You need to define 'entities[${index}].entity'`);
       }
+      assertOptionalString(handleConfig.text, `entities[${index}].text`);
       if (!this._isValidEntityId(handleConfig.entity)) {
         throw new Error(`Invalid entity format for handle #${index + 1}. Expected domain.object_id`);
       }

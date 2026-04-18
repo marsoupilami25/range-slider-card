@@ -12,6 +12,6 @@ export const flexSliderCardConfigStub: FlexSliderCardConfig = {
   max: 100,
   step: 1,
   entities: [
-    { entity: "" },
+    { entity: "", text: "" },
   ],
 };

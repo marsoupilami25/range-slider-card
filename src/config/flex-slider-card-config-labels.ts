@@ -4,6 +4,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   valuesbaractive: "Enable values bar",
   bubblesactive: "Enable bubbles",
   entity: "Entity",
+  text: "Text",
   min: "Min (Number only)",
   max: "Max (Number only)",
   step: "Step (Number only)",
