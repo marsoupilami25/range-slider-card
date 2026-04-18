@@ -259,6 +259,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!this._config) {
       return;
     }
+    if (!this._config.supportsLegacyTwoHandleRuntime) {
+      this._applyCardMod();
+      return;
+    }
     if (this._config.hasValuesBar) {
       this._slider.setCallbacks(this._valuesBar!.setMode, this._valuesBar!.setValue);
     }
@@ -308,6 +312,16 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
     if (!this._config.entitiesExist()) {
       return html`<ha-card><div class="card-content">Entities not found</div></ha-card>`;
+    }
+
+    if (!this._config.supportsLegacyTwoHandleRuntime) {
+      return html`
+        <ha-card>
+          <div class="card-content">
+            Multi-handle runtime is not implemented yet. The editor supports ${this._config.entityCount} handles, but rendering still expects exactly 2.
+          </div>
+        </ha-card>
+      `;
     }
 
     const hasValuesBar = this._config.hasValuesBar;

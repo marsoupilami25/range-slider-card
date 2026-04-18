@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { assign, union, literal, refine, number, object, optional, string, boolean, any } from "superstruct";
+import { assign, union, literal, number, object, optional, string, boolean, any, array } from "superstruct";
 import { lovelaceCardConfigStruct } from "../type/ha";
 
 export type FlexSliderCardFormat = "std" | "compact";
@@ -102,6 +102,13 @@ export const flexSliderCardTicksConfigStruct = object({
   minorticks: optional(number()),
 });
 
+export type FlexSliderCardHandleConfig = {
+  entity: string;
+};
+export const flexSliderCardHandleConfigStruct = object({
+  entity: string(),
+});
+
 export type FlexSliderCardConfig = LovelaceCardConfig &
 {
   /* display options */
@@ -120,8 +127,11 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   verticalheight?: number;
 
  /* bahavioral */
-  entity_min: string;
-  entity_max: string;
+  entities?: FlexSliderCardHandleConfig[];
+  /* legacy entities configuration start */
+  entity_min?: string;
+  entity_max?: string;
+  /* legacy entities configuration end */
   min?: number;
   max?: number;
   step?: number;
@@ -148,8 +158,11 @@ export const flexSliderCardConfigStruct = assign(
     verticalheight: optional(number()),
 
     /* behavioral */
-    entity_min: string(),
-    entity_max: string(),
+    entities: optional(array(flexSliderCardHandleConfigStruct)),
+    /* legacy entities configuration start */
+    entity_min: optional(string()),
+    entity_max: optional(string()),
+    /* legacy entities configuration end */
     min: optional(number()),
     max: optional(number()),
     step: optional(number()),

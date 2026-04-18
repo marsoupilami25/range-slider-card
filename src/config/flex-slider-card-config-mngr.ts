@@ -21,13 +21,13 @@ import { FlexSliderCardEntityType } from "../utils/entity-management";
 export class FlexSliderCardConfigMngr {
 
   private _config: FlexSliderCardConfig;
-  private _entities: { [suffix: string]: FlexSliderCardEntity };
+  private _entities: FlexSliderCardEntity[];
   private _entitytype?: FlexSliderCardEntityType;
 
   constructor(config: FlexSliderCardConfig) {
     this._config = structuredClone(config);      // user configuration object
-    this._entities = {};        // entities objects, with suffix as key ("min" and "max")
-    this._entitytype = undefined;    // entity type: "number" or "time", depending on the domains of entity_min and entity_max
+    this._entities = [];        // entities objects ordered like handles in config.entities
+    this._entitytype = undefined;    // entity type: "number" or "time", shared by all handles
 
     this._checkFormat();
     this._checkTitle();
@@ -509,31 +509,64 @@ export class FlexSliderCardConfigMngr {
   }
 
   protected _checkEntities(): void {
+    const entities = Array.isArray(this._config.entities)
+      ? this._config.entities.map((handleConfig) => ({
+          entity: handleConfig?.entity ?? "",
+        }))
+      : [];
 
-    if (!this._config.entity_min || !this._config.entity_max) {
-      throw new Error("You need to define 'entity_min' and 'entity_max'");
+    // legacy entities configuration start
+    if (this._config.entity_min !== undefined && this._config.entity_max === undefined) {
+      throw new Error("Cannot use 'entity_min' without 'entity_max'");
     }
 
-    if (!this._isValidEntityId(this._config.entity_min)) {
-      throw new Error("Invalid entity min format. Expected domain.object_id");
+    if (this._config.entity_max !== undefined && this._config.entity_min === undefined) {
+      throw new Error("Cannot use 'entity_max' without 'entity_min'");
     }
 
-    if (!this._isValidEntityId(this._config.entity_max)) {
-      throw new Error("Invalid entity max format. Expected domain.object_id");
+    if (this._config.entity_min !== undefined) {
+      if (this._config.entities?.[0] !== undefined) {
+        throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
+      }
+      entities[0] = { entity: this._config.entity_min };
     }
 
-    this._entities.min = new FlexSliderCardEntity(this, "min");
-    this._entities.max = new FlexSliderCardEntity(this, "max");
-
-    this._entitytype = this._entities.min.entitytype;
-    if (this._entities.max.entitytype != this._entitytype) {
-      throw new Error("'entity_min' and 'entity_max' shall have compatible domains");
+    if (this._config.entity_max !== undefined) {
+      if (this._config.entities?.[1] !== undefined) {
+        throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
+      }
+      entities[1] = { entity: this._config.entity_max };
     }
 
+    this._config.entities = entities;
+    delete this._config.entity_min;
+    delete this._config.entity_max;
+    // legacy entities configuration end
+
+    if (!Array.isArray(this._config.entities) || this._config.entities.length === 0) {
+      throw new Error("You need to define at least one entity in 'entities'");
+    }
+
+    this._entities = this._config.entities.map((handleConfig, index) => {
+      if (!handleConfig?.entity) {
+        throw new Error(`You need to define 'entities[${index}].entity'`);
+      }
+      if (!this._isValidEntityId(handleConfig.entity)) {
+        throw new Error(`Invalid entity format for handle #${index + 1}. Expected domain.object_id`);
+      }
+      return new FlexSliderCardEntity(this, String(index));
+    });
+
+    this._entitytype = this._entities[0].entitytype;
+    for (const entity of this._entities) {
+      if (entity.entitytype !== this._entitytype) {
+        throw new Error("All configured entities must use compatible domains");
+      }
+    }
   }
 
   protected _updateEntities(hass: HomeAssistant): void {
-    Object.values(this._entities).forEach(entity => entity.update(hass));
+    this._entities.forEach((entity) => entity.update(hass));
   }
 
   protected _resetEntities(): void {
@@ -543,7 +576,19 @@ export class FlexSliderCardConfigMngr {
   }
 
   public getEntityConfig(suffix: string): string {
-    return this._config[`entity_${suffix}`];
+    if (suffix === "min") {
+      return this._getEntityConfigAt(0);
+    }
+    if (suffix === "max") {
+      return this._getEntityConfigAt(1);
+    }
+
+    const index = Number(suffix);
+    if (!Number.isInteger(index)) {
+      throw new Error(`Invalid entity suffix '${suffix}'`);
+    }
+
+    return this._getEntityConfigAt(index);
   }
 
   public get entitytype(): FlexSliderCardEntityType {
@@ -554,23 +599,46 @@ export class FlexSliderCardConfigMngr {
   }
 
   public get entities(): { [suffix: string]: FlexSliderCardEntity } {
-    return this._entities;
+    const entities: { [suffix: string]: FlexSliderCardEntity } = {};
+    if (this._entities[0]) {
+      entities.min = this._entities[0];
+    }
+    if (this._entities[1]) {
+      entities.max = this._entities[1];
+    }
+    return entities;
+  }
+
+  public get entityCount(): number {
+    return this._entities.length;
+  }
+
+  public get supportsLegacyTwoHandleRuntime(): boolean {
+    return this._entities.length === 2;
   }
 
   public entitiesExist(): boolean {
-    return Object.values(this._entities).every(entity => entity.exists());
+    return this._entities.every((entity) => entity.exists());
   }
 
   public entitiesResetBaseline(): void {
-    Object.values(this._entities).forEach(entity => entity.resetBaseline());
+    this._entities.forEach((entity) => entity.resetBaseline());
   }
 
   public entitiesSetBaseline(): void {
-    Object.values(this._entities).forEach(entity => entity.setBaseline());
+    this._entities.forEach((entity) => entity.setBaseline());
   }
 
   public entitiesIsUpdated(): boolean {
-    return Object.values(this._entities).some(entity => entity.isUpdated());
+    return this._entities.some((entity) => entity.isUpdated());
+  }
+
+  private _getEntityConfigAt(index: number): string {
+    const entityConfig = this._config.entities?.[index]?.entity;
+    if (!entityConfig) {
+      throw new Error(`Entity handle #${index + 1} is not available`);
+    }
+    return entityConfig;
   }
 
 }
