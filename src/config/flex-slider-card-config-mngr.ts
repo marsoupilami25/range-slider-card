@@ -6,6 +6,8 @@ import {
   assertFlexSliderCardDigits,
   assertFlexSliderCardDirection,
   FlexSliderCardDirection,
+  assertFlexSliderCardHandlesBehavior,
+  FlexSliderCardHandlesBehavior,
   assertFlexSliderCardOrientation,
   FlexSliderCardOrientation,
   assertFlexSliderCardVerticalLayout,
@@ -388,6 +390,11 @@ export class FlexSliderCardConfigMngr {
     }
     assertFlexSliderCardVerticalLayout(this._config.verticallayout);
 
+    if (this._config.handlesbehavior == null) {
+      this._config.handlesbehavior = "fixed";
+    }
+    assertFlexSliderCardHandlesBehavior(this._config.handlesbehavior);
+
     if (this._config.orientation === "horizontal") {
       assertOptionalNumber(this._config.horizontalwidth, "horizontalwidth");
       this._config.horizontalwidth ??= 90;
@@ -446,6 +453,13 @@ export class FlexSliderCardConfigMngr {
       throw new Error("Vertical layout is not defined in config");
     }
     return this._config.verticallayout;
+  }
+
+  public get handlesBehavior(): FlexSliderCardHandlesBehavior {
+    if (this._config.handlesbehavior == null) {
+      throw new Error("Handles behavior is not defined in config");
+    }
+    return this._config.handlesbehavior;
   }
 
   public get gridRows(): number | string | undefined {

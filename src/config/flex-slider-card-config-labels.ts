@@ -10,6 +10,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   min: "Min (Number only)",
   max: "Max (Number only)",
   step: "Step (Number only)",
+  handlesbehavior: "Handle behavior",
   unit: "Unit", 
   showtext: "Show text",
   digits: "Digits Mode",

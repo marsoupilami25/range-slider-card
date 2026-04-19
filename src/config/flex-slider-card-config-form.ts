@@ -351,6 +351,24 @@ export const connectEndSchema: HaFormSchema[] = [
   },
 ];
 
+export const handlesBehaviorSchema: HaFormSchema[] = [
+  {
+    name: "handlesbehavior",
+    selector: {
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "unconstrained", label: "Unconstrained" },
+          { value: "flexible", label: "Flexible" },
+          { value: "fixed", label: "Fixed" },
+        ],
+      },
+    },
+    required: false,
+    default: "fixed",
+  },
+];
+
 export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,
   hasTicks: boolean,

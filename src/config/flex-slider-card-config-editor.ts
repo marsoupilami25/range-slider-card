@@ -16,7 +16,7 @@ import {
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
 import { HaFormSchema } from "../type/ha";
-import { computeSchema, connectEndSchema, handleSchema } from "./flex-slider-card-config-form";
+import { computeSchema, connectEndSchema, handleSchema, handlesBehaviorSchema } from "./flex-slider-card-config-form";
 import { flexSliderCardConfigLabels } from "./flex-slider-card-config-labels";
 import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
 
@@ -115,6 +115,13 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .section-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       flex-shrink: 0;
     }
 
@@ -239,24 +246,37 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
                     <p class="section-description">
                       Configure one or more entities. Every handle must use a compatible domain.
                     </p>
-                    <div class="section-actions">
-                      <button
-                        class="action-button icon-button"
-                        type="button"
-                        aria-label="Remove last entity"
-                        ?disabled=${entities.length === 1}
-                        @click=${this._removeLastHandle}
-                      >
-                        -
-                      </button>
-                      <button
-                        class="action-button icon-button"
-                        type="button"
-                        aria-label="Add entity"
-                        @click=${this._addHandle}
-                      >
-                        +
-                      </button>
+                    <div class="section-tools">
+                      ${entities.length > 1
+                        ? html`
+                            <ha-form
+                              .hass=${this.hass}
+                              .data=${this._config}
+                              .schema=${handlesBehaviorSchema}
+                              .computeLabel=${this._computeLabel}
+                              @value-changed=${this._handleConfigChanged}
+                            ></ha-form>
+                          `
+                        : nothing}
+                      <div class="section-actions">
+                        <button
+                          class="action-button icon-button"
+                          type="button"
+                          aria-label="Remove last entity"
+                          ?disabled=${entities.length === 1}
+                          @click=${this._removeLastHandle}
+                        >
+                          -
+                        </button>
+                        <button
+                          class="action-button icon-button"
+                          type="button"
+                          aria-label="Add entity"
+                          @click=${this._addHandle}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   </div>
 
