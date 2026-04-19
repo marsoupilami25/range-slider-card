@@ -130,12 +130,14 @@ export class FlexSliderCardValuesBar extends LitElement {
         this._userModifiedValue,
         this.config.nbdigitsValuesBar,
         this.config.unitValuesBar,
+        this.config.showTextValuesBar,
       );
     }
     return this.config.entities[handle].toText(
       this.values[handle],
       this.config.nbdigitsValuesBar,
       this.config.unitValuesBar,
+      this.config.showTextValuesBar,
     );
   }
 

@@ -34,6 +34,20 @@ export function getLegacyHandleText(
   return undefined;
 }
 
+export function hasLegacyValuesBarTextConfig(config?: FlexSliderCardConfig): boolean {
+  return (
+    hasConfiguredText(config?.valuesbar?.mintext) ||
+    hasConfiguredText(config?.valuesbar?.maxtext)
+  );
+}
+
+export function hasLegacyBubblesTextConfig(config?: FlexSliderCardConfig): boolean {
+  return (
+    hasConfiguredText(config?.bubbles?.mintext) ||
+    hasConfiguredText(config?.bubbles?.maxtext)
+  );
+}
+
 export function hasLegacyEntityTextConfig(config?: FlexSliderCardConfig): boolean {
   return getLegacyHandleText(config, 0) !== undefined || getLegacyHandleText(config, 1) !== undefined;
 }

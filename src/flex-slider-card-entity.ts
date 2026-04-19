@@ -76,10 +76,10 @@ export class FlexSliderCardEntity {
     return this._datatype
   }
 
-  public toText(sliderValue: number, nbdigits: number, unit = ""): string {
+  public toText(sliderValue: number, nbdigits: number, unit = "", showText = true): string {
     const value = this.toDisplay(sliderValue, nbdigits);
 
-    return this._text ? `${this._text}: ${value}${unit}` : `${value}${unit}`;
+    return showText && this._text ? `${this._text}: ${value}${unit}` : `${value}${unit}`;
   }
 
   public toDisplay(sliderValue: number, nbdigits: number): string {
