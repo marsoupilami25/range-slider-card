@@ -256,7 +256,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
                         <ha-form
                           .hass=${this.hass}
                           .data=${handleConfig}
-                          .schema=${handleSchema}
+                          .schema=${this._getHandleSchema(index)}
                           .computeLabel=${this._computeHandleLabel(index)}
                           @value-changed=${(ev: CustomEvent) => this._handleHandleChanged(ev, index)}
                         ></ha-form>
@@ -400,6 +400,29 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       entity: handle?.entity ?? "",
       text: handle?.text ?? "",
     };
+  }
+
+  private _getHandleSchema(index: number): HaFormSchema[] {
+    const excludedEntities = (this._config.entities ?? [])
+      .map((handle, handleIndex) => handleIndex === index ? "" : handle.entity ?? "")
+      .filter((entityId) => entityId !== "");
+
+    return handleSchema.map((schema) => {
+      if (!("name" in schema) || schema.name !== "entity") {
+        return schema;
+      }
+
+      return {
+        ...schema,
+        selector: {
+          ...schema.selector,
+          entity: {
+            ...schema.selector.entity,
+            exclude_entities: excludedEntities,
+          },
+        },
+      };
+    });
   }
 
   private _createEmptyHandle(): FlexSliderCardHandleConfig {
