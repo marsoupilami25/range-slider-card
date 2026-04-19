@@ -467,6 +467,13 @@ export class FlexSliderCardConfigMngr {
     return this.isCompact ? 1 : 2;
   }
 
+  public get connect(): boolean[] {
+    return [
+      ...this._config.entities!.map((handleConfig) => handleConfig.connectprevious!),
+      this._config.connectend!,
+    ];
+  }
+
   /****************************************************/
   /* entities                                         */
   /****************************************************/
