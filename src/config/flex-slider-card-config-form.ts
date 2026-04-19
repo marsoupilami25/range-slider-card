@@ -325,9 +325,29 @@ export const handleSchema: HaFormSchema[] = [
     },
   },
   {
-    name: "text",
+    type: "grid",
+    name: "",
+    schema: [
+      {
+        name: "text",
+        required: false,
+        selector: { text: {} },
+      },
+      {
+        name: "connectprevious",
+        required: false,
+        selector: { boolean: {} },
+      },
+    ],
+  },
+];
+
+export const connectEndSchema: HaFormSchema[] = [
+  {
+    name: "connectend",
     required: false,
-    selector: { text: {} },
+    selector: { boolean: {} },
+    default: false,
   },
 ];
 

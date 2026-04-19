@@ -113,10 +113,12 @@ export const flexSliderCardTicksConfigStruct = object({
 export type FlexSliderCardHandleConfig = {
   entity: string;
   text?: string;
+  connectprevious?: boolean;
 };
 export const flexSliderCardHandleConfigStruct = object({
   entity: string(),
   text: optional(string()),
+  connectprevious: optional(boolean()),
 });
 
 export type FlexSliderCardConfig = LovelaceCardConfig &
@@ -138,6 +140,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
 
  /* bahavioral */
   entities?: FlexSliderCardHandleConfig[];
+  connectend?: boolean;
   /* legacy entities configuration start */
   entity_min?: string;
   entity_max?: string;
@@ -169,6 +172,7 @@ export const flexSliderCardConfigStruct = assign(
 
     /* behavioral */
     entities: optional(array(flexSliderCardHandleConfigStruct)),
+    connectend: optional(boolean()),
     /* legacy entities configuration start */
     entity_min: optional(string()),
     entity_max: optional(string()),

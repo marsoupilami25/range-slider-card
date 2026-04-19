@@ -16,7 +16,7 @@ import {
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
 import { HaFormSchema } from "../type/ha";
-import { computeSchema, handleSchema } from "./flex-slider-card-config-form";
+import { computeSchema, connectEndSchema, handleSchema } from "./flex-slider-card-config-form";
 import { flexSliderCardConfigLabels } from "./flex-slider-card-config-labels";
 import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
 
@@ -273,6 +273,14 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
                       </div>
                     `)}
                   </div>
+
+                  <ha-form
+                    .hass=${this.hass}
+                    .data=${this._config}
+                    .schema=${connectEndSchema}
+                    .computeLabel=${this._computeLabel}
+                    @value-changed=${this._handleConfigChanged}
+                  ></ha-form>
                 </section>
               `}
         </div>
@@ -296,14 +304,15 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     }
     this._error = undefined;
 
+    const normalizedConfig = this._normalizeConfig(config);
+
     if (hasAnyLegacyEntityConfig) {
-      const normalizedConfig = this._normalizeConfig(config);
       this._config = normalizedConfig;
       fireEvent(this, "config-changed", { config: normalizedConfig });
       return;
     }
     // legacy entities configuration end
-    this._config = config;
+    this._config = normalizedConfig;
   }
 
   /****************************************************/
@@ -406,37 +415,68 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
   /****************************************************/
 
   private _normalizeHandle(handle?: FlexSliderCardHandleConfig): FlexSliderCardHandleConfig {
-    return {
+    const normalizedHandle: FlexSliderCardHandleConfig = {
       entity: handle?.entity ?? "",
       text: handle?.text ?? "",
     };
+
+    if (handle?.connectprevious !== undefined) {
+      normalizedHandle.connectprevious = handle.connectprevious;
+    }
+
+    return normalizedHandle;
   }
 
   private _getHandleSchema(index: number): HaFormSchema[] {
+    const entityCount = this._config.entities?.length ?? 0;
     const excludedEntities = (this._config.entities ?? [])
       .map((handle, handleIndex) => handleIndex === index ? "" : handle.entity ?? "")
       .filter((entityId) => entityId !== "");
 
     return handleSchema.map((schema) => {
-      if (!("name" in schema) || schema.name !== "entity") {
-        return schema;
+      if ("name" in schema && schema.name === "entity") {
+        return {
+          ...schema,
+          selector: {
+            ...schema.selector,
+            entity: {
+              ...schema.selector.entity,
+              exclude_entities: excludedEntities,
+            },
+          },
+        };
       }
 
-      return {
-        ...schema,
-        selector: {
-          ...schema.selector,
-          entity: {
-            ...schema.selector.entity,
-            exclude_entities: excludedEntities,
-          },
-        },
-      };
+      if (schema.type === "grid" && Array.isArray(schema.schema)) {
+        return {
+          ...schema,
+          schema: schema.schema.map((fieldSchema) => {
+            if (!("name" in fieldSchema) || fieldSchema.name !== "connectprevious") {
+              return fieldSchema;
+            }
+
+            return {
+              ...fieldSchema,
+              default: this._getDefaultConnectPrevious(index, entityCount),
+            };
+          }),
+        };
+      }
+
+      return schema;
     });
   }
 
   private _createEmptyHandle(): FlexSliderCardHandleConfig {
     return createEmptyLegacyHandle();
+  }
+
+  private _getDefaultConnectPrevious(index: number, entityCount: number): boolean {
+    if (entityCount <= 1) {
+      return true;
+    }
+
+    return index > 0;
   }
 
   /****************************************************/

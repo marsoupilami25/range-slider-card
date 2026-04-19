@@ -502,8 +502,14 @@ export class FlexSliderCardConfigMngr {
       ? this._config.entities.map((handleConfig) => ({
           entity: handleConfig?.entity ?? "",
           text: handleConfig?.text ?? "",
+          connectprevious: handleConfig?.connectprevious,
         }))
       : [];
+
+    assertOptionalBoolean(this._config.connectend, "connectend");
+    if (this._config.connectend == null) {
+      this._config.connectend = false;
+    }
 
     // legacy entities configuration start
     if (this._config.entity_min !== undefined && this._config.entity_max === undefined) {
@@ -552,11 +558,17 @@ export class FlexSliderCardConfigMngr {
       throw new Error("You need to define at least one entity in 'entities'");
     }
 
+    const entityCount = this._config.entities.length;
+
     this._entities = this._config.entities.map((handleConfig, index) => {
       if (!handleConfig?.entity) {
         throw new Error(`You need to define 'entities[${index}].entity'`);
       }
       assertOptionalString(handleConfig.text, `entities[${index}].text`);
+      assertOptionalBoolean(handleConfig.connectprevious, `entities[${index}].connectprevious`);
+      if (handleConfig.connectprevious == null) {
+        handleConfig.connectprevious = entityCount <= 1 ? true : index > 0;
+      }
       if (!this._isValidEntityId(handleConfig.entity)) {
         throw new Error(`Invalid entity format for handle #${index + 1}. Expected domain.object_id`);
       }
