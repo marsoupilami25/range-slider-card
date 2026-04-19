@@ -17,6 +17,12 @@ import {
   assertOptionalBoolean
 } from "../utils/utils";
 import { FlexSliderCardEntityType } from "../utils/entity-management";
+import {
+  clearLegacyEntityTexts,
+  getLegacyHandleText,
+  hasEntityTextConflict,
+  setLegacyHandle,
+} from "../utils/config-legacy-helpers";
 
 export class FlexSliderCardConfigMngr {
 
@@ -144,8 +150,6 @@ export class FlexSliderCardConfigMngr {
       this._config.valuesbar.unit = "";
     }
 
-    delete this._config.valuesbar.mintext;
-    delete this._config.valuesbar.maxtext;
   }
 
   protected _updateValuesBar(hass: HomeAssistant): void { }
@@ -203,9 +207,6 @@ export class FlexSliderCardConfigMngr {
     if (this._config.bubbles.unit == null) {
       this._config.bubbles.unit = "";
     }
-
-    delete this._config.bubbles.mintext;
-    delete this._config.bubbles.maxtext;
 
     assertOptionalBoolean(this._config.bubbles.dragonly, "dragonly");
     if (this._config.bubbles.dragonly == null) {
@@ -475,19 +476,34 @@ export class FlexSliderCardConfigMngr {
       if (this._config.entities?.[0] !== undefined) {
         throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
       }
-      entities[0] = { entity: this._config.entity_min, text: "" };
+      setLegacyHandle(entities, 0, { entity: this._config.entity_min });
     }
 
     if (this._config.entity_max !== undefined) {
       if (this._config.entities?.[1] !== undefined) {
         throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
       }
-      entities[1] = { entity: this._config.entity_max, text: "" };
+      setLegacyHandle(entities, 1, { entity: this._config.entity_max });
+    }
+
+    if (hasEntityTextConflict(this._config)) {
+      throw new Error("Cannot use both legacy 'mintext/maxtext' and 'entities[].text'");
+    }
+
+    const minText = getLegacyHandleText(this._config, 0);
+    if (minText !== undefined) {
+      setLegacyHandle(entities, 0, { text: minText });
+    }
+
+    const maxText = getLegacyHandleText(this._config, 1);
+    if (maxText !== undefined) {
+      setLegacyHandle(entities, 1, { text: maxText });
     }
 
     this._config.entities = entities;
     delete this._config.entity_min;
     delete this._config.entity_max;
+    clearLegacyEntityTexts(this._config);
     // legacy entities configuration end
 
     if (!Array.isArray(this._config.entities) || this._config.entities.length === 0) {

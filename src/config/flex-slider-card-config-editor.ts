@@ -5,6 +5,14 @@ import {
   FlexSliderCardConfig,
   FlexSliderCardHandleConfig,
 } from "./flex-slider-card-config-type";
+import {
+  clearLegacyEntityTexts,
+  createEmptyLegacyHandle,
+  getLegacyHandleText,
+  hasEntityTextConflict,
+  hasLegacyEntityConfig,
+  setLegacyHandle,
+} from "../utils/config-legacy-helpers";
 import { HaFormSchema } from "../type/ha";
 import { computeSchema, handleSchema } from "./flex-slider-card-config-form";
 import { flexSliderCardConfigLabels } from "./flex-slider-card-config-labels";
@@ -276,7 +284,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
 
   public setConfig(config: FlexSliderCardConfig): void {
     // legacy entities configuration start
-    const hasLegacyEntityConfig = this._hasLegacyEntityConfig(config);
+    const hasAnyLegacyEntityConfig = this._hasLegacyEntityConfig(config);
     const legacyEntityConflictError = this._getLegacyEntityConflictError(config);
 
     if (legacyEntityConflictError) {  
@@ -286,7 +294,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     }
     this._error = undefined;
 
-    if (hasLegacyEntityConfig) {
+    if (hasAnyLegacyEntityConfig) {
       const normalizedConfig = this._normalizeConfig(config);
       this._config = normalizedConfig;
       fireEvent(this, "config-changed", { config: normalizedConfig });
@@ -426,7 +434,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
   }
 
   private _createEmptyHandle(): FlexSliderCardHandleConfig {
-    return { entity: "", text: "" };
+    return createEmptyLegacyHandle();
   }
 
   /****************************************************/
@@ -461,7 +469,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
 
   private _hasLegacyEntityConfig(config?: FlexSliderCardConfig): boolean {
     // legacy entities configuration start
-    return config?.entity_min !== undefined || config?.entity_max !== undefined;
+    return hasLegacyEntityConfig(config);
     // legacy entities configuration end
   }
 
@@ -477,6 +485,10 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
 
     if (config?.entity_min !== undefined && config.entities?.[0] !== undefined) {
       return "Cannot use both 'entity_min/entity_max' and 'entities' in the editor configuration";
+    }
+
+    if (hasEntityTextConflict(config)) {
+      return "Cannot use both legacy 'mintext/maxtext' and 'entities[].text' in the editor configuration";
     }
 
     return undefined;
@@ -498,11 +510,21 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
 
     // legacy entities configuration start
     if (entity_min !== undefined) {
-      entities[0] = { entity: entity_min };
+      setLegacyHandle(entities, 0, { entity: entity_min });
     }
 
     if (entity_max !== undefined) {
-      entities[1] = { entity: entity_max };
+      setLegacyHandle(entities, 1, { entity: entity_max });
+    }
+
+    const minText = getLegacyHandleText(config, 0);
+    if (minText !== undefined) {
+      setLegacyHandle(entities, 0, { text: minText });
+    }
+
+    const maxText = getLegacyHandleText(config, 1);
+    if (maxText !== undefined) {
+      setLegacyHandle(entities, 1, { text: maxText });
     }
     // legacy entities configuration end
 
@@ -510,9 +532,15 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       entities.push(this._createEmptyHandle());
     }
 
-    return {
+    const normalizedConfig: FlexSliderCardConfig = {
       ...rest,
       entities,
+    };
+
+    clearLegacyEntityTexts(normalizedConfig);
+
+    return {
+      ...normalizedConfig,
     };
   }
 
