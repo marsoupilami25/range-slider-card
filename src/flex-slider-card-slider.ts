@@ -110,6 +110,7 @@ export class FlexSliderCardSlider extends LitElement {
         density: density,
         format: { to: (value) => this._sliderToPips(value) },
       } : undefined,
+      behaviour: 'unconstrained',
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
 
