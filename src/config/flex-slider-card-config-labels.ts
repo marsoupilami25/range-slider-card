@@ -5,6 +5,8 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   bubblesactive: "Enable bubbles",
   entity: "Entity",
   text: "Text",
+  connectprevious: "Connect with previous",
+  connectend: "Connect at end",
   min: "Min (Number only)",
   max: "Max (Number only)",
   step: "Step (Number only)",
