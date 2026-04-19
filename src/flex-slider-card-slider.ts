@@ -39,6 +39,7 @@ export class FlexSliderCardSlider extends LitElement {
   private _slider!: NoUiSliderAPI;                   // reference to the noUiSlider instance
   private _userIsUpdating: boolean = false;                 // true when user is currently dragging the slider, false otherwise
   private _isSyncing: boolean = false;                         // true when the slider is being updated programmatically, false otherwise
+  private _isAdjustingHandles: boolean = false;
   private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null;
   private _valuesBarSetValue: FlexSliderCardValuesBarSetValueCallback | null = null;
 
@@ -122,8 +123,8 @@ export class FlexSliderCardSlider extends LitElement {
       void this._onChange(values);
     });
 
-    this._slider.on("update", (values: (number | string)[]) => {
-      this._onUpdate(values);
+    this._slider.on("update", (values: (number | string)[], handle: number) => {
+      this._onUpdate(values, handle);
     });
 
     this._slider.on("end", () => {
@@ -245,7 +246,11 @@ export class FlexSliderCardSlider extends LitElement {
 
     this._isSyncing = true;
     try {
-      await this._commitChangedValuesInOrder(currentValues, nextValues, changedIndexes);
+      if (this.config.handlesBehavior === "unconstrained") {
+        await this._commitChangedValues(changedIndexes, nextValues);
+      } else {
+        await this._commitChangedValuesInOrder(currentValues, nextValues, changedIndexes);
+      }
     } catch (error) {
       const message =
         error instanceof Error
@@ -259,9 +264,28 @@ export class FlexSliderCardSlider extends LitElement {
     }
   }
 
-  private _onUpdate(values: (number | string)[]): void {
+  private _onUpdate(values: (number | string)[], handle: number): void {
     debuglog("slider update");
     const numbers: number[] = values.map(Number);
+
+    if (!this._isAdjustingHandles) {
+      const adjustedValues = this._getAdjustedHandleValues(numbers, handle);
+      if (adjustedValues !== null) {
+        this._isAdjustingHandles = true;
+        try {
+          adjustedValues.forEach((value, index) => {
+            if (value !== numbers[index]) {
+              this._slider.setHandle(index, value, false, false);
+            }
+          });
+        } finally {
+          this._isAdjustingHandles = false;
+        }
+        this._valuesBarSetValue?.(adjustedValues);
+        return;
+      }
+    }
+
     this._valuesBarSetValue?.(numbers);
   }
 
@@ -276,6 +300,15 @@ export class FlexSliderCardSlider extends LitElement {
   /****************************************************/
   /* Private methods                                  */
   /****************************************************/
+
+  private async _commitChangedValues(
+    changedIndexes: number[],
+    nextValues: number[],
+  ): Promise<void> {
+    for (const index of changedIndexes) {
+      await this.config.entities[index].setSliderValue(nextValues[index]);
+    }
+  }
 
   private async _commitChangedValuesInOrder(
     currentValues: number[],
@@ -305,6 +338,37 @@ export class FlexSliderCardSlider extends LitElement {
         throw new Error("Unable to update entities while preserving non-decreasing handle order");
       }
     }
+  }
+
+  private _getAdjustedHandleValues(
+    values: number[],
+    handle: number,
+  ): number[] | null {
+    if (this.config.handlesBehavior === "unconstrained") {
+      return null;
+    }
+
+    const nextValues = [...values];
+
+    if (this.config.handlesBehavior === "flexible") {
+      for (let index = handle + 1; index < nextValues.length; index += 1) {
+        if (nextValues[index] < nextValues[index - 1]) {
+          nextValues[index] = nextValues[index - 1];
+        }
+      }
+
+      for (let index = handle - 1; index >= 0; index -= 1) {
+        if (nextValues[index] > nextValues[index + 1]) {
+          nextValues[index] = nextValues[index + 1];
+        }
+      }
+    } else if (this.config.handlesBehavior === "fixed") {
+      const leftBound = handle === 0 ? Number.NEGATIVE_INFINITY : nextValues[handle - 1];
+      const rightBound = handle === nextValues.length - 1 ? Number.POSITIVE_INFINITY : nextValues[handle + 1];
+      nextValues[handle] = Math.min(Math.max(nextValues[handle], leftBound), rightBound);
+    }
+
+    return nextValues;
   }
 
   private _sliderToPips(value: number): string {
