@@ -33,12 +33,17 @@ export class FlexSliderCardValuesBar extends LitElement {
     }
     .valuesbar {
       display: flex;
-      justify-content: space-between;
       align-items: flex-start;
       width: 100%;
       color: var(--primary-text-color);
       font-size: var(--flex-slider-card-barvalues-font-size);
       /* outline: 1px solid green; /* Debugging border */
+    }
+    .valuesbar.single-handle {
+      justify-content: center;
+    }
+    .valuesbar.multi-handle {
+      justify-content: space-between;
     }
     .editing {
       color: var(--primary-color);
@@ -61,14 +66,21 @@ export class FlexSliderCardValuesBar extends LitElement {
       return nothing;
     }
 
-    const handlesToDisplay = this.config.entityCount <= 1
-      ? [0]
-      : this.config.direction === "ltr"
-        ? [0, this.config.entityCount - 1]
-        : [this.config.entityCount - 1, 0];
+    const handlesToDisplay = Array.from(
+      { length: this.config.entityCount },
+      (_, index) => index,
+    );
+
+    if (this.config.direction === "rtl") {
+      handlesToDisplay.reverse();
+    }
+
+    const valuesBarClass = this.config.entityCount <= 1
+      ? "valuesbar single-handle"
+      : "valuesbar multi-handle";
 
     return html`
-      <div class="valuesbar">
+      <div class=${valuesBarClass}>
         ${handlesToDisplay.map((handle) => html`
           <span>
             <span class=${this._isEditing(handle) ? "editing" : ""}>
