@@ -582,16 +582,21 @@ export class FlexSliderCardConfigMngr {
     const entityCount = this._config.entities.length;
 
     this._entities = this._config.entities.map((handleConfig, index) => {
+      const entityLabel = this._getEntityLabel(index);
+
       if (!handleConfig?.entity) {
-        throw new Error(`You need to define 'entities[${index}].entity'`);
+        throw new Error(`You need to define ${entityLabel}`);
       }
-      assertOptionalString(handleConfig.text, `entities[${index}].text`);
-      assertOptionalBoolean(handleConfig.connectprevious, `entities[${index}].connectprevious`);
+      assertOptionalString(handleConfig.text, this._getEntityTextLabel(index));
+      assertOptionalBoolean(
+        handleConfig.connectprevious,
+        this._getEntityConnectPreviousLabel(index),
+      );
       if (handleConfig.connectprevious == null) {
         handleConfig.connectprevious = entityCount <= 1 ? true : index > 0;
       }
       if (!this._isValidEntityId(handleConfig.entity)) {
-        throw new Error(`Invalid entity format for handle #${index + 1}. Expected domain.object_id`);
+        throw new Error(`Invalid format for ${entityLabel}. Expected domain.object_id`);
       }
       return new FlexSliderCardEntity(handleConfig.entity, handleConfig.text ?? "");
     });
@@ -648,6 +653,18 @@ export class FlexSliderCardConfigMngr {
 
   public entitiesIsUpdated(): boolean {
     return this._entities.some((entity) => entity.isUpdated());
+  }
+
+  private _getEntityLabel(index: number): string {
+    return `Entity ${index + 1}`;
+  }
+
+  private _getEntityTextLabel(index: number): string {
+    return `Text ${index + 1}`;
+  }
+
+  private _getEntityConnectPreviousLabel(index: number): string {
+    return `Connect with previous for ${this._getEntityLabel(index)}`;
   }
 
 }
