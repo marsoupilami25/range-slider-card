@@ -98,7 +98,7 @@ export class FlexSliderCardSlider extends LitElement {
       orientation: this.config.orientation,
       direction: this.config.direction,
       tooltips: tooltips,
-      connect: true,
+      connect: this.config.connect,
       range: {
         'min': this.config.min,
         'max': this.config.max
