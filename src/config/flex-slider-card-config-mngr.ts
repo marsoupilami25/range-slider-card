@@ -505,6 +505,11 @@ export class FlexSliderCardConfigMngr {
       return new FlexSliderCardEntity(handleConfig.entity, handleConfig.text ?? "");
     });
 
+    const uniqueEntityIds = new Set(this._entities.map((entity) => entity.entityId));
+    if (uniqueEntityIds.size !== this._entities.length) {
+      throw new Error("Configured entities must be unique");
+    }
+
     this._entitytype = this._entities[0].entitytype;
     for (const entity of this._entities) {
       if (entity.entitytype !== this._entitytype) {
