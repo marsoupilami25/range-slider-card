@@ -174,6 +174,11 @@ const valuesBarSchema = memoizeOne((digitsValuesBar: string): HaFormSchema[] => 
             selector: { text: {} },
           },
           {
+            name: "showtext",
+            selector: { boolean: {} },
+            required: false,
+          },
+          {
             name: "digits",
             selector: {
               select: {
@@ -209,19 +214,14 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
         type: "grid",
         schema: [
           {
-            name: "dragonly",
-            selector: { boolean: {} },
-            required: false,
-          },
-          {
             name: "unit",
             selector: { text: {} },
           },
-        ],
-      },
-      {
-        type: "grid",
-        schema: [
+          {
+            name: "showtext",
+            selector: { boolean: {} },
+            required: false,
+          },
           {
             name: "digits",
             selector: {
@@ -240,6 +240,11 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
               number: { mode: "box", min: 0 },
             },
             disabled: digitsBubbles !== "manual",
+          },
+          {
+            name: "dragonly",
+            selector: { boolean: {} },
+            required: false,
           },
         ],
       },

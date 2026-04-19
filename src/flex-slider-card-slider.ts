@@ -325,6 +325,7 @@ export class FlexSliderCardSlider extends LitElement {
       value,
       this.config.nbdigitsBubbles,
       this.config.unitBubbles,
+      this.config.showTextBubbles,
     );
   }
   

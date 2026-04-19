@@ -20,7 +20,9 @@ import { FlexSliderCardEntityType } from "../utils/entity-management";
 import {
   clearLegacyEntityTexts,
   getLegacyHandleText,
+  hasLegacyBubblesTextConfig,
   hasEntityTextConflict,
+  hasLegacyValuesBarTextConfig,
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
 
@@ -150,6 +152,11 @@ export class FlexSliderCardConfigMngr {
       this._config.valuesbar.unit = "";
     }
 
+    assertOptionalBoolean(this._config.valuesbar.showtext, "showtext");
+    if (this._config.valuesbar.showtext == null) {
+      this._config.valuesbar.showtext = false;
+    }
+
   }
 
   protected _updateValuesBar(hass: HomeAssistant): void { }
@@ -172,6 +179,13 @@ export class FlexSliderCardConfigMngr {
       throw new Error("Unit is not defined in config");
     }
     return this._config.valuesbar.unit;
+  }
+
+  public get showTextValuesBar(): boolean {
+    if (this._config.valuesbar?.showtext == null) {
+      throw new Error("Show text is not defined in config");
+    }
+    return this._config.valuesbar.showtext;
   }
 
   /****************************************************/
@@ -208,6 +222,11 @@ export class FlexSliderCardConfigMngr {
       this._config.bubbles.unit = "";
     }
 
+    assertOptionalBoolean(this._config.bubbles.showtext, "showtext");
+    if (this._config.bubbles.showtext == null) {
+      this._config.bubbles.showtext = false;
+    }
+
     assertOptionalBoolean(this._config.bubbles.dragonly, "dragonly");
     if (this._config.bubbles.dragonly == null) {
       this._config.bubbles.dragonly = false;
@@ -234,6 +253,13 @@ export class FlexSliderCardConfigMngr {
       throw new Error("Unit is not defined in config");
     }
     return this._config.bubbles.unit;
+  }
+
+  public get showTextBubbles(): boolean {
+    if (this._config.bubbles?.showtext == null) {
+      throw new Error("Show text is not defined in config");
+    }
+    return this._config.bubbles.showtext;
   }
 
   public get isDragOnlyBubbles(): boolean {
@@ -456,6 +482,22 @@ export class FlexSliderCardConfigMngr {
   }
 
   protected _checkEntities(): void {
+    if (hasLegacyValuesBarTextConfig(this._config)) {
+      const valuesbar = this._config.valuesbar;
+      if (!valuesbar) {
+        throw new Error("Legacy valuesbar text config requires valuesbar");
+      }
+      valuesbar.showtext = true;
+    }
+
+    if (hasLegacyBubblesTextConfig(this._config)) {
+      const bubbles = this._config.bubbles;
+      if (!bubbles) {
+        throw new Error("Legacy bubbles text config requires bubbles");
+      }
+      bubbles.showtext = true;
+    }
+
     const entities = Array.isArray(this._config.entities)
       ? this._config.entities.map((handleConfig) => ({
           entity: handleConfig?.entity ?? "",

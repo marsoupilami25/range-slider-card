@@ -10,7 +10,9 @@ import {
   createEmptyLegacyHandle,
   getLegacyHandleText,
   hasEntityTextConflict,
+  hasLegacyBubblesTextConfig,
   hasLegacyEntityConfig,
+  hasLegacyValuesBarTextConfig,
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
 import { HaFormSchema } from "../type/ha";
@@ -536,6 +538,20 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       ...rest,
       entities,
     };
+
+    if (hasLegacyValuesBarTextConfig(config)) {
+      normalizedConfig.valuesbar = {
+        ...normalizedConfig.valuesbar,
+        showtext: true,
+      };
+    }
+
+    if (hasLegacyBubblesTextConfig(config)) {
+      normalizedConfig.bubbles = {
+        ...normalizedConfig.bubbles,
+        showtext: true,
+      };
+    }
 
     clearLegacyEntityTexts(normalizedConfig);
 

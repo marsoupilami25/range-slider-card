@@ -62,6 +62,7 @@ export type FlexSliderCardValuesBarConfig = {
   mintext?: string;
   // Legacy config kept for backward compatibility. Migrated to entities[1].text.
   maxtext?: string;
+  showtext?: boolean;
   digits?: FlexSliderCardDigits;
   nbdigits?: number;
   unit?: string;
@@ -69,6 +70,7 @@ export type FlexSliderCardValuesBarConfig = {
 export const flexSliderCardValuesBarConfigStruct = object({
   mintext: optional(string()),
   maxtext: optional(string()),
+  showtext: optional(boolean()),
   digits: optional(flexSliderCardDigitsStruct),
   nbdigits: optional(number()),
   unit: optional(string()),
@@ -79,6 +81,7 @@ export type FlexSliderCardBubblesConfig = {
   mintext?: string;
   // Legacy config kept for backward compatibility. Migrated to entities[1].text.
   maxtext?: string;
+  showtext?: boolean;
   digits?: FlexSliderCardDigits;
   nbdigits?: number;
   unit?: string;
@@ -87,6 +90,7 @@ export type FlexSliderCardBubblesConfig = {
 export const flexSliderCardBubblesConfigStruct = object({
   mintext: optional(string()),
   maxtext: optional(string()),
+  showtext: optional(boolean()),
   digits: optional(flexSliderCardDigitsStruct),
   nbdigits: optional(number()),
   unit: optional(string()),
