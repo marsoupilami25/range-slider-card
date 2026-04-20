@@ -14,7 +14,7 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.noUi-target {
     height: 6px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
-    border-radius: 4px / 6px;
+    border-radius: 5px;
     border: none;
     box-shadow: none;
   }
@@ -27,7 +27,11 @@ export const compactFlexSliderSliderCardCss: string = `
     height: 6px;
     background: color-mix(in srgb, var(--primary-color) 30%, transparent);
   }
-  
+
+  .slider.compact .noUi-connects {
+    border-radius: 5px;
+  }
+
   .slider.compact.noUi-horizontal .noUi-handle {
     width: 12px;
     height: 12px;
@@ -132,7 +136,7 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.noUi-vertical.noUi-target {
     width: 6px;
     height: 100%;
-    border-radius: 6px / 4px;
+    border-radius: 5px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
     border: none;
     box-shadow: none;
