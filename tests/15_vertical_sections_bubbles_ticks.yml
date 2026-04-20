@@ -3,8 +3,8 @@ sections:
   - type: grid
     cards:
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -22,8 +22,9 @@ sections:
           rows: auto
         valuesbaractive: false
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         bubblesactive: true
         ticksactive: true
         step: 10
@@ -44,8 +45,10 @@ sections:
           columns: 6
           rows: auto
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -64,8 +67,11 @@ sections:
           columns: 6
           rows: auto
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -81,7 +87,7 @@ sections:
         verticalheight: 2
         valuesbaractive: false
       - type: tile
-        entity: input_number.inputnumbertestmin
+        entity: input_number.inputnumbertest1
         vertical: false
         features_position: bottom
         grid_options:
@@ -90,8 +96,8 @@ sections:
   - type: grid
     cards:
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -130,8 +136,9 @@ sections:
           columns: 6
           rows: auto
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -152,8 +159,10 @@ sections:
           columns: 6
           rows: auto
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         bubblesactive: true
         ticksactive: true
         min: 18

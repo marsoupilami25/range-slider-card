@@ -3,7 +3,10 @@ path: ""
 cards:
   - type: entities
     entities:
-      - input_number.inputnumbertestmin
+      - input_number.inputnumbertest1
+      - input_number.inputnumbertest2
+      - input_number.inputnumbertest3
+      - input_number.inputnumbertest4
     show_header_toggle: true
     state_color: false
   - type: vertical-stack
@@ -13,8 +16,9 @@ cards:
         heading: Std | vlay
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -27,8 +31,9 @@ cards:
         orientation: vertical
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -42,8 +47,10 @@ cards:
         verticallayout: mirrored
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         min: 18
         max: 30
         step: 0.5
@@ -55,8 +62,11 @@ cards:
         orientation: vertical
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         min: 18
         max: 30
         step: 0.5
@@ -69,8 +79,9 @@ cards:
         verticallayout: mirrored
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -87,8 +98,9 @@ cards:
         orientation: vertical
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -112,8 +124,10 @@ cards:
         heading: Cmp | vlay
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         min: 10
         max: 40
         step: 1
@@ -123,8 +137,11 @@ cards:
         orientation: vertical
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         min: 10
         max: 40
         step: 1
@@ -135,8 +152,8 @@ cards:
         verticallayout: mirrored
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         min: 10
         max: 40
         step: 1
@@ -149,8 +166,9 @@ cards:
         orientation: vertical
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 10
         max: 40
         step: 1
@@ -164,8 +182,10 @@ cards:
         verticallayout: mirrored
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         min: 10
         max: 40
         step: 1
@@ -179,8 +199,11 @@ cards:
         orientation: vertical
         verticalheight: 3
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         min: 10
         max: 40
         step: 1

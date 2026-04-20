@@ -3,7 +3,7 @@ sections:
   - type: grid
     cards:
       - type: tile
-        entity: input_number.inputnumbertestmin
+        entity: input_number.inputnumbertest1
         vertical: false
         features_position: bottom
         grid_options:
@@ -13,8 +13,8 @@ sections:
         heading: Std | Bul+Tk
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -30,8 +30,9 @@ sections:
           columns: null
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         bubblesactive: true
         ticksactive: true
         step: 10
@@ -50,8 +51,10 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -68,8 +71,11 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -86,8 +92,9 @@ sections:
         heading: Std | Bul+Tk | VB
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -128,8 +135,9 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -155,8 +163,10 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -204,8 +214,11 @@ sections:
         heading: Cmp | Bul+Tk
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -239,8 +252,8 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -258,8 +271,9 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -277,8 +291,10 @@ sections:
         heading: Cmp | Bul+Tk | VB
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -316,8 +332,11 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -340,8 +359,8 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         bubblesactive: true
         ticksactive: true
         min: 18
