@@ -1,8 +1,10 @@
 In this folder are views to test the custom card.
 
 You need to create the following entities:
-- `input_number.inputnumbertestmin`
-- `input_number.inputnumbertestmax`
+- `input_number.inputnumbertest1`
+- `input_number.inputnumbertest2`
+- `input_number.inputnumbertest3`
+- `input_number.inputnumbertest4`
 - `input_datetime.inputheuretestmin`
 - `input_datetime.inputheuretestmax`
 

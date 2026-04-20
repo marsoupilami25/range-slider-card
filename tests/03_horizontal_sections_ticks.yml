@@ -3,7 +3,7 @@ sections:
   - type: grid
     cards:
       - type: tile
-        entity: input_number.inputnumbertestmin
+        entity: input_number.inputnumbertest1
         vertical: false
         features_position: bottom
         grid_options:
@@ -13,8 +13,8 @@ sections:
         heading: Std | Tk
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         min: 18
         max: 30
         step: 0.5
@@ -29,8 +29,9 @@ sections:
           columns: null
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         step: 10
         name: inum | r1 | d1
         grid_options:
@@ -49,8 +50,10 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         min: 18
         max: 30
         step: 0.5
@@ -66,8 +69,11 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         min: 18
         max: 30
         step: 0.5
@@ -80,8 +86,9 @@ sections:
         heading: Std | Tk | VB
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -114,8 +121,9 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -136,8 +144,10 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         min: 18
         max: 30
         step: 0.5
@@ -172,8 +182,11 @@ sections:
         heading: Cmp | Tk
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         min: 18
         max: 30
         step: 0.25
@@ -201,8 +214,8 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         min: 18
         max: 30
         step: 0.5
@@ -219,8 +232,9 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
         min: 18
         max: 30
         step: 0.5
@@ -237,8 +251,10 @@ sections:
         heading: Cmp | Tk | VB
         heading_style: title
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
         min: 18
         max: 30
         step: 0.5
@@ -271,8 +287,11 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+          - entity: input_number.inputnumbertest4
         min: 18
         max: 30
         step: 0.25
@@ -292,8 +311,8 @@ sections:
           columns: full
           rows: null
       - type: custom:flex-slider-card
-        entity_min: input_number.inputnumbertestmin
-        entity_max: input_number.inputnumbertestmax
+        entities:
+          - entity: input_number.inputnumbertest1
         min: 18
         max: 30
         step: 0.5
