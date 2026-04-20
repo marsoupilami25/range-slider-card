@@ -12,7 +12,6 @@ import { debuglog, minutesToTime } from "./utils/utils";
 import { FlexSliderCardEntityType } from "./utils/entity-management";
 import { CARD_HEIGHT_BASE, INTER_CARD, COMPACT_CONTAINER_PADDING, COMPACT_TITLE_HEIGHT, STD_CONTAINER_PADDING, STD_TITLE_HEIGHT } from "./type/constants";
 
-
 // Extension de HTMLElement pour typer noUiSlider
 export interface NoUiSliderElement extends HTMLElement {
   noUiSlider: NoUiSliderAPI;
@@ -34,15 +33,13 @@ export class FlexSliderCardSlider extends LitElement {
   @property({ type: Boolean })
   public forceHeight = false;          // reference to the card configuration
 
-  @property({ type: Number })
-  public minvalue = 0;
-
-  @property({ type: Number })
-  public maxvalue = 100;
+  @property({ attribute: false })
+  public values: number[] = [0, 100];
 
   private _slider!: NoUiSliderAPI;                   // reference to the noUiSlider instance
   private _userIsUpdating: boolean = false;                 // true when user is currently dragging the slider, false otherwise
   private _isSyncing: boolean = false;                         // true when the slider is being updated programmatically, false otherwise
+  private _isAdjustingHandles: boolean = false;
   private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null;
   private _valuesBarSetValue: FlexSliderCardValuesBarSetValueCallback | null = null;
 
@@ -91,16 +88,18 @@ export class FlexSliderCardSlider extends LitElement {
 
     const pipsValues = Array.from({ length: this.config.majorticks }, (_, i) => i * 100 / (this.config.majorticks - 1));
     const density = 100 / ((this.config.majorticks - 1) * (this.config.minorticks + 1));
+    const tooltips = this.config.hasBubbles
+      ? this.values.map((_, index) => ({
+          to: (value: number) => this._sliderToBubble(value, index),
+        }))
+      : false;
 
     noUiSlider.create(this._sliderElement, {
-      start: [this.minvalue, this.maxvalue],
+      start: this.values,
       orientation: this.config.orientation,
       direction: this.config.direction,
-      tooltips: [ 
-        this.config.hasBubbles ? { to: (value) => this._sliderToBubbleMin(value) } : false,
-        this.config.hasBubbles ? { to: (value) => this._sliderToBubbleMax(value) } : false,
-      ],
-      connect: true,
+      tooltips: tooltips,
+      connect: this.config.connect,
       range: {
         'min': this.config.min,
         'max': this.config.max
@@ -112,10 +111,11 @@ export class FlexSliderCardSlider extends LitElement {
         density: density,
         format: { to: (value) => this._sliderToPips(value) },
       } : undefined,
+      behaviour: 'unconstrained',
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
 
-    this._slider.on("start", (values: (number | string)[], handle: number) => {
+    this._slider.on("start", (_values: (number | string)[], handle: number) => {
       this._onStart(handle);
     });
 
@@ -123,8 +123,8 @@ export class FlexSliderCardSlider extends LitElement {
       void this._onChange(values);
     });
 
-    this._slider.on("update", (values: (number | string)[]) => {
-      this._onUpdate(values);
+    this._slider.on("update", (values: (number | string)[], handle: number) => {
+      this._onUpdate(values, handle);
     });
 
     this._slider.on("end", () => {
@@ -135,8 +135,8 @@ export class FlexSliderCardSlider extends LitElement {
   protected override updated(changedProps: Map<string, unknown>): void {
     if (!this._slider || this._userIsUpdating || this._isSyncing) return;
 
-    if (changedProps.has("minvalue") || changedProps.has("maxvalue")) {
-      this._slider.set([this.minvalue, this.maxvalue], false);
+    if (changedProps.has("values")) {
+      this._slider.set(this.values, false);
     }
   }
 
@@ -233,31 +233,23 @@ export class FlexSliderCardSlider extends LitElement {
   private async _onChange(values: (number | string)[]): Promise<void> {
     debuglog("slider change");
 
-    // noUiSlider renvoie souvent des strings → conversion recommandée
-    const min = Number(values[0]);
-    const max = Number(values[1]);
-    const currentMin = this.config.entities.min.sliderValue;
-    const currentMax = this.config.entities.max.sliderValue;
+    const nextValues = values.map(Number);
+    const currentValues = this.config.entities.map((entity) => entity.sliderValue);
+    const changedIndexes = nextValues
+      .map((value, index) => currentValues[index] === value ? -1 : index)
+      .filter((index) => index !== -1);
 
-    if (currentMin === min && currentMax === max) {
+    if (changedIndexes.length === 0) {
       this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
       return;
     }
 
     this._isSyncing = true;
     try {
-      if (currentMin !== min && min > currentMax) {
-        if (currentMax !== max) {
-          await this.config.entities.max.setSliderValue(max);
-        }
-        await this.config.entities.min.setSliderValue(min);
+      if (this.config.handlesBehavior === "unconstrained") {
+        await this._commitChangedValues(changedIndexes, nextValues);
       } else {
-        if (currentMin !== min) {
-          await this.config.entities.min.setSliderValue(min);
-        }
-        if (currentMax !== max) {
-          await this.config.entities.max.setSliderValue(max);
-        }
+        await this._commitChangedValuesInOrder(currentValues, nextValues, changedIndexes);
       }
     } catch (error) {
       const message =
@@ -272,9 +264,28 @@ export class FlexSliderCardSlider extends LitElement {
     }
   }
 
-  private _onUpdate(values: (number | string)[]): void {
+  private _onUpdate(values: (number | string)[], handle: number): void {
     debuglog("slider update");
     const numbers: number[] = values.map(Number);
+
+    if (!this._isAdjustingHandles) {
+      const adjustedValues = this._getAdjustedHandleValues(numbers, handle);
+      if (adjustedValues !== null) {
+        this._isAdjustingHandles = true;
+        try {
+          adjustedValues.forEach((value, index) => {
+            if (value !== numbers[index]) {
+              this._slider.setHandle(index, value, false, false);
+            }
+          });
+        } finally {
+          this._isAdjustingHandles = false;
+        }
+        this._valuesBarSetValue?.(adjustedValues);
+        return;
+      }
+    }
+
     this._valuesBarSetValue?.(numbers);
   }
 
@@ -290,6 +301,76 @@ export class FlexSliderCardSlider extends LitElement {
   /* Private methods                                  */
   /****************************************************/
 
+  private async _commitChangedValues(
+    changedIndexes: number[],
+    nextValues: number[],
+  ): Promise<void> {
+    for (const index of changedIndexes) {
+      await this.config.entities[index].setSliderValue(nextValues[index]);
+    }
+  }
+
+  private async _commitChangedValuesInOrder(
+    currentValues: number[],
+    nextValues: number[],
+    changedIndexes: number[],
+  ): Promise<void> {
+    const workingValues = [...currentValues];
+    const pendingIndexes = new Set(changedIndexes);
+
+    while (pendingIndexes.size > 0) {
+      let progressed = false;
+
+      for (const index of Array.from(pendingIndexes)) {
+        const leftValue = index === 0 ? Number.NEGATIVE_INFINITY : workingValues[index - 1];
+        const rightValue = index === workingValues.length - 1 ? Number.POSITIVE_INFINITY : workingValues[index + 1];
+        const targetValue = nextValues[index];
+
+        if (leftValue <= targetValue && targetValue <= rightValue) {
+          await this.config.entities[index].setSliderValue(targetValue);
+          workingValues[index] = targetValue;
+          pendingIndexes.delete(index);
+          progressed = true;
+        }
+      }
+
+      if (!progressed) {
+        throw new Error("Unable to update entities while preserving non-decreasing handle order");
+      }
+    }
+  }
+
+  private _getAdjustedHandleValues(
+    values: number[],
+    handle: number,
+  ): number[] | null {
+    if (this.config.handlesBehavior === "unconstrained") {
+      return null;
+    }
+
+    const nextValues = [...values];
+
+    if (this.config.handlesBehavior === "flexible") {
+      for (let index = handle + 1; index < nextValues.length; index += 1) {
+        if (nextValues[index] < nextValues[index - 1]) {
+          nextValues[index] = nextValues[index - 1];
+        }
+      }
+
+      for (let index = handle - 1; index >= 0; index -= 1) {
+        if (nextValues[index] > nextValues[index + 1]) {
+          nextValues[index] = nextValues[index + 1];
+        }
+      }
+    } else if (this.config.handlesBehavior === "fixed") {
+      const leftBound = handle === 0 ? Number.NEGATIVE_INFINITY : nextValues[handle - 1];
+      const rightBound = handle === nextValues.length - 1 ? Number.POSITIVE_INFINITY : nextValues[handle + 1];
+      nextValues[handle] = Math.min(Math.max(nextValues[handle], leftBound), rightBound);
+    }
+
+    return nextValues;
+  }
+
   private _sliderToPips(value: number): string {
     let valueToDisplay: string = "";
 
@@ -304,36 +385,13 @@ export class FlexSliderCardSlider extends LitElement {
     return valueToDisplay;
   }
 
-  private _sliderToBubbleMin(value: number): string {
-    let valueToDisplay: string = "";
-
-    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
-    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
-      valueToDisplay = minutesToTime(value);
-    } else {
-      throw new Error("Unsupported entity type");
-    }
-
-    valueToDisplay = this.config.mintextBubbles + valueToDisplay + this.config.unitBubbles;
-
-    return valueToDisplay;
-  }
-
-  private _sliderToBubbleMax(value: number): string {
-    let valueToDisplay: string = "";
-
-    if (this.config?.entitytype === FlexSliderCardEntityType.NUMBER) {
-      valueToDisplay = Number(value).toFixed(Number(this.config.nbdigitsBubbles));
-    } else if (this.config?.entitytype === FlexSliderCardEntityType.TIME) {
-      valueToDisplay = minutesToTime(value);
-    } else {
-      throw new Error("Unsupported entity type");
-    }
-
-    valueToDisplay = this.config.maxtextBubbles + valueToDisplay + this.config.unitBubbles;
-
-    return valueToDisplay;
+  private _sliderToBubble(value: number, handle: number): string {
+    return this.config.entities[handle].toText(
+      value,
+      this.config.nbdigitsBubbles,
+      this.config.unitBubbles,
+      this.config.showTextBubbles,
+    );
   }
   
 }

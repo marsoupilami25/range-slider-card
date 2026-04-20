@@ -325,8 +325,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       `${hasTicks ? "has-ticks " : ""}` +
       `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
-    const minValue = this._config.entities.min.sliderValue;
-    const maxValue = this._config.entities.max.sliderValue;
+    const values = this._config.entities.map((entity) => entity.sliderValue);
     const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
     const verticalSliderContainerStyle =
       isVertical && hasBubbles !== hasTicks
@@ -345,8 +344,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
             <div class="slider-container" style="${verticalSliderContainerStyle}">
               <flex-slider-card-slider
                 .config=${this._config}
-                .minvalue=${minValue}
-                .maxvalue=${maxValue}
+                .values=${values}
                 .sliderClass=${sliderClass}
                 .forceHeight=${this._shallForceHeight()}
                 @user-update-state-changed=${this._handleUserUpdateStateChanged}
@@ -355,8 +353,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
             ${hasValuesBar ? html`
                 <flex-slider-card-valuesbar
                   .config=${this._config}
-                  .minvalue=${minValue}
-                  .maxvalue=${maxValue}
+                  .values=${values}
                 ></flex-slider-card-valuesbar>
               ` : nothing}
           </div>

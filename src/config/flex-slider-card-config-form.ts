@@ -116,30 +116,6 @@ const baseSchema = memoizeOne((
         name: "",
         schema: [
           {
-            name: "entity_min",
-            required: false,
-            selector: {
-              entity: {
-                domain: ["number", "input_number", "input_datetime"],
-              }
-            },
-          },
-          {
-            name: "entity_max",
-            required: false,
-            selector: {
-              entity: {
-                domain: ["number", "input_number", "input_datetime"],
-              }
-            },
-          },
-        ],
-      },
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          {
             name: "min",
             selector: {
               number: { mode: "box" },
@@ -198,6 +174,11 @@ const valuesBarSchema = memoizeOne((digitsValuesBar: string): HaFormSchema[] => 
             selector: { text: {} },
           },
           {
+            name: "showtext",
+            selector: { boolean: {} },
+            required: false,
+          },
+          {
             name: "digits",
             selector: {
               select: {
@@ -218,19 +199,6 @@ const valuesBarSchema = memoizeOne((digitsValuesBar: string): HaFormSchema[] => 
           },
         ],
       },
-      {
-        type: "grid",
-        schema: [
-          {
-            name: "mintext",
-            selector: { text: {} },
-          },
-          {
-            name: "maxtext",
-            selector: { text: {} },
-          },
-        ],
-      },
     ],
   }
 ]);
@@ -246,19 +214,14 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
         type: "grid",
         schema: [
           {
-            name: "dragonly",
-            selector: { boolean: {} },
-            required: false,
-          },
-          {
             name: "unit",
             selector: { text: {} },
           },
-        ],
-      },
-      {
-        type: "grid",
-        schema: [
+          {
+            name: "showtext",
+            selector: { boolean: {} },
+            required: false,
+          },
           {
             name: "digits",
             selector: {
@@ -278,18 +241,10 @@ const bubblesSchema = memoizeOne((digitsBubbles: string): HaFormSchema[] => [
             },
             disabled: digitsBubbles !== "manual",
           },
-        ],
-      },
-      {
-        type: "grid",
-        schema: [
           {
-            name: "mintext",
-            selector: { text: {} },
-          },
-          {
-            name: "maxtext",
-            selector: { text: {} },
+            name: "dragonly",
+            selector: { boolean: {} },
+            required: false,
           },
         ],
       },
@@ -358,6 +313,61 @@ const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
     ],
   }
 ]);
+
+export const handleSchema: HaFormSchema[] = [
+  {
+    name: "entity",
+    required: false,
+    selector: {
+      entity: {
+        domain: ["number", "input_number", "input_datetime"],
+      }
+    },
+  },
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      {
+        name: "text",
+        required: false,
+        selector: { text: {} },
+      },
+      {
+        name: "connectprevious",
+        required: false,
+        selector: { boolean: {} },
+      },
+    ],
+  },
+];
+
+export const connectEndSchema: HaFormSchema[] = [
+  {
+    name: "connectend",
+    required: false,
+    selector: { boolean: {} },
+    default: false,
+  },
+];
+
+export const handlesBehaviorSchema: HaFormSchema[] = [
+  {
+    name: "handlesbehavior",
+    selector: {
+      select: {
+        mode: "dropdown",
+        options: [
+          { value: "unconstrained", label: "Unconstrained" },
+          { value: "flexible", label: "Flexible" },
+          { value: "fixed", label: "Fixed" },
+        ],
+      },
+    },
+    required: false,
+    default: "fixed",
+  },
+];
 
 export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,

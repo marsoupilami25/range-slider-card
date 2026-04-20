@@ -6,6 +6,8 @@ import {
   assertFlexSliderCardDigits,
   assertFlexSliderCardDirection,
   FlexSliderCardDirection,
+  assertFlexSliderCardHandlesBehavior,
+  FlexSliderCardHandlesBehavior,
   assertFlexSliderCardOrientation,
   FlexSliderCardOrientation,
   assertFlexSliderCardVerticalLayout,
@@ -17,17 +19,25 @@ import {
   assertOptionalBoolean
 } from "../utils/utils";
 import { FlexSliderCardEntityType } from "../utils/entity-management";
+import {
+  clearLegacyEntityTexts,
+  getLegacyHandleText,
+  hasLegacyBubblesTextConfig,
+  hasEntityTextConflict,
+  hasLegacyValuesBarTextConfig,
+  setLegacyHandle,
+} from "../utils/config-legacy-helpers";
 
 export class FlexSliderCardConfigMngr {
 
   private _config: FlexSliderCardConfig;
-  private _entities: { [suffix: string]: FlexSliderCardEntity };
+  private _entities: FlexSliderCardEntity[];
   private _entitytype?: FlexSliderCardEntityType;
 
   constructor(config: FlexSliderCardConfig) {
     this._config = structuredClone(config);      // user configuration object
-    this._entities = {};        // entities objects, with suffix as key ("min" and "max")
-    this._entitytype = undefined;    // entity type: "number" or "time", depending on the domains of entity_min and entity_max
+    this._entities = [];        // entities objects ordered like handles in config.entities
+    this._entitytype = undefined;    // entity type: "number" or "time", shared by all handles
 
     this._checkFormat();
     this._checkTitle();
@@ -144,21 +154,11 @@ export class FlexSliderCardConfigMngr {
       this._config.valuesbar.unit = "";
     }
 
-    assertOptionalString(this._config.valuesbar.mintext, "mintext");
-    if (this._config.valuesbar.mintext == null) {
-      this._config.valuesbar.mintext = "";
-    }
-    if (this._config.valuesbar.mintext !== "") {
-      this._config.valuesbar.mintext = this._config.valuesbar.mintext + ":";
+    assertOptionalBoolean(this._config.valuesbar.showtext, "showtext");
+    if (this._config.valuesbar.showtext == null) {
+      this._config.valuesbar.showtext = false;
     }
 
-    assertOptionalString(this._config.valuesbar.maxtext, "maxtext");
-    if (this._config.valuesbar.maxtext == null) {
-      this._config.valuesbar.maxtext = "";
-    }
-    if (this._config.valuesbar.maxtext !== "") {
-      this._config.valuesbar.maxtext = this._config.valuesbar.maxtext + ":";
-    }
   }
 
   protected _updateValuesBar(hass: HomeAssistant): void { }
@@ -183,18 +183,11 @@ export class FlexSliderCardConfigMngr {
     return this._config.valuesbar.unit;
   }
 
-  public get mintextValuesBar(): string {
-    if (this._config.valuesbar?.mintext == null) {
-      throw new Error("Min text is not defined in config");
+  public get showTextValuesBar(): boolean {
+    if (this._config.valuesbar?.showtext == null) {
+      throw new Error("Show text is not defined in config");
     }
-    return this._config.valuesbar.mintext;
-  }
-
-  public get maxtextValuesBar(): string {
-    if (this._config.valuesbar?.maxtext == null) {
-      throw new Error("Max text is not defined in config");
-    }
-    return this._config.valuesbar.maxtext;
+    return this._config.valuesbar.showtext;
   }
 
   /****************************************************/
@@ -231,20 +224,9 @@ export class FlexSliderCardConfigMngr {
       this._config.bubbles.unit = "";
     }
 
-    assertOptionalString(this._config.bubbles.mintext, "mintext");
-    if (this._config.bubbles.mintext == null) {
-      this._config.bubbles.mintext = "";
-    }
-    if (this._config.bubbles.mintext !== "") {
-      this._config.bubbles.mintext = this._config.bubbles.mintext + ":";
-    }
-
-    assertOptionalString(this._config.bubbles.maxtext, "maxtext");
-    if (this._config.bubbles.maxtext == null) {
-      this._config.bubbles.maxtext = "";
-    }
-    if (this._config.bubbles.maxtext !== "") {
-      this._config.bubbles.maxtext = this._config.bubbles.maxtext + ":";
+    assertOptionalBoolean(this._config.bubbles.showtext, "showtext");
+    if (this._config.bubbles.showtext == null) {
+      this._config.bubbles.showtext = false;
     }
 
     assertOptionalBoolean(this._config.bubbles.dragonly, "dragonly");
@@ -275,18 +257,11 @@ export class FlexSliderCardConfigMngr {
     return this._config.bubbles.unit;
   }
 
-  public get mintextBubbles(): string {
-    if (this._config.bubbles?.mintext == null) {
-      throw new Error("Min text is not defined in config");
+  public get showTextBubbles(): boolean {
+    if (this._config.bubbles?.showtext == null) {
+      throw new Error("Show text is not defined in config");
     }
-    return this._config.bubbles.mintext;
-  }
-
-  public get maxtextBubbles(): string {
-    if (this._config.bubbles?.maxtext == null) {
-      throw new Error("Max text is not defined in config");
-    }
-    return this._config.bubbles.maxtext;
+    return this._config.bubbles.showtext;
   }
 
   public get isDragOnlyBubbles(): boolean {
@@ -415,6 +390,11 @@ export class FlexSliderCardConfigMngr {
     }
     assertFlexSliderCardVerticalLayout(this._config.verticallayout);
 
+    if (this._config.handlesbehavior == null) {
+      this._config.handlesbehavior = "fixed";
+    }
+    assertFlexSliderCardHandlesBehavior(this._config.handlesbehavior);
+
     if (this._config.orientation === "horizontal") {
       assertOptionalNumber(this._config.horizontalwidth, "horizontalwidth");
       this._config.horizontalwidth ??= 90;
@@ -475,6 +455,13 @@ export class FlexSliderCardConfigMngr {
     return this._config.verticallayout;
   }
 
+  public get handlesBehavior(): FlexSliderCardHandlesBehavior {
+    if (this._config.handlesbehavior == null) {
+      throw new Error("Handles behavior is not defined in config");
+    }
+    return this._config.handlesbehavior;
+  }
+
   public get gridRows(): number | string | undefined {
     return this._config.grid_options?.rows;
   }
@@ -494,6 +481,13 @@ export class FlexSliderCardConfigMngr {
     return this.isCompact ? 1 : 2;
   }
 
+  public get connect(): boolean[] {
+    return [
+      ...this._config.entities!.map((handleConfig) => handleConfig.connectprevious!),
+      this._config.connectend!,
+    ];
+  }
+
   /****************************************************/
   /* entities                                         */
   /****************************************************/
@@ -509,41 +503,125 @@ export class FlexSliderCardConfigMngr {
   }
 
   protected _checkEntities(): void {
-
-    if (!this._config.entity_min || !this._config.entity_max) {
-      throw new Error("You need to define 'entity_min' and 'entity_max'");
+    if (hasLegacyValuesBarTextConfig(this._config)) {
+      const valuesbar = this._config.valuesbar;
+      if (!valuesbar) {
+        throw new Error("Legacy valuesbar text config requires valuesbar");
+      }
+      valuesbar.showtext = true;
     }
 
-    if (!this._isValidEntityId(this._config.entity_min)) {
-      throw new Error("Invalid entity min format. Expected domain.object_id");
+    if (hasLegacyBubblesTextConfig(this._config)) {
+      const bubbles = this._config.bubbles;
+      if (!bubbles) {
+        throw new Error("Legacy bubbles text config requires bubbles");
+      }
+      bubbles.showtext = true;
     }
 
-    if (!this._isValidEntityId(this._config.entity_max)) {
-      throw new Error("Invalid entity max format. Expected domain.object_id");
+    const entities = Array.isArray(this._config.entities)
+      ? this._config.entities.map((handleConfig) => ({
+          entity: handleConfig?.entity ?? "",
+          text: handleConfig?.text ?? "",
+          connectprevious: handleConfig?.connectprevious,
+        }))
+      : [];
+
+    assertOptionalBoolean(this._config.connectend, "connectend");
+    if (this._config.connectend == null) {
+      this._config.connectend = false;
     }
 
-    this._entities.min = new FlexSliderCardEntity(this, "min");
-    this._entities.max = new FlexSliderCardEntity(this, "max");
-
-    this._entitytype = this._entities.min.entitytype;
-    if (this._entities.max.entitytype != this._entitytype) {
-      throw new Error("'entity_min' and 'entity_max' shall have compatible domains");
+    // legacy entities configuration start
+    if (this._config.entity_min !== undefined && this._config.entity_max === undefined) {
+      throw new Error("Cannot use 'entity_min' without 'entity_max'");
     }
 
+    if (this._config.entity_max !== undefined && this._config.entity_min === undefined) {
+      throw new Error("Cannot use 'entity_max' without 'entity_min'");
+    }
+
+    if (this._config.entity_min !== undefined) {
+      if (this._config.entities?.[0] !== undefined) {
+        throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
+      }
+      setLegacyHandle(entities, 0, { entity: this._config.entity_min });
+    }
+
+    if (this._config.entity_max !== undefined) {
+      if (this._config.entities?.[1] !== undefined) {
+        throw new Error("Cannot use both 'entity_min/entity_max' and 'entities'");
+      }
+      setLegacyHandle(entities, 1, { entity: this._config.entity_max });
+    }
+
+    if (hasEntityTextConflict(this._config)) {
+      throw new Error("Cannot use both legacy 'mintext/maxtext' and 'entities[].text'");
+    }
+
+    const minText = getLegacyHandleText(this._config, 0);
+    if (minText !== undefined) {
+      setLegacyHandle(entities, 0, { text: minText });
+    }
+
+    const maxText = getLegacyHandleText(this._config, 1);
+    if (maxText !== undefined) {
+      setLegacyHandle(entities, 1, { text: maxText });
+    }
+
+    this._config.entities = entities;
+    delete this._config.entity_min;
+    delete this._config.entity_max;
+    clearLegacyEntityTexts(this._config);
+    // legacy entities configuration end
+
+    if (!Array.isArray(this._config.entities) || this._config.entities.length === 0) {
+      throw new Error("You need to define at least one entity in 'entities'");
+    }
+
+    const entityCount = this._config.entities.length;
+
+    this._entities = this._config.entities.map((handleConfig, index) => {
+      const entityLabel = this._getEntityLabel(index);
+
+      if (!handleConfig?.entity) {
+        throw new Error(`You need to define ${entityLabel}`);
+      }
+      assertOptionalString(handleConfig.text, this._getEntityTextLabel(index));
+      assertOptionalBoolean(
+        handleConfig.connectprevious,
+        this._getEntityConnectPreviousLabel(index),
+      );
+      if (handleConfig.connectprevious == null) {
+        handleConfig.connectprevious = entityCount <= 1 ? true : index > 0;
+      }
+      if (!this._isValidEntityId(handleConfig.entity)) {
+        throw new Error(`Invalid format for ${entityLabel}. Expected domain.object_id`);
+      }
+      return new FlexSliderCardEntity(handleConfig.entity, handleConfig.text ?? "");
+    });
+
+    const uniqueEntityIds = new Set(this._entities.map((entity) => entity.entityId));
+    if (uniqueEntityIds.size !== this._entities.length) {
+      throw new Error("Configured entities must be unique");
+    }
+
+    this._entitytype = this._entities[0].entitytype;
+    for (const entity of this._entities) {
+      if (entity.entitytype !== this._entitytype) {
+        throw new Error("All configured entities must use compatible domains");
+      }
+    }
   }
 
   protected _updateEntities(hass: HomeAssistant): void {
-    Object.values(this._entities).forEach(entity => entity.update(hass));
+    this._entities.forEach((entity) => entity.update(hass));
   }
 
   protected _resetEntities(): void {
     if (this.entitiesExist()) {
       this.entitiesResetBaseline();
     }
-  }
-
-  public getEntityConfig(suffix: string): string {
-    return this._config[`entity_${suffix}`];
   }
 
   public get entitytype(): FlexSliderCardEntityType {
@@ -553,24 +631,40 @@ export class FlexSliderCardConfigMngr {
     return this._entitytype;
   }
 
-  public get entities(): { [suffix: string]: FlexSliderCardEntity } {
+  public get entities(): FlexSliderCardEntity[] {
     return this._entities;
   }
 
+  public get entityCount(): number {
+    return this._entities.length;
+  }
+
   public entitiesExist(): boolean {
-    return Object.values(this._entities).every(entity => entity.exists());
+    return this._entities.every((entity) => entity.exists());
   }
 
   public entitiesResetBaseline(): void {
-    Object.values(this._entities).forEach(entity => entity.resetBaseline());
+    this._entities.forEach((entity) => entity.resetBaseline());
   }
 
   public entitiesSetBaseline(): void {
-    Object.values(this._entities).forEach(entity => entity.setBaseline());
+    this._entities.forEach((entity) => entity.setBaseline());
   }
 
   public entitiesIsUpdated(): boolean {
-    return Object.values(this._entities).some(entity => entity.isUpdated());
+    return this._entities.some((entity) => entity.isUpdated());
+  }
+
+  private _getEntityLabel(index: number): string {
+    return `Entity ${index + 1}`;
+  }
+
+  private _getEntityTextLabel(index: number): string {
+    return `Text ${index + 1}`;
+  }
+
+  private _getEntityConnectPreviousLabel(index: number): string {
+    return `Connect with previous for ${this._getEntityLabel(index)}`;
   }
 
 }

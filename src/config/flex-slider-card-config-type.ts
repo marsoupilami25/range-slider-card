@@ -1,5 +1,5 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
-import { assign, union, literal, refine, number, object, optional, string, boolean, any } from "superstruct";
+import { assign, union, literal, number, object, optional, string, boolean, any, array } from "superstruct";
 import { lovelaceCardConfigStruct } from "../type/ha";
 
 export type FlexSliderCardFormat = "std" | "compact";
@@ -57,9 +57,24 @@ export const flexSliderCardVerticalLayoutStruct = union([
   literal("mirrored"),
 ]);
 
+export type FlexSliderCardHandlesBehavior = "unconstrained" | "flexible" | "fixed";
+export function assertFlexSliderCardHandlesBehavior(value: any): asserts value is FlexSliderCardHandlesBehavior {
+  if (!["unconstrained", "flexible", "fixed"].includes(value)) {
+    throw new Error(`Invalid FlexSliderCardHandlesBehavior: ${value}`);
+  }
+}
+export const flexSliderCardHandlesBehaviorStruct = union([
+  literal("unconstrained"),
+  literal("flexible"),
+  literal("fixed"),
+]);
+
 export type FlexSliderCardValuesBarConfig = {
+  // Legacy config kept for backward compatibility. Migrated to entities[0].text.
   mintext?: string;
+  // Legacy config kept for backward compatibility. Migrated to entities[1].text.
   maxtext?: string;
+  showtext?: boolean;
   digits?: FlexSliderCardDigits;
   nbdigits?: number;
   unit?: string;
@@ -67,14 +82,18 @@ export type FlexSliderCardValuesBarConfig = {
 export const flexSliderCardValuesBarConfigStruct = object({
   mintext: optional(string()),
   maxtext: optional(string()),
+  showtext: optional(boolean()),
   digits: optional(flexSliderCardDigitsStruct),
   nbdigits: optional(number()),
   unit: optional(string()),
 });
 
 export type FlexSliderCardBubblesConfig = {
+  // Legacy config kept for backward compatibility. Migrated to entities[0].text.
   mintext?: string;
+  // Legacy config kept for backward compatibility. Migrated to entities[1].text.
   maxtext?: string;
+  showtext?: boolean;
   digits?: FlexSliderCardDigits;
   nbdigits?: number;
   unit?: string;
@@ -83,6 +102,7 @@ export type FlexSliderCardBubblesConfig = {
 export const flexSliderCardBubblesConfigStruct = object({
   mintext: optional(string()),
   maxtext: optional(string()),
+  showtext: optional(boolean()),
   digits: optional(flexSliderCardDigitsStruct),
   nbdigits: optional(number()),
   unit: optional(string()),
@@ -102,29 +122,54 @@ export const flexSliderCardTicksConfigStruct = object({
   minorticks: optional(number()),
 });
 
+export type FlexSliderCardHandleConfig = {
+  entity: string;
+  text?: string;
+  connectprevious?: boolean;
+};
+export const flexSliderCardHandleConfigStruct = object({
+  entity: string(),
+  text: optional(string()),
+  connectprevious: optional(boolean()),
+});
+
 export type FlexSliderCardConfig = LovelaceCardConfig &
 {
   /* display options */
   name?: string;
   format?: FlexSliderCardFormat;
-  valuesbaractive?: boolean;
-  bubblesactive?: boolean;
-  valuesbar?: FlexSliderCardValuesBarConfig;
-  bubbles?: FlexSliderCardBubblesConfig;
-  direction?: FlexSliderCardDirection;
   orientation?: FlexSliderCardOrientation;
-  verticallayout?: FlexSliderCardVerticalLayout;
-  ticksactive?: boolean;
-  ticks?: FlexSliderCardTicksConfig;
   horizontalwidth?: number;
   verticalheight?: number;
+  valuesbaractive?: boolean;
+  bubblesactive?: boolean;
+  ticksactive?: boolean;
+  verticallayout?: FlexSliderCardVerticalLayout;
 
- /* bahavioral */
-  entity_min: string;
-  entity_max: string;
+  /* behavioral */
   min?: number;
   max?: number;
   step?: number;
+  direction?: FlexSliderCardDirection;
+
+  /* values bar */
+  valuesbar?: FlexSliderCardValuesBarConfig;
+
+  /* bubbles */
+  bubbles?: FlexSliderCardBubblesConfig;
+
+  /* ticks */
+  ticks?: FlexSliderCardTicksConfig;
+
+  /* entities */
+  handlesbehavior?: FlexSliderCardHandlesBehavior;
+  entities?: FlexSliderCardHandleConfig[];
+  connectend?: boolean;
+
+  /* legacy entities configuration start */
+  entity_min?: string;
+  entity_max?: string;
+  /* legacy entities configuration end */
 
   /* card mod */
   card_mod?: Record<string, unknown>;
@@ -135,24 +180,38 @@ export const flexSliderCardConfigStruct = assign(
     /* display options */
     name: optional(string()),
     format: optional(flexSliderCardFormatStruct),
-    valuesbaractive: optional(boolean()), 
-    bubblesactive: optional(boolean()),
-    valuesbar: optional(flexSliderCardValuesBarConfigStruct),
-    bubbles: optional(flexSliderCardBubblesConfigStruct),
-    direction: optional(flexSliderCardDirectionStruct),
     orientation: optional(flexSliderCardOrientationStruct),
-    verticallayout: optional(flexSliderCardVerticalLayoutStruct),
-    ticksactive: optional(boolean()),
-    ticks: optional(flexSliderCardTicksConfigStruct),
     horizontalwidth: optional(number()),
     verticalheight: optional(number()),
+    valuesbaractive: optional(boolean()), 
+    bubblesactive: optional(boolean()),
+    ticksactive: optional(boolean()),
+    verticallayout: optional(flexSliderCardVerticalLayoutStruct),
 
     /* behavioral */
-    entity_min: string(),
-    entity_max: string(),
     min: optional(number()),
     max: optional(number()),
     step: optional(number()),
+    direction: optional(flexSliderCardDirectionStruct),
+
+    /* values bar */
+    valuesbar: optional(flexSliderCardValuesBarConfigStruct),
+
+    /* bubbles */
+    bubbles: optional(flexSliderCardBubblesConfigStruct),
+
+    /* ticks */
+    ticks: optional(flexSliderCardTicksConfigStruct),
+
+    /* entities */
+    handlesbehavior: optional(flexSliderCardHandlesBehaviorStruct),
+    entities: optional(array(flexSliderCardHandleConfigStruct)),
+    connectend: optional(boolean()),
+
+    /* legacy entities configuration start */
+    entity_min: optional(string()),
+    entity_max: optional(string()),
+    /* legacy entities configuration end */
 
     /* card mod */
     card_mod: optional(any()),
