@@ -18,7 +18,11 @@ The slider always covers a single day from `00:00` to `23:59`.
 ## Features
 
 - One slider with 1..n handles   
+![One handle](/assets/1handle.png)   
+![n handles](/assets/nhandles.png)   
 - Legacy 2-handle config from `2.x` still supported   
+- configurable connections between handles   
+![configurable connections](/assets/configurableconnect.png)   
 - Standard and compact layouts   
 ![Standard format](/assets/standard.png)   
 ![Compact format](/assets/compact.png)   
