@@ -219,9 +219,13 @@ export const stdFlexSliderSliderCardCss: string = `
   }
 
   .slider.std.noUi-vertical .noUi-value-vertical {
-    transform: translateY(-50%);
+    transform: translateY(-55%);
     left: -8px;
     line-height: 1;
+  }
+
+  .slider.std.noUi-vertical.noUi-rtl .noUi-value-vertical {
+    transform: translateY(35%);
   }
 
   .slider.std.noUi-vertical.mirrored .noUi-value-vertical {
