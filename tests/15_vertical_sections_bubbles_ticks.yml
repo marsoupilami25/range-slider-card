@@ -69,9 +69,13 @@ sections:
       - type: custom:flex-slider-card
         entities:
           - entity: input_number.inputnumbertest1
+            text: ""
           - entity: input_number.inputnumbertest2
+            text: ""
           - entity: input_number.inputnumbertest3
+            text: ""
           - entity: input_number.inputnumbertest4
+            text: ""
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -86,6 +90,7 @@ sections:
           rows: 3
         verticalheight: 2
         valuesbaractive: false
+        direction: rtl
       - type: tile
         entity: input_number.inputnumbertest1
         vertical: false
