@@ -122,6 +122,13 @@ export const flexSliderCardTicksConfigStruct = object({
   minorticks: optional(number()),
 });
 
+export type FlexSliderCardReferenceConfig = {
+  entity?: string;
+};
+export const flexSliderCardReferenceConfigStruct = object({
+  entity: optional(string()),
+});
+
 export type FlexSliderCardHandleConfig = {
   entity: string;
   text?: string;
@@ -144,6 +151,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   valuesbaractive?: boolean;
   bubblesactive?: boolean;
   ticksactive?: boolean;
+  referenceactive?: boolean;
   verticallayout?: FlexSliderCardVerticalLayout;
 
   /* behavioral */
@@ -160,6 +168,9 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
 
   /* ticks */
   ticks?: FlexSliderCardTicksConfig;
+
+  /* reference */
+  reference?: FlexSliderCardReferenceConfig;
 
   /* entities */
   handlesbehavior?: FlexSliderCardHandlesBehavior;
@@ -186,6 +197,7 @@ export const flexSliderCardConfigStruct = assign(
     valuesbaractive: optional(boolean()), 
     bubblesactive: optional(boolean()),
     ticksactive: optional(boolean()),
+    referenceactive: optional(boolean()),
     verticallayout: optional(flexSliderCardVerticalLayoutStruct),
 
     /* behavioral */
@@ -202,6 +214,9 @@ export const flexSliderCardConfigStruct = assign(
 
     /* ticks */
     ticks: optional(flexSliderCardTicksConfigStruct),
+
+    /* reference */
+    reference: optional(flexSliderCardReferenceConfigStruct),
 
     /* entities */
     handlesbehavior: optional(flexSliderCardHandlesBehaviorStruct),

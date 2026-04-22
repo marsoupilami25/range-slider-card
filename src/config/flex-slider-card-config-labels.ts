@@ -3,6 +3,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   format: "Format",
   valuesbaractive: "Enable values bar",
   bubblesactive: "Enable bubbles",
+  referenceactive: "Enable reference entity",
   entity: "Entity",
   text: "Text",
   connectprevious: "Connect with previous",
@@ -24,4 +25,5 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   ticksactive: "Show tick marks",
   majorticks: "Number of Major Ticks",
   minorticks: "Number of Minor Ticks",
+  reference: "Reference entity",
 };

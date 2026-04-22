@@ -18,7 +18,7 @@ import {
   assertOptionalNumber,
   assertOptionalBoolean
 } from "../utils/utils";
-import { FlexSliderCardEntityType } from "../utils/entity-management";
+import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
 import {
   clearLegacyEntityTexts,
   getLegacyHandleText,
@@ -46,6 +46,7 @@ export class FlexSliderCardConfigMngr {
     this._checkValuesBar();
     this._checkBubbles();
     this._checkTicks();
+    this._checkReference();
   }
 
   public update(hass: HomeAssistant): void {
@@ -56,6 +57,7 @@ export class FlexSliderCardConfigMngr {
     this._updateValuesBar(hass);
     this._updateBubbles(hass);
     this._updateTicks(hass);
+    this._updateReference(hass);
   }
 
   public reset(): void {
@@ -66,6 +68,7 @@ export class FlexSliderCardConfigMngr {
     this._resetValuesBar();
     this._resetBubbles();
     this._resetTicks();
+    this._resetReference();
   }
 
   public get config() : FlexSliderCardConfig {
@@ -346,6 +349,41 @@ export class FlexSliderCardConfigMngr {
     }
     return this._config.ticks.minorticks;
   }
+
+  /****************************************************/
+  /* reference entity                                 */
+  /****************************************************/
+
+  protected _checkReference(): void {
+    assertOptionalBoolean(this._config.referenceactive, "reference");
+    if (this._config.referenceactive == null) {
+      this._config.referenceactive = false;
+    }
+
+    if (this._config.reference == null) {
+      this._config.reference = {};
+    }
+
+    assertOptionalString(this._config.reference.entity, "reference.entity");
+    if (!this._config.reference.entity) {
+      return;
+    }
+
+    if (!this._isValidEntityId(this._config.reference.entity)) {
+      throw new Error("Invalid format for reference entity. Expected domain.object_id");
+    }
+
+    if (getEntityType(this._config.reference.entity) !== this.entitytype) {
+      const expectedDomains = this.entitytype === FlexSliderCardEntityType.TIME
+        ? "input_datetime"
+        : "number or input_number";
+      throw new Error(`Reference entity must use compatible domains. Expected: ${expectedDomains}`);
+    }
+  }
+
+  protected _updateReference(hass: HomeAssistant): void { }
+
+  protected _resetReference(): void { }
   
   /****************************************************/
   /* slider                                           */
