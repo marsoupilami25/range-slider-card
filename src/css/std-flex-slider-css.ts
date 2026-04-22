@@ -1,4 +1,8 @@
-import { STD_TITLE_HEIGHT, STD_CONTAINER_PADDING } from "../type/constants";
+import {
+  STD_TITLE_HEIGHT,
+  STD_CONTAINER_PADDING,
+  STD_VERTICAL_CONTAINER_PADDING,
+} from "../type/constants";
 
 export const stdFlexSliderCardCss: string = `
 
@@ -23,6 +27,14 @@ export const stdFlexSliderCardCss: string = `
 
   .container.std.no-values {
     padding-bottom: ${STD_CONTAINER_PADDING}px;
+  }
+
+  .container.std.vertical.no-title {
+    padding-top: ${STD_VERTICAL_CONTAINER_PADDING}px;
+  }
+
+  .container.std.vertical.no-values {
+    padding-bottom: ${STD_VERTICAL_CONTAINER_PADDING}px;
   }
 
   .container.std .title {

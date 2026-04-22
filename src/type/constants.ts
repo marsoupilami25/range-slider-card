@@ -3,6 +3,8 @@ export const COMPACT_TITLE_HEIGHT = 20;
 
 export const STD_CONTAINER_PADDING = 5;
 export const COMPACT_CONTAINER_PADDING = 3;
+export const STD_VERTICAL_CONTAINER_PADDING = 12;
+export const COMPACT_VERTICAL_CONTAINER_PADDING = 7;
 
 export const CARD_HEIGHT_BASE = 56;
 export const INTER_CARD = 8;

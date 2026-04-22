@@ -1,4 +1,8 @@
-import { COMPACT_TITLE_HEIGHT, COMPACT_CONTAINER_PADDING } from "../type/constants";
+import {
+  COMPACT_TITLE_HEIGHT,
+  COMPACT_CONTAINER_PADDING,
+  COMPACT_VERTICAL_CONTAINER_PADDING,
+} from "../type/constants";
 
 export const compactFlexSliderCardCss: string = `
 
@@ -23,6 +27,14 @@ export const compactFlexSliderCardCss: string = `
 
   .container.compact.no-values {
     padding-bottom: ${COMPACT_CONTAINER_PADDING}px;
+  }
+
+  .container.compact.vertical.no-title {
+    padding-top: ${COMPACT_VERTICAL_CONTAINER_PADDING}px;
+  }
+
+  .container.compact.vertical.no-values {
+    padding-bottom: ${COMPACT_VERTICAL_CONTAINER_PADDING}px;
   }
 
   .container.compact .title {

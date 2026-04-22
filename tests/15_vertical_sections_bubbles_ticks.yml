@@ -69,9 +69,13 @@ sections:
       - type: custom:flex-slider-card
         entities:
           - entity: input_number.inputnumbertest1
+            text: ""
           - entity: input_number.inputnumbertest2
+            text: ""
           - entity: input_number.inputnumbertest3
+            text: ""
           - entity: input_number.inputnumbertest4
+            text: ""
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -86,6 +90,7 @@ sections:
           rows: 3
         verticalheight: 2
         valuesbaractive: false
+        direction: rtl
       - type: tile
         entity: input_number.inputnumbertest1
         vertical: false
@@ -98,6 +103,7 @@ sections:
       - type: custom:flex-slider-card
         entities:
           - entity: input_number.inputnumbertest1
+            text: ""
         bubblesactive: true
         ticksactive: true
         min: 18
@@ -112,6 +118,7 @@ sections:
         grid_options:
           columns: 6
         valuesbaractive: false
+        direction: rtl
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax

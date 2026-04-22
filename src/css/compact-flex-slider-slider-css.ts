@@ -77,14 +77,14 @@ export const compactFlexSliderSliderCardCss: string = `
     background: var(--primary-color);
     width: 2px;
     height: 6px;
-    transform: translateX(-1px);
+    transform: translateX(0px);
   }
 
   .slider.compact.noUi-horizontal .noUi-marker-normal {
     background: var(--divider-color);
     width: 1px;
     height: 4px;
-    transform: translateX(-1px);
+    transform: translateX(0px);
   }
 
   .slider.compact.noUi-horizontal.noUi-rtl .noUi-marker-large {
@@ -208,9 +208,13 @@ export const compactFlexSliderSliderCardCss: string = `
   }
 
   .slider.compact.noUi-vertical .noUi-value-vertical {
-    transform: translateY(-60%);
+    transform: translateY(-65%);
     left: -12px;
     line-height: 1;
+  }
+
+  .slider.compact.noUi-vertical.noUi-rtl .noUi-value-vertical {
+    transform: translateY(25%);
   }
 
   .slider.compact.noUi-vertical.mirrored .noUi-value-vertical {

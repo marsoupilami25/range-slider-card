@@ -146,8 +146,14 @@ const baseSchema = memoizeOne((
               select: {
                 mode: "dropdown",
                 options: [
-                  { value: "ltr", label: "Left to Right" },
-                  { value: "rtl", label: "Right to Left" },
+                  {
+                    value: "ltr",
+                    label: isVertical ? "Top to Bottom" : "Left to Right",
+                  },
+                  {
+                    value: "rtl",
+                    label: isVertical ? "Bottom to Top" : "Right to Left",
+                  },
                 ],
               },
             },
