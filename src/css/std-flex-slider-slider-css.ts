@@ -14,7 +14,7 @@ export const stdFlexSliderSliderCardCss: string = `
   .slider.std.noUi-target {
     height: 16px;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
     box-shadow: none;
     /* outline: 1px solid blue; /* Debugging border */
@@ -32,7 +32,7 @@ export const stdFlexSliderSliderCardCss: string = `
   }
 
   .slider.std .noUi-connects {
-    border-radius: 15px;
+    border-radius: 10px;
   }
 
   .slider.std.noUi-horizontal .noUi-handle {
@@ -142,7 +142,7 @@ export const stdFlexSliderSliderCardCss: string = `
     width: 16px;
     height: 100%;
     background: color-mix(in srgb, var(--disabled-color) 30%, transparent);
-    border-radius: 15px;
+    border-radius: 10px;
     border: none;
     box-shadow: none;
     /* outline: 1px solid blue; /* Debugging border */
