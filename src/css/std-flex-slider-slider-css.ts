@@ -89,7 +89,18 @@ export const stdFlexSliderSliderCardCss: string = `
   }
 
   .slider.std .noUi-origin.display-reference-origin .noUi-handle {
+    width: 8px;
+    height: 8px;
+    background: var(--disabled-color);
+    border: 0;
+    border-radius: 50%;
+    box-shadow: none;
     pointer-events: none;
+  }
+
+  .slider.std.noUi-horizontal .noUi-origin.display-reference-origin .noUi-handle {
+    top: 4px;
+    right: -4px;
   }
 
   .slider.std.noUi-horizontal .noUi-pips {
@@ -203,6 +214,13 @@ export const stdFlexSliderSliderCardCss: string = `
     opacity: 0;
     box-shadow: none;
     pointer-events: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-origin.display-reference-origin .noUi-handle {
+    top: auto;
+    right: 4px;
+    bottom: -5px;
+    left: auto;
   }
 
   .slider.std.noUi-vertical.mirrored .noUi-tooltip {

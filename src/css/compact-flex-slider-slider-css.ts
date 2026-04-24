@@ -84,7 +84,23 @@ export const compactFlexSliderSliderCardCss: string = `
   }
 
   .slider.compact .noUi-origin.display-reference-origin .noUi-handle {
+    background: var(--disabled-color);
+    border: 0;
+    border-radius: 999px;
+    box-shadow: none;
     pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin .noUi-touch-area {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .slider.compact.noUi-horizontal .noUi-origin.display-reference-origin .noUi-handle {
+    width: 4px;
+    height: 9px;
+    top: -2px;
+    right: -2px;
   }
 
   .slider.compact.noUi-horizontal .noUi-pips {
@@ -192,6 +208,15 @@ export const compactFlexSliderSliderCardCss: string = `
     opacity: 0;
     box-shadow: none;
     pointer-events: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-origin.display-reference-origin .noUi-handle {
+    width: 10px;
+    height: 4px;
+    left: -8px;
+    right: auto;
+    top: auto;
+    bottom: -2px;
   }
 
   .slider.compact.noUi-vertical.mirrored .noUi-tooltip {
