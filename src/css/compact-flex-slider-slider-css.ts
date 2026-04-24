@@ -69,6 +69,24 @@ export const compactFlexSliderSliderCardCss: string = `
     display: none;
   }
 
+  .slider.compact .noUi-origin.ghost-max-origin {
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin {
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.ghost-max-origin .noUi-handle {
+    opacity: 0;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin .noUi-handle {
+    pointer-events: none;
+  }
+
   .slider.compact.noUi-horizontal .noUi-pips {
     top: +0px;
   }
@@ -168,6 +186,12 @@ export const compactFlexSliderSliderCardCss: string = `
 
   .slider.compact.noUi-vertical .noUi-tooltip {
     top: 6px;
+  }
+
+  .slider.compact.noUi-vertical .noUi-origin.ghost-max-origin .noUi-handle {
+    opacity: 0;
+    box-shadow: none;
+    pointer-events: none;
   }
 
   .slider.compact.noUi-vertical.mirrored .noUi-tooltip {

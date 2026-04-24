@@ -325,7 +325,13 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       `${hasTicks ? "has-ticks " : ""}` +
       `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
-    const values = this._config.entities.map((entity) => entity.sliderValue);
+    const values = this._config.hasReference
+      ? [
+          ...this._config.entities.map((entity) => entity.sliderValue),
+          this._config.max,
+          this._config.referenceEntity.sliderValue,
+        ]
+      : this._config.entities.map((entity) => entity.sliderValue);
     const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
     const verticalSliderContainerStyle =
       isVertical && hasBubbles !== hasTicks

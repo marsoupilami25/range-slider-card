@@ -32,11 +32,13 @@ export class FlexSliderCardConfigMngr {
 
   private _config: FlexSliderCardConfig;
   private _entities: FlexSliderCardEntity[];
+  private _referenceEntity?: FlexSliderCardEntity;
   private _entitytype?: FlexSliderCardEntityType;
 
   constructor(config: FlexSliderCardConfig) {
     this._config = structuredClone(config);      // user configuration object
     this._entities = [];        // entities objects ordered like handles in config.entities
+    this._referenceEntity = undefined; // optional non-editable reference handle
     this._entitytype = undefined;    // entity type: "number" or "time", shared by all handles
 
     this._checkFormat();
@@ -364,6 +366,8 @@ export class FlexSliderCardConfigMngr {
       this._config.reference = {};
     }
 
+    this._referenceEntity = undefined;
+
     assertOptionalString(this._config.reference.entity, "reference.entity");
     if (!this._config.reference.entity) {
       return;
@@ -379,11 +383,17 @@ export class FlexSliderCardConfigMngr {
         : "number or input_number";
       throw new Error(`Reference entity must use compatible domains. Expected: ${expectedDomains}`);
     }
+
+    this._referenceEntity = new FlexSliderCardEntity(this._config.reference.entity);
   }
 
-  protected _updateReference(hass: HomeAssistant): void { }
+  protected _updateReference(hass: HomeAssistant): void {
+    this._referenceEntity?.update(hass);
+  }
 
-  protected _resetReference(): void { }
+  protected _resetReference(): void {
+    this._referenceEntity?.resetBaseline();
+  }
   
   /****************************************************/
   /* slider                                           */
@@ -520,6 +530,15 @@ export class FlexSliderCardConfigMngr {
   }
 
   public get connect(): boolean[] {
+    if (this.hasReference) {
+      return [
+        ...this._config.entities!.map((handleConfig) => handleConfig.connectprevious!),
+        this._config.connectend!,
+        false,
+        false,
+      ];
+    }
+
     return [
       ...this._config.entities!.map((handleConfig) => handleConfig.connectprevious!),
       this._config.connectend!,
@@ -677,20 +696,35 @@ export class FlexSliderCardConfigMngr {
     return this._entities.length;
   }
 
+  public get hasReference(): boolean {
+    return this._referenceEntity !== undefined;
+  }
+
+  public get referenceEntity(): FlexSliderCardEntity {
+    if (!this._referenceEntity) {
+      throw new Error("Reference entity is not defined in config");
+    }
+    return this._referenceEntity;
+  }
+
   public entitiesExist(): boolean {
-    return this._entities.every((entity) => entity.exists());
+    return this._entities.every((entity) => entity.exists()) &&
+      (!this.hasReference || this.referenceEntity.exists());
   }
 
   public entitiesResetBaseline(): void {
     this._entities.forEach((entity) => entity.resetBaseline());
+    this._referenceEntity?.resetBaseline();
   }
 
   public entitiesSetBaseline(): void {
     this._entities.forEach((entity) => entity.setBaseline());
+    this._referenceEntity?.setBaseline();
   }
 
   public entitiesIsUpdated(): boolean {
-    return this._entities.some((entity) => entity.isUpdated());
+    return this._entities.some((entity) => entity.isUpdated()) ||
+      this._referenceEntity?.isUpdated() === true;
   }
 
   private _getEntityLabel(index: number): string {

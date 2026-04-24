@@ -96,9 +96,12 @@ export class FlexSliderCardSlider extends LitElement {
     const pipsValues = Array.from({ length: this.config.majorticks }, (_, i) => i * 100 / (this.config.majorticks - 1));
     const density = 100 / ((this.config.majorticks - 1) * (this.config.minorticks + 1));
     const tooltips = this.config.hasBubbles
-      ? this.values.map((_, index) => ({
-          to: (value: number) => this._sliderToBubble(value, index),
-        }))
+      ? [
+          ...this.config.entities.map((_, index) => ({
+            to: (value: number) => this._sliderToBubble(value, index),
+          })),
+          ...(this.config.hasReference ? [false, false] : []),
+        ]
       : false;
 
     noUiSlider.create(this._sliderElement, {
@@ -121,6 +124,14 @@ export class FlexSliderCardSlider extends LitElement {
       behaviour: 'unconstrained',
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
+
+    if (this.config.hasReference) {
+      const origins = this._slider.getOrigins();
+      origins[this.config.entityCount]?.classList.add("ghost-max-origin");
+      origins[this.values.length - 1]?.classList.add("display-reference-origin");
+      this._slider.disable(this.config.entityCount);
+      this._slider.disable(this.values.length - 1);
+    }
 
     this._slider.on("start", (_values: (number | string)[], handle: number) => {
       this._onStart(handle);
@@ -234,6 +245,10 @@ export class FlexSliderCardSlider extends LitElement {
   /****************************************************/
 
   private _onStart(handle: number): void {
+    if (handle >= this.config.entityCount) {
+      return;
+    }
+
     debuglog(`slider start ${handle}`);
     this._userIsUpdating = true;
     this._emitUserUpdateStateChanged(true);
@@ -243,7 +258,7 @@ export class FlexSliderCardSlider extends LitElement {
   private async _onChange(values: (number | string)[]): Promise<void> {
     debuglog("slider change");
 
-    const nextValues = values.map(Number);
+    const nextValues = values.map(Number).slice(0, this.config.entityCount);
     const currentValues = this.config.entities.map((entity) => entity.sliderValue);
     const changedIndexes = nextValues
       .map((value, index) => currentValues[index] === value ? -1 : index)
@@ -277,9 +292,15 @@ export class FlexSliderCardSlider extends LitElement {
   private _onUpdate(values: (number | string)[], handle: number): void {
     debuglog("slider update");
     const numbers: number[] = values.map(Number);
+    const editableValues = numbers.slice(0, this.config.entityCount);
+
+    if (handle >= this.config.entityCount) {
+      this._valuesBarSetValue?.(editableValues);
+      return;
+    }
 
     if (!this._isAdjustingHandles) {
-      const adjustedValues = this._getAdjustedHandleValues(numbers, handle);
+      const adjustedValues = this._getAdjustedHandleValues(editableValues, handle);
       if (adjustedValues !== null) {
         this._isAdjustingHandles = true;
         try {
@@ -296,7 +317,7 @@ export class FlexSliderCardSlider extends LitElement {
       }
     }
 
-    this._valuesBarSetValue?.(numbers);
+    this._valuesBarSetValue?.(editableValues);
   }
 
   private _onEnd(): void {
