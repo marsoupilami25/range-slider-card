@@ -54,7 +54,9 @@ cards:
   - type: custom:flex-slider-card
     entities:
       - entity: input_number.inputnumbertest1
+        text: ""
       - entity: input_number.inputnumbertest2
+        text: ""
     min: 18
     max: 30
     step: 0.5
@@ -63,12 +65,17 @@ cards:
     reference:
       entity: input_number.inputnumbertestref
       text: Ref
-      bubble: true
       unit: C
+      bubble: true
+      valuesbar: false
+      valuesbartextlarge: false
+    bubblesactive: true
   - type: custom:flex-slider-card
     entities:
       - entity: input_number.inputnumbertest1
+        text: ""
       - entity: input_number.inputnumbertest2
+        text: ""
     min: 18
     max: 30
     step: 0.5
@@ -77,10 +84,13 @@ cards:
     reference:
       entity: input_number.inputnumbertestref
       text: Ref
-      bubble: true
       unit: C
+      bubble: true
+      valuesbar: false
+      valuesbartextlarge: false
     bubbles:
       dragonly: true
+    bubblesactive: true
   - type: heading
     icon: ""
     heading: Cmp | Bul vis.

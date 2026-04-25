@@ -83,13 +83,6 @@ sections:
           rows: 3
         verticalheight: 2
         valuesbaractive: false
-      - type: tile
-        entity: input_number.inputnumbertest1
-        vertical: false
-        features_position: bottom
-        grid_options:
-          columns: 6
-          rows: 1
   - type: grid
     cards:
       - type: custom:flex-slider-card
