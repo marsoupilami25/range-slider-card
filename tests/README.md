@@ -51,6 +51,7 @@ Abbreviation legend:
 - `unit`: custom unit display test
 - `W40`, `W50`, `W90`, `W100`: horizontal width percentage
 - `RTL`: right-to-left direction
+- `HB`: handles behavior test
 - `vlay`: vertical layout
 - `std`: standard vertical layout
 - `mir`: mirrored vertical layout
@@ -62,9 +63,11 @@ Abbreviation legend:
 
 Focused views are also available for specific options:
 - `06_horizontal_masonry_horizontalwidth.yml`
-- `09_horizontal_masonry_bubbles_dragonly.yml`
-- `17_vertical_masonry_verticallayout.yml`
 - `07_horizontal_masonry_card_mod.yml`
+- `09_horizontal_masonry_bubbles_dragonly.yml`
+- `12_horizontal_masonry_handlesbehavior.yml`
+- `18_vertical_masonry_verticallayout.yml`
+- `22_vertical_masonry_handlesbehavior.yml`
 
 `07_horizontal_masonry_card_mod.yml` requires `card-mod` to be installed in the test environment.
 
