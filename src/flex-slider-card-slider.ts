@@ -73,6 +73,11 @@ export class FlexSliderCardSlider extends LitElement {
     .slider {
       width: 100%;
     }
+
+    /* noUiSlider writes inline z-index values; keep the reference handle and bubble above editable handles. */
+    .slider .noUi-origin.display-reference-origin {
+      z-index: 1000 !important;
+    }
     
     /* noUiSlider overrides */
 
