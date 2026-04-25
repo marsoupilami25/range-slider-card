@@ -68,6 +68,13 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.dragonly .noUi-origin.display-reference-origin .noUi-tooltip {
     opacity: 1;
   }
+
+  .slider.compact .noUi-origin.display-reference-origin .noUi-tooltip {
+    background: var(--ha-card-background, var(--card-background-color, var(--primary-background-color)));
+    color: var(--secondary-text-color);
+    border-color: transparent;
+    font-weight: 700;
+  }
   
   .slider.compact .noUi-handle::before, .slider.compact .noUi-handle::after {
     display: none;
@@ -105,6 +112,10 @@ export const compactFlexSliderSliderCardCss: string = `
     height: 9px;
     top: -2px;
     right: -2px;
+  }
+
+  .slider.compact.noUi-horizontal .noUi-origin.display-reference-origin .noUi-tooltip {
+    top: -19px;
   }
 
   .slider.compact.noUi-horizontal .noUi-pips {
