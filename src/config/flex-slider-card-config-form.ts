@@ -348,6 +348,11 @@ const referenceSchema = memoizeOne((selectedEntityType?: FlexSliderCardEntityTyp
           }
         },
       },
+      {
+        name: "text",
+        required: false,
+        selector: { text: {} },
+      },
     ],
   }];
 });

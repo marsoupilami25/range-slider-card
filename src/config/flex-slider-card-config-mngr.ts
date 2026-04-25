@@ -369,6 +369,7 @@ export class FlexSliderCardConfigMngr {
     this._referenceEntity = undefined;
 
     assertOptionalString(this._config.reference.entity, "reference.entity");
+    assertOptionalString(this._config.reference.text, "reference.text");
     if (!this._config.reference.entity) {
       return;
     }
@@ -384,7 +385,10 @@ export class FlexSliderCardConfigMngr {
       throw new Error(`Reference entity must use compatible domains. Expected: ${expectedDomains}`);
     }
 
-    this._referenceEntity = new FlexSliderCardEntity(this._config.reference.entity);
+    this._referenceEntity = new FlexSliderCardEntity(
+      this._config.reference.entity,
+      this._config.reference.text ?? ""
+    );
   }
 
   protected _updateReference(hass: HomeAssistant): void {

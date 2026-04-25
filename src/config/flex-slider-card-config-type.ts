@@ -124,9 +124,11 @@ export const flexSliderCardTicksConfigStruct = object({
 
 export type FlexSliderCardReferenceConfig = {
   entity?: string;
+  text?: string;
 };
 export const flexSliderCardReferenceConfigStruct = object({
   entity: optional(string()),
+  text: optional(string()),
 });
 
 export type FlexSliderCardHandleConfig = {

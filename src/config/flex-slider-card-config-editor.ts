@@ -449,6 +449,17 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     return normalizedHandle;
   }
 
+  private _normalizeReference(reference?: FlexSliderCardConfig["reference"]): FlexSliderCardConfig["reference"] {
+    if (reference == null) {
+      return undefined;
+    }
+
+    return {
+      entity: reference.entity ?? "",
+      text: reference.text ?? "",
+    };
+  }
+
   private _getHandleSchema(index: number): HaFormSchema[] {
     const entityCount = this._config.entities?.length ?? 0;
     const excludedEntities = (this._config.entities ?? [])
@@ -599,6 +610,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     const normalizedConfig: FlexSliderCardConfig = {
       ...rest,
       entities,
+      reference: this._normalizeReference(config?.reference),
     };
 
     if (hasLegacyValuesBarTextConfig(config)) {
