@@ -95,14 +95,7 @@ export class FlexSliderCardSlider extends LitElement {
 
     const pipsValues = Array.from({ length: this.config.majorticks }, (_, i) => i * 100 / (this.config.majorticks - 1));
     const density = 100 / ((this.config.majorticks - 1) * (this.config.minorticks + 1));
-    const tooltips = this.config.hasBubbles
-      ? [
-          ...this.config.entities.map((_, index) => ({
-            to: (value: number) => this._sliderToBubble(value, index),
-          })),
-          ...(this.config.hasReference ? [false, false] : []),
-        ]
-      : false;
+    const tooltips = this._buildTooltips();
 
     noUiSlider.create(this._sliderElement, {
       start: this.values,
@@ -163,6 +156,9 @@ export class FlexSliderCardSlider extends LitElement {
     const verticalLayoutClass = this.config.isVertical && this.config.verticalLayout === "mirrored"
       ? " mirrored"
       : "";
+    const hasBubbles = this.config.hasBubbles;
+    const hasReferenceBubble = this.config.hasReferenceBubble;
+    const reservesBubbleSpace = hasBubbles || hasReferenceBubble;
 
     if (this.config.isVertical) {
       let height: string;
@@ -192,12 +188,12 @@ export class FlexSliderCardSlider extends LitElement {
     let padding = "";
     let marginTop = "";
 
-    if (this.config.hasBubbles && this.config.hasTicks) {
+    if (reservesBubbleSpace && this.config.hasTicks) {
       alignItems = "center";
       height = this.config.isStd ? "67px" : "50px";
       padding = this.config.isStd ? "0px" : "2px";
       marginTop = this.config.isStd ? "-1px" : "0px";
-    } else if (this.config.hasBubbles) {
+    } else if (reservesBubbleSpace) {
       alignItems = "flex-end";
       height = this.config.isStd ? "43px" : "32px";
       padding = this.config.isStd ? "1px" : "4px";
@@ -402,6 +398,29 @@ export class FlexSliderCardSlider extends LitElement {
     return nextValues;
   }
 
+  private _buildTooltips(): false | ({ to: (value: number) => string } | false)[] {
+    if (!this.config.hasBubbles && !this.config.hasReferenceBubble) {
+      return false;
+    }
+
+    const tooltips: ({ to: (value: number) => string } | false)[] = this.config.entities.map((_, index) => (
+      this.config.hasBubbles
+        ? { to: (value: number) => this._sliderToBubble(value, index) }
+        : false
+    ));
+
+    if (this.config.hasReference) {
+      tooltips.push(false);
+      tooltips.push(
+        this.config.hasReferenceBubble
+          ? { to: (value: number) => this._sliderToReferenceBubble(value) }
+          : false
+      );
+    }
+
+    return tooltips;
+  }
+
   private _sliderToPips(value: number): string {
     let valueToDisplay: string = "";
 
@@ -422,6 +441,15 @@ export class FlexSliderCardSlider extends LitElement {
       this.config.nbdigitsBubbles,
       this.config.unitBubbles,
       this.config.showTextBubbles,
+    );
+  }
+
+  private _sliderToReferenceBubble(value: number): string {
+    return this.config.referenceEntity.toText(
+      value,
+      this.config.nbdigitsBubbles,
+      this.config.unitReferenceBubble,
+      true,
     );
   }
   

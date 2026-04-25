@@ -326,7 +326,10 @@ const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
   }
 ]);
 
-const referenceSchema = memoizeOne((selectedEntityType?: FlexSliderCardEntityType): HaFormSchema[] => {
+const referenceSchema = memoizeOne((
+  selectedEntityType?: FlexSliderCardEntityType,
+  hasReferenceBubble = false,
+): HaFormSchema[] => {
   const domains = selectedEntityType === FlexSliderCardEntityType.TIME
     ? ["input_datetime"]
     : selectedEntityType === FlexSliderCardEntityType.NUMBER
@@ -349,10 +352,32 @@ const referenceSchema = memoizeOne((selectedEntityType?: FlexSliderCardEntityTyp
         },
       },
       {
-        name: "text",
-        required: false,
-        selector: { text: {} },
+        type: "grid",
+        name: "",
+        schema: [
+          {
+            name: "bubble",
+            required: false,
+            selector: { boolean: {} },
+          },
+        ],
       },
+      ...(hasReferenceBubble ? [{
+        type: "grid",
+        name: "",
+        schema: [
+          {
+            name: "text",
+            required: false,
+            selector: { text: {} },
+          },
+          {
+            name: "unit",
+            required: false,
+            selector: { text: {} },
+          },
+        ],
+      }] : []),
     ],
   }];
 });
@@ -416,6 +441,7 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,
   hasTicks: boolean,
   hasReference: boolean,
+  hasReferenceBubble: boolean,
   digitsValuesBar: string,
   digitsBubbles: string,
   digitsTicks: string,
@@ -429,6 +455,6 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
   if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
   if (hasTicks) schema.push(...ticksSchema(digitsTicks));
-  if (hasReference) schema.push(...referenceSchema(selectedEntityType));
+  if (hasReference) schema.push(...referenceSchema(selectedEntityType, hasReferenceBubble));
   return schema;
 });

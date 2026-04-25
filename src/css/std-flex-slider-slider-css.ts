@@ -70,6 +70,10 @@ export const stdFlexSliderSliderCardCss: string = `
     opacity: 1;
   }
 
+  .slider.std.dragonly .noUi-origin.display-reference-origin .noUi-tooltip {
+    opacity: 1;
+  }
+
   .slider.std .noUi-handle::before, .slider.std .noUi-handle::after {
     display: none;
   }
@@ -205,9 +209,9 @@ export const stdFlexSliderSliderCardCss: string = `
     box-shadow: none;
   }
 
-  .slider.std.noUi-vertical .noUi-tooltip{
-    top: 7px;
-    translate: -3px;
+  .slider.std.noUi-vertical .noUi-tooltip {
+    top: 50%;
+    transform: translate(-3px, -50%);
   }
 
   .slider.std.noUi-vertical .noUi-origin.ghost-max-origin .noUi-handle {

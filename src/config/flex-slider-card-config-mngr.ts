@@ -370,6 +370,14 @@ export class FlexSliderCardConfigMngr {
 
     assertOptionalString(this._config.reference.entity, "reference.entity");
     assertOptionalString(this._config.reference.text, "reference.text");
+    assertOptionalString(this._config.reference.unit, "reference.unit");
+    assertOptionalBoolean(this._config.reference.bubble, "reference.bubble");
+    if (this._config.reference.unit == null) {
+      this._config.reference.unit = undefined;
+    }
+    if (this._config.reference.bubble == null) {
+      this._config.reference.bubble = false;
+    }
     if (!this._config.reference.entity) {
       return;
     }
@@ -398,7 +406,15 @@ export class FlexSliderCardConfigMngr {
   protected _resetReference(): void {
     this._referenceEntity?.resetBaseline();
   }
-  
+
+  public get hasReferenceBubble(): boolean {
+    return this.hasReference && this._config.reference?.bubble === true;
+  }
+
+  public get unitReferenceBubble(): string {
+    return this._config.reference?.unit ?? "";
+  }
+
   /****************************************************/
   /* slider                                           */
   /****************************************************/

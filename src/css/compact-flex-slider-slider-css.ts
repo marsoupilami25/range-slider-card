@@ -64,6 +64,10 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.dragonly .noUi-active .noUi-tooltip {
     opacity: 1;
   }
+
+  .slider.compact.dragonly .noUi-origin.display-reference-origin .noUi-tooltip {
+    opacity: 1;
+  }
   
   .slider.compact .noUi-handle::before, .slider.compact .noUi-handle::after {
     display: none;
@@ -201,7 +205,8 @@ export const compactFlexSliderSliderCardCss: string = `
   }
 
   .slider.compact.noUi-vertical .noUi-tooltip {
-    top: 6px;
+    top: 50%;
+    transform: translate(0, -50%);
   }
 
   .slider.compact.noUi-vertical .noUi-origin.ghost-max-origin .noUi-handle {

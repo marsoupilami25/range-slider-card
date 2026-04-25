@@ -6,6 +6,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   referenceactive: "Enable reference entity",
   entity: "Entity",
   text: "Text",
+  bubble: "Show bubble",
   connectprevious: "Connect with previous",
   connectend: "Connect at end",
   min: "Min (Number only)",

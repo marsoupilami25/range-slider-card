@@ -195,6 +195,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.bubblesactive === true,
       this._config.ticksactive === true,
       this._config.referenceactive === true,
+      this._config.reference?.bubble === true,
       this._config.valuesbar?.digits ?? "",
       this._config.bubbles?.digits ?? "",
       this._config.ticks?.digits ?? "",
@@ -457,6 +458,8 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     return {
       entity: reference.entity ?? "",
       text: reference.text ?? "",
+      unit: reference.unit ?? "",
+      bubble: reference.bubble ?? false,
     };
   }
 
