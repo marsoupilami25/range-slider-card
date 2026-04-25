@@ -1,0 +1,94 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertest1
+      - input_number.inputnumbertest2
+      - input_number.inputnumbertest3
+      - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
+    show_header_toggle: true
+    state_color: false
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std | HB
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Fixed | VB
+        handlesbehavior: fixed
+        valuesbaractive: true
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Flexible | VB
+        handlesbehavior: flexible
+        valuesbaractive: true
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Unconstrained | VB
+        handlesbehavior: unconstrained
+        valuesbaractive: true
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Cmp | HB
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Fixed | Bul
+        format: compact
+        handlesbehavior: fixed
+        bubblesactive: true
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Flexible | Bul
+        format: compact
+        handlesbehavior: flexible
+        bubblesactive: true
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Unconstrained | Bul
+        format: compact
+        handlesbehavior: unconstrained
+        bubblesactive: true
+title: Handles behavior

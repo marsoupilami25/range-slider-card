@@ -1,0 +1,112 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertest1
+      - input_number.inputnumbertest2
+      - input_number.inputnumbertest3
+      - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
+    show_header_toggle: true
+    state_color: false
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std | HB
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Fixed | Bul | h3
+        handlesbehavior: fixed
+        bubblesactive: true
+        orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Flexible | Bul | h3
+        handlesbehavior: flexible
+        bubblesactive: true
+        orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Unconstrained | Bul | h3
+        handlesbehavior: unconstrained
+        bubblesactive: true
+        orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Cmp | HB
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Fixed | Bul | h3
+        format: compact
+        handlesbehavior: fixed
+        bubblesactive: true
+        orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Flexible | Bul | h3
+        format: compact
+        handlesbehavior: flexible
+        bubblesactive: true
+        orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: Unconstrained | Bul | h3
+        format: compact
+        handlesbehavior: unconstrained
+        bubblesactive: true
+        orientation: vertical
+        verticalheight: 3
+        valuesbaractive: false
+title: Handles behavior

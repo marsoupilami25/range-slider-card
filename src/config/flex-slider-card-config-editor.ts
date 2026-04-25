@@ -194,12 +194,16 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.valuesbaractive === true,
       this._config.bubblesactive === true,
       this._config.ticksactive === true,
+      this._config.referenceactive === true,
+      this._config.reference?.bubble === true,
+      this._config.reference?.valuesbar === true,
       this._config.valuesbar?.digits ?? "",
       this._config.bubbles?.digits ?? "",
       this._config.ticks?.digits ?? "",
       isNumber,
       isVertical,
       isCompact,
+      selectedEntityType,
     );
 
     return html`
@@ -374,6 +378,12 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     const nextConfig = structuredClone(ev.detail.value as FlexSliderCardConfig);
     if (nextConfig.orientation === "vertical") {
       nextConfig.valuesbaractive = false;
+      if (nextConfig.reference) {
+        nextConfig.reference.valuesbar = false;
+        nextConfig.reference.valuesbartextlarge = false;
+      }
+    } else if (nextConfig.reference && nextConfig.reference.valuesbar !== true) {
+      nextConfig.reference.valuesbartextlarge = false;
     }
     this._applyConfig(nextConfig);
   };
@@ -445,6 +455,21 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     }
 
     return normalizedHandle;
+  }
+
+  private _normalizeReference(reference?: FlexSliderCardConfig["reference"]): FlexSliderCardConfig["reference"] {
+    if (reference == null) {
+      return undefined;
+    }
+
+    return {
+      entity: reference.entity ?? "",
+      text: reference.text ?? "",
+      unit: reference.unit ?? "",
+      bubble: reference.bubble ?? false,
+      valuesbar: reference.valuesbar ?? false,
+      valuesbartextlarge: reference.valuesbartextlarge ?? false,
+    };
   }
 
   private _getHandleSchema(index: number): HaFormSchema[] {
@@ -597,6 +622,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     const normalizedConfig: FlexSliderCardConfig = {
       ...rest,
       entities,
+      reference: this._normalizeReference(config?.reference),
     };
 
     if (hasLegacyValuesBarTextConfig(config)) {

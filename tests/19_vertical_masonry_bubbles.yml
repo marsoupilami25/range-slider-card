@@ -7,27 +7,28 @@ cards:
       - input_number.inputnumbertest2
       - input_number.inputnumbertest3
       - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
     show_header_toggle: true
     state_color: false
   - type: custom:flex-slider-card
     entities:
       - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
     min: 18
     max: 30
     step: 0.5
-    name: Std | 6/2
-    ticksactive: true
-    ticks:
-      digits: manual
-      nbdigits: 3
-      majorticks: 6
-      minorticks: 2
+    name: Std
+    bubblesactive: true
+    bubbles:
+      unit: °C
+      mintext: Inf
+      maxtext: Sup
     orientation: vertical
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Std | no tit. | 4/1 | h3
+        heading: Std | no tit. | h3
         heading_style: title
       - type: custom:flex-slider-card
         entities:
@@ -36,10 +37,7 @@ cards:
         min: 18
         max: 30
         step: 0.5
-        ticksactive: true
-        ticks:
-          majorticks: 4
-          minorticks: 1
+        bubblesactive: true
         orientation: vertical
         verticalheight: 3
         valuesbaractive: false
@@ -51,17 +49,16 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Cmp | 7/0
+    name: Cmp | RTL
     format: compact
-    ticksactive: true
-    ticks:
-      majorticks: 7
+    bubblesactive: true
+    direction: rtl
     orientation: vertical
   - type: vertical-stack
     cards:
       - type: heading
         icon: ""
-        heading: Cmp | no tit. | 5/4 | h3
+        heading: Cmp | no tit. | h3
         heading_style: title
       - type: custom:flex-slider-card
         entities:
@@ -73,12 +70,9 @@ cards:
         max: 40
         step: 1
         format: compact
-        ticksactive: true
-        ticks:
-          majorticks: 5
-          minorticks: 4
+        bubblesactive: true
         orientation: vertical
         verticalheight: 3
         valuesbaractive: false
-theme: Caule Light Green
-title: Ticks
+theme: Caule Light Purple
+title: Bubbles

@@ -64,9 +64,58 @@ export const compactFlexSliderSliderCardCss: string = `
   .slider.compact.dragonly .noUi-active .noUi-tooltip {
     opacity: 1;
   }
+
+  .slider.compact.dragonly .noUi-origin.display-reference-origin .noUi-tooltip {
+    opacity: 1;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin .noUi-tooltip {
+    background: var(--ha-card-background, var(--card-background-color, var(--primary-background-color)));
+    color: var(--secondary-text-color);
+    border-color: transparent;
+    font-weight: 700;
+  }
   
   .slider.compact .noUi-handle::before, .slider.compact .noUi-handle::after {
     display: none;
+  }
+
+  .slider.compact .noUi-origin.ghost-max-origin {
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin {
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.ghost-max-origin .noUi-handle {
+    opacity: 0;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin .noUi-handle {
+    background: var(--disabled-color);
+    border: 0;
+    border-radius: 999px;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.compact .noUi-origin.display-reference-origin .noUi-touch-area {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .slider.compact.noUi-horizontal .noUi-origin.display-reference-origin .noUi-handle {
+    width: 4px;
+    height: 9px;
+    top: -2px;
+    right: -2px;
+  }
+
+  .slider.compact.noUi-horizontal .noUi-origin.display-reference-origin .noUi-tooltip {
+    top: -19px;
   }
 
   .slider.compact.noUi-horizontal .noUi-pips {
@@ -167,7 +216,23 @@ export const compactFlexSliderSliderCardCss: string = `
   }
 
   .slider.compact.noUi-vertical .noUi-tooltip {
-    top: 6px;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  .slider.compact.noUi-vertical .noUi-origin.ghost-max-origin .noUi-handle {
+    opacity: 0;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.compact.noUi-vertical .noUi-origin.display-reference-origin .noUi-handle {
+    width: 10px;
+    height: 4px;
+    left: -8px;
+    right: auto;
+    top: auto;
+    bottom: -2px;
   }
 
   .slider.compact.noUi-vertical.mirrored .noUi-tooltip {

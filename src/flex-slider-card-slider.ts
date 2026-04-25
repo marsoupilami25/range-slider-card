@@ -73,6 +73,11 @@ export class FlexSliderCardSlider extends LitElement {
     .slider {
       width: 100%;
     }
+
+    /* noUiSlider writes inline z-index values; keep the reference handle and bubble above editable handles. */
+    .slider .noUi-origin.display-reference-origin {
+      z-index: 1000 !important;
+    }
     
     /* noUiSlider overrides */
 
@@ -95,11 +100,7 @@ export class FlexSliderCardSlider extends LitElement {
 
     const pipsValues = Array.from({ length: this.config.majorticks }, (_, i) => i * 100 / (this.config.majorticks - 1));
     const density = 100 / ((this.config.majorticks - 1) * (this.config.minorticks + 1));
-    const tooltips = this.config.hasBubbles
-      ? this.values.map((_, index) => ({
-          to: (value: number) => this._sliderToBubble(value, index),
-        }))
-      : false;
+    const tooltips = this._buildTooltips();
 
     noUiSlider.create(this._sliderElement, {
       start: this.values,
@@ -121,6 +122,14 @@ export class FlexSliderCardSlider extends LitElement {
       behaviour: 'unconstrained',
     });
     this._slider = this._sliderElement.noUiSlider;           // reference to the noUiSlider instance
+
+    if (this.config.hasReference) {
+      const origins = this._slider.getOrigins();
+      origins[this.config.entityCount]?.classList.add("ghost-max-origin");
+      origins[this.values.length - 1]?.classList.add("display-reference-origin");
+      this._slider.disable(this.config.entityCount);
+      this._slider.disable(this.values.length - 1);
+    }
 
     this._slider.on("start", (_values: (number | string)[], handle: number) => {
       this._onStart(handle);
@@ -152,6 +161,9 @@ export class FlexSliderCardSlider extends LitElement {
     const verticalLayoutClass = this.config.isVertical && this.config.verticalLayout === "mirrored"
       ? " mirrored"
       : "";
+    const hasBubbles = this.config.hasBubbles;
+    const hasReferenceBubble = this.config.hasReferenceBubble;
+    const reservesBubbleSpace = hasBubbles || hasReferenceBubble;
 
     if (this.config.isVertical) {
       let height: string;
@@ -181,12 +193,12 @@ export class FlexSliderCardSlider extends LitElement {
     let padding = "";
     let marginTop = "";
 
-    if (this.config.hasBubbles && this.config.hasTicks) {
+    if (reservesBubbleSpace && this.config.hasTicks) {
       alignItems = "center";
       height = this.config.isStd ? "67px" : "50px";
       padding = this.config.isStd ? "0px" : "2px";
       marginTop = this.config.isStd ? "-1px" : "0px";
-    } else if (this.config.hasBubbles) {
+    } else if (reservesBubbleSpace) {
       alignItems = "flex-end";
       height = this.config.isStd ? "43px" : "32px";
       padding = this.config.isStd ? "1px" : "4px";
@@ -234,6 +246,10 @@ export class FlexSliderCardSlider extends LitElement {
   /****************************************************/
 
   private _onStart(handle: number): void {
+    if (handle >= this.config.entityCount) {
+      return;
+    }
+
     debuglog(`slider start ${handle}`);
     this._userIsUpdating = true;
     this._emitUserUpdateStateChanged(true);
@@ -243,7 +259,7 @@ export class FlexSliderCardSlider extends LitElement {
   private async _onChange(values: (number | string)[]): Promise<void> {
     debuglog("slider change");
 
-    const nextValues = values.map(Number);
+    const nextValues = values.map(Number).slice(0, this.config.entityCount);
     const currentValues = this.config.entities.map((entity) => entity.sliderValue);
     const changedIndexes = nextValues
       .map((value, index) => currentValues[index] === value ? -1 : index)
@@ -277,9 +293,15 @@ export class FlexSliderCardSlider extends LitElement {
   private _onUpdate(values: (number | string)[], handle: number): void {
     debuglog("slider update");
     const numbers: number[] = values.map(Number);
+    const editableValues = numbers.slice(0, this.config.entityCount);
+
+    if (handle >= this.config.entityCount) {
+      this._valuesBarSetValue?.(editableValues);
+      return;
+    }
 
     if (!this._isAdjustingHandles) {
-      const adjustedValues = this._getAdjustedHandleValues(numbers, handle);
+      const adjustedValues = this._getAdjustedHandleValues(editableValues, handle);
       if (adjustedValues !== null) {
         this._isAdjustingHandles = true;
         try {
@@ -296,7 +318,7 @@ export class FlexSliderCardSlider extends LitElement {
       }
     }
 
-    this._valuesBarSetValue?.(numbers);
+    this._valuesBarSetValue?.(editableValues);
   }
 
   private _onEnd(): void {
@@ -381,6 +403,29 @@ export class FlexSliderCardSlider extends LitElement {
     return nextValues;
   }
 
+  private _buildTooltips(): false | ({ to: (value: number) => string } | false)[] {
+    if (!this.config.hasBubbles && !this.config.hasReferenceBubble) {
+      return false;
+    }
+
+    const tooltips: ({ to: (value: number) => string } | false)[] = this.config.entities.map((_, index) => (
+      this.config.hasBubbles
+        ? { to: (value: number) => this._sliderToBubble(value, index) }
+        : false
+    ));
+
+    if (this.config.hasReference) {
+      tooltips.push(false);
+      tooltips.push(
+        this.config.hasReferenceBubble
+          ? { to: (value: number) => this._sliderToReferenceBubble(value) }
+          : false
+      );
+    }
+
+    return tooltips;
+  }
+
   private _sliderToPips(value: number): string {
     let valueToDisplay: string = "";
 
@@ -401,6 +446,15 @@ export class FlexSliderCardSlider extends LitElement {
       this.config.nbdigitsBubbles,
       this.config.unitBubbles,
       this.config.showTextBubbles,
+    );
+  }
+
+  private _sliderToReferenceBubble(value: number): string {
+    return this.config.referenceEntity.toText(
+      value,
+      this.config.nbdigitsBubbles,
+      this.config.referenceUnit,
+      true,
     );
   }
   

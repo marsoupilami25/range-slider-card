@@ -5,14 +5,6 @@
 
 A Home Assistant custom card that controls one or more entities from a single slider.
 
-Supported domains:
-- `input_number`
-- `number`
-- `input_datetime`
-
-For `input_datetime`, only time-only entities are supported (`has_time: true`, `has_date: false`).
-The slider always covers a single day from `00:00` to `23:59`.
-
 ![Example of a flex slider card](/assets/slider_example.png)
 
 ## Features
@@ -36,6 +28,8 @@ The slider always covers a single day from `00:00` to `23:59`.
 ![With bubbles](/assets/bubbles.png)   
 - Optional tick marks   
 ![With ticks mark](/assets/ticks.png)   
+- Optional reference entity   
+![With optional reference entity](/assets/reference.png)   
 - Left-to-right or right-to-left direction   
 ![Reversed direction](/assets/direction.png)   
 - Uses the active Home Assistant theme   
@@ -49,7 +43,7 @@ The slider always covers a single day from `00:00` to `23:59`.
 Version `2.x` introduced the visual editor and changed the configuration format.
 Old `1.x` configurations are not backward compatible.
 
-Version `3.x` adds multi-handle through major configuration update.
+Version `3.x` adds multi-handle and reference entity support through a major configuration update.
 Nevertheless legacy keys such as `entity_min`, `entity_max`, `valuesbar.mintext`, and `bubbles.maxtext` are still accepted. The visual editor automatically upgrade the configuration to the new style when opened.
 
 ## Installation
@@ -150,6 +144,32 @@ bubbles:
 Both `input_datetime` entities must be time-only (`has_time: true`, `has_date: false`).
 For this domain, `min` and `max` are ignored and `step` is rounded to whole minutes.
 
+### Reference Entity Example
+
+```yaml
+type: custom:flex-slider-card
+name: Heating target
+entities:
+  - entity: input_number.temperature_min
+    text: Min
+  - entity: input_number.temperature_max
+    text: Max
+min: 18
+max: 30
+step: 0.5
+bubblesactive: true
+referenceactive: true
+reference:
+  entity: input_number.temperature_current
+  text: Current
+  bubble: true
+  valuesbar: false
+  unit: C
+```
+
+The reference entity is displayed as a read-only handle on the same slider scale.
+It must use a domain compatible with the slider entities.
+
 ### Vertical Example
 
 ```yaml
@@ -190,6 +210,7 @@ ticks:
 | `valuesbaractive` | boolean | No | `false` | Shows the values bar. Ignored in vertical mode |
 | `bubblesactive` | boolean | No | `false` | Shows value bubbles on handles |
 | `ticksactive` | boolean | No | `false` | Shows tick marks |
+| `referenceactive` | boolean | No | `false` | Shows a non-editable reference entity on the slider |
 | `verticallayout` | `standard` \| `mirrored` | No | `standard` | In vertical mode, moves bubbles and tick labels to the default side or the mirrored side |
 
 ### Slider Behavior
@@ -242,6 +263,25 @@ Available when `valuesbaractive: true`.
 Legacy `mintext` and `maxtext` are still accepted for backward compatibility.
 They will be automatically converted to the new configuration style, using `entities[].text`, when the visual editor is opened.   
 Note: if both `mintext` and `maxtext` exist in `bubbles` and `valuesbar`, `valuesbar` text values are selected.
+
+### `reference` Options
+
+Available when `referenceactive: true`.
+
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `entity` | string | Yes | - | Reference entity id in `domain.object_id` format |
+| `text` | string | No | `""` | Optional label used by the reference bubble or reference values bar |
+| `unit` | string | No | `""` | Unit suffix for the reference bubble or reference values bar |
+| `bubble` | boolean | No | `false` | Shows a bubble on the reference handle |
+| `valuesbar` | boolean | No | `false` | Shows the reference entity in the values bar. Ignored in vertical mode |
+| `valuesbartextlarge` | boolean | No | `false` | Uses a larger text size for the reference values bar |
+
+Rules:
+- The reference entity is read-only.
+- The reference entity must use the same supported domain family as the slider entities.
+- `reference.valuesbar: true` cannot be combined with `valuesbaractive: true`.
+- `reference.valuesbar` is automatically disabled in vertical mode.
 
 ### Entities
 

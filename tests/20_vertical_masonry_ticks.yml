@@ -7,12 +7,12 @@ cards:
       - input_number.inputnumbertest2
       - input_number.inputnumbertest3
       - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
     show_header_toggle: true
     state_color: false
   - type: custom:flex-slider-card
     entities:
       - entity: input_number.inputnumbertest1
-      - entity: input_number.inputnumbertest2
     min: 18
     max: 30
     step: 0.5
@@ -23,11 +23,6 @@ cards:
       nbdigits: 3
       majorticks: 6
       minorticks: 2
-    bubblesactive: true
-    bubbles:
-      unit: °C
-      mintext: Inf
-      maxtext: Sup
     orientation: vertical
   - type: vertical-stack
     cards:
@@ -42,7 +37,6 @@ cards:
         min: 18
         max: 30
         step: 0.5
-        bubblesactive: true
         ticksactive: true
         ticks:
           majorticks: 4
@@ -58,13 +52,11 @@ cards:
     min: 10
     max: 40
     step: 1
-    name: Cmp | RTL | 7/0
+    name: Cmp | 7/0
     format: compact
-    bubblesactive: true
     ticksactive: true
     ticks:
       majorticks: 7
-    direction: rtl
     orientation: vertical
   - type: vertical-stack
     cards:
@@ -82,7 +74,6 @@ cards:
         max: 40
         step: 1
         format: compact
-        bubblesactive: true
         ticksactive: true
         ticks:
           majorticks: 5
@@ -90,5 +81,5 @@ cards:
         orientation: vertical
         verticalheight: 3
         valuesbaractive: false
-theme: Caule Light Orange
-title: Ticks & Bubbles
+theme: Caule Light Green
+title: Ticks

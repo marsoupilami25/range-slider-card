@@ -18,7 +18,7 @@ import {
   assertOptionalNumber,
   assertOptionalBoolean
 } from "../utils/utils";
-import { FlexSliderCardEntityType } from "../utils/entity-management";
+import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
 import {
   clearLegacyEntityTexts,
   getLegacyHandleText,
@@ -32,11 +32,13 @@ export class FlexSliderCardConfigMngr {
 
   private _config: FlexSliderCardConfig;
   private _entities: FlexSliderCardEntity[];
+  private _referenceEntity?: FlexSliderCardEntity;
   private _entitytype?: FlexSliderCardEntityType;
 
   constructor(config: FlexSliderCardConfig) {
     this._config = structuredClone(config);      // user configuration object
     this._entities = [];        // entities objects ordered like handles in config.entities
+    this._referenceEntity = undefined; // optional non-editable reference handle
     this._entitytype = undefined;    // entity type: "number" or "time", shared by all handles
 
     this._checkFormat();
@@ -46,6 +48,7 @@ export class FlexSliderCardConfigMngr {
     this._checkValuesBar();
     this._checkBubbles();
     this._checkTicks();
+    this._checkReference();
   }
 
   public update(hass: HomeAssistant): void {
@@ -56,6 +59,7 @@ export class FlexSliderCardConfigMngr {
     this._updateValuesBar(hass);
     this._updateBubbles(hass);
     this._updateTicks(hass);
+    this._updateReference(hass);
   }
 
   public reset(): void {
@@ -66,6 +70,7 @@ export class FlexSliderCardConfigMngr {
     this._resetValuesBar();
     this._resetBubbles();
     this._resetTicks();
+    this._resetReference();
   }
 
   public get config() : FlexSliderCardConfig {
@@ -346,7 +351,93 @@ export class FlexSliderCardConfigMngr {
     }
     return this._config.ticks.minorticks;
   }
-  
+
+  /****************************************************/
+  /* reference entity                                 */
+  /****************************************************/
+
+  protected _checkReference(): void {
+    assertOptionalBoolean(this._config.referenceactive, "reference");
+    if (this._config.referenceactive == null) {
+      this._config.referenceactive = false;
+    }
+
+    if (this._config.reference == null) {
+      this._config.reference = {};
+    }
+
+    this._referenceEntity = undefined;
+
+    assertOptionalString(this._config.reference.entity, "reference.entity");
+    assertOptionalString(this._config.reference.text, "reference.text");
+    assertOptionalString(this._config.reference.unit, "reference.unit");
+    assertOptionalBoolean(this._config.reference.bubble, "reference.bubble");
+    assertOptionalBoolean(this._config.reference.valuesbar, "reference.valuesbar");
+    assertOptionalBoolean(this._config.reference.valuesbartextlarge, "reference.valuesbartextlarge");
+    if (this._config.reference.unit == null) {
+      this._config.reference.unit = undefined;
+    }
+    if (this._config.reference.bubble == null) {
+      this._config.reference.bubble = false;
+    }
+    if (this._config.orientation === "vertical") {
+      this._config.reference.valuesbar = false;
+    } else if (this._config.reference.valuesbar == null) {
+      this._config.reference.valuesbar = false;
+    }
+    if (this._config.reference.valuesbar !== true) {
+      this._config.reference.valuesbartextlarge = false;
+    } else if (this._config.reference.valuesbartextlarge == null) {
+      this._config.reference.valuesbartextlarge = false;
+    }
+    if (this._config.valuesbaractive === true && this._config.reference.valuesbar === true) {
+      throw new Error("Cannot use both entity values bar and reference values bar");
+    }
+    if (!this._config.reference.entity) {
+      return;
+    }
+
+    if (!this._isValidEntityId(this._config.reference.entity)) {
+      throw new Error("Invalid format for reference entity. Expected domain.object_id");
+    }
+
+    if (getEntityType(this._config.reference.entity) !== this.entitytype) {
+      const expectedDomains = this.entitytype === FlexSliderCardEntityType.TIME
+        ? "input_datetime"
+        : "number or input_number";
+      throw new Error(`Reference entity must use compatible domains. Expected: ${expectedDomains}`);
+    }
+
+    this._referenceEntity = new FlexSliderCardEntity(
+      this._config.reference.entity,
+      this._config.reference.text ?? ""
+    );
+  }
+
+  protected _updateReference(hass: HomeAssistant): void {
+    this._referenceEntity?.update(hass);
+  }
+
+  protected _resetReference(): void {
+    this._referenceEntity?.resetBaseline();
+  }
+
+  public get hasReferenceBubble(): boolean {
+    return this.hasReference && this._config.reference?.bubble === true;
+  }
+
+  public get hasReferenceValuesBar(): boolean {
+    return this.hasReference && this._config.reference?.valuesbar === true;
+  }
+
+  public get hasReferenceValuesBarTextLarge(): boolean {
+    return this.hasReferenceValuesBar && this._config.reference?.valuesbartextlarge === true;
+  }
+
+  public get referenceUnit(): string {
+    return this._config.reference?.unit ?? "";
+  }
+
   /****************************************************/
   /* slider                                           */
   /****************************************************/
@@ -482,6 +573,15 @@ export class FlexSliderCardConfigMngr {
   }
 
   public get connect(): boolean[] {
+    if (this.hasReference) {
+      return [
+        ...this._config.entities!.map((handleConfig) => handleConfig.connectprevious!),
+        this._config.connectend!,
+        false,
+        false,
+      ];
+    }
+
     return [
       ...this._config.entities!.map((handleConfig) => handleConfig.connectprevious!),
       this._config.connectend!,
@@ -639,20 +739,35 @@ export class FlexSliderCardConfigMngr {
     return this._entities.length;
   }
 
+  public get hasReference(): boolean {
+    return this._referenceEntity !== undefined;
+  }
+
+  public get referenceEntity(): FlexSliderCardEntity {
+    if (!this._referenceEntity) {
+      throw new Error("Reference entity is not defined in config");
+    }
+    return this._referenceEntity;
+  }
+
   public entitiesExist(): boolean {
-    return this._entities.every((entity) => entity.exists());
+    return this._entities.every((entity) => entity.exists()) &&
+      (!this.hasReference || this.referenceEntity.exists());
   }
 
   public entitiesResetBaseline(): void {
     this._entities.forEach((entity) => entity.resetBaseline());
+    this._referenceEntity?.resetBaseline();
   }
 
   public entitiesSetBaseline(): void {
     this._entities.forEach((entity) => entity.setBaseline());
+    this._referenceEntity?.setBaseline();
   }
 
   public entitiesIsUpdated(): boolean {
-    return this._entities.some((entity) => entity.isUpdated());
+    return this._entities.some((entity) => entity.isUpdated()) ||
+      this._referenceEntity?.isUpdated() === true;
   }
 
   private _getEntityLabel(index: number): string {

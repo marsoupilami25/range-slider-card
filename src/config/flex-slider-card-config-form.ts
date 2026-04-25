@@ -1,5 +1,6 @@
 import memoizeOne from "memoize-one";
 import { HaFormSchema } from "../type/ha";
+import { FlexSliderCardEntityType } from "../utils/entity-management";
 
 // The form only supports an inclusive minimum, while runtime validation requires step > 0.
 const MIN_POSITIVE_STEP_FOR_FORM = 0.000001;
@@ -9,6 +10,7 @@ const baseSchema = memoizeOne((
   isVertical: boolean,
   isCompact: boolean,
   showVerticalLayout: boolean,
+  hasReferenceValuesBar: boolean,
 ): HaFormSchema[] => [
   {
     name: "name",
@@ -78,7 +80,7 @@ const baseSchema = memoizeOne((
         name: "valuesbaractive",
         selector: { boolean: {} },
         required: false,
-        disabled: isVertical,
+        disabled: isVertical || hasReferenceValuesBar,
       },
       {
         name: "bubblesactive",
@@ -87,6 +89,11 @@ const baseSchema = memoizeOne((
       },
       {
         name: "ticksactive",
+        selector: { boolean: {} },
+        required: false,
+      },
+      {
+        name: "referenceactive",
         selector: { boolean: {} },
         required: false,
       },
@@ -320,6 +327,82 @@ const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
   }
 ]);
 
+const referenceSchema = memoizeOne((
+  selectedEntityType?: FlexSliderCardEntityType,
+  hasReferenceBubble = false,
+  hasReferenceValuesBar = false,
+  hasValuesBar = false,
+  isVertical = false,
+): HaFormSchema[] => {
+  const domains = selectedEntityType === FlexSliderCardEntityType.TIME
+    ? ["input_datetime"]
+    : selectedEntityType === FlexSliderCardEntityType.NUMBER
+      ? ["number", "input_number"]
+      : ["number", "input_number", "input_datetime"];
+
+  return [{
+    type: "expandable",
+    name: "reference",
+    title: "Reference Entity",
+    icon: "mdi:target",
+    schema: [
+      {
+        name: "entity",
+        required: false,
+        selector: {
+          entity: {
+            domain: domains,
+          }
+        },
+      },
+      {
+        type: "grid",
+        name: "",
+        schema: [
+          {
+            name: "bubble",
+            required: false,
+            selector: { boolean: {} },
+          },
+          {
+            name: "valuesbar",
+            required: false,
+            selector: { boolean: {} },
+            disabled: isVertical || hasValuesBar,
+          },
+        ],
+      },
+      ...(hasReferenceBubble || hasReferenceValuesBar ? [{
+        type: "grid",
+        name: "",
+        schema: [
+          {
+            name: "text",
+            required: false,
+            selector: { text: {} },
+          },
+          {
+            name: "unit",
+            required: false,
+            selector: { text: {} },
+          },
+        ],
+      }] : []),
+      ...(hasReferenceValuesBar ? [{
+        type: "grid",
+        name: "",
+        schema: [
+          {
+            name: "valuesbartextlarge",
+            required: false,
+            selector: { boolean: {} },
+          },
+        ],
+      }] : []),
+    ],
+  }];
+});
+
 export const handleSchema: HaFormSchema[] = [
   {
     name: "entity",
@@ -378,17 +461,28 @@ export const handlesBehaviorSchema: HaFormSchema[] = [
 export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,
   hasTicks: boolean,
+  hasReference: boolean,
+  hasReferenceBubble: boolean,
+  hasReferenceValuesBar: boolean,
   digitsValuesBar: string,
   digitsBubbles: string,
   digitsTicks: string,
   isNumber: boolean,
   isVertical: boolean,
-  isCompact: boolean): HaFormSchema[] => {
+  isCompact: boolean,
+  selectedEntityType?: FlexSliderCardEntityType): HaFormSchema[] => {
   const showVerticalLayout = isVertical && (hasBubbles || hasTicks);
 
-  const schema = [...baseSchema(isNumber, isVertical, isCompact, showVerticalLayout)];
+  const schema = [...baseSchema(isNumber, isVertical, isCompact, showVerticalLayout, hasReferenceValuesBar)];
   if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
   if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
   if (hasTicks) schema.push(...ticksSchema(digitsTicks));
+  if (hasReference) schema.push(...referenceSchema(
+    selectedEntityType,
+    hasReferenceBubble,
+    hasReferenceValuesBar,
+    hasValuesBar,
+    isVertical,
+  ));
   return schema;
 });

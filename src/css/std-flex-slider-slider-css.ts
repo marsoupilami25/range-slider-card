@@ -70,8 +70,52 @@ export const stdFlexSliderSliderCardCss: string = `
     opacity: 1;
   }
 
+  .slider.std.dragonly .noUi-origin.display-reference-origin .noUi-tooltip {
+    opacity: 1;
+  }
+
+  .slider.std .noUi-origin.display-reference-origin .noUi-tooltip {
+    background: var(--ha-card-background, var(--card-background-color, var(--primary-background-color)));
+    color: var(--secondary-text-color);
+    border-color: transparent;
+    font-weight: 700;
+  }
+
   .slider.std .noUi-handle::before, .slider.std .noUi-handle::after {
     display: none;
+  }
+
+  .slider.std .noUi-origin.ghost-max-origin {
+    pointer-events: none;
+  }
+
+  .slider.std .noUi-origin.display-reference-origin {
+    pointer-events: none;
+  }
+
+  .slider.std .noUi-origin.ghost-max-origin .noUi-handle {
+    opacity: 0;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.std .noUi-origin.display-reference-origin .noUi-handle {
+    width: 8px;
+    height: 8px;
+    background: var(--disabled-color);
+    border: 0;
+    border-radius: 50%;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.std.noUi-horizontal .noUi-origin.display-reference-origin .noUi-handle {
+    top: 4px;
+    right: -4px;
+  }
+
+  .slider.std.noUi-horizontal .noUi-origin.display-reference-origin .noUi-tooltip {
+    top: -29px;
   }
 
   .slider.std.noUi-horizontal .noUi-pips {
@@ -176,9 +220,22 @@ export const stdFlexSliderSliderCardCss: string = `
     box-shadow: none;
   }
 
-  .slider.std.noUi-vertical .noUi-tooltip{
-    top: 7px;
-    translate: -3px;
+  .slider.std.noUi-vertical .noUi-tooltip {
+    top: 50%;
+    transform: translate(-3px, -50%);
+  }
+
+  .slider.std.noUi-vertical .noUi-origin.ghost-max-origin .noUi-handle {
+    opacity: 0;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .slider.std.noUi-vertical .noUi-origin.display-reference-origin .noUi-handle {
+    top: auto;
+    right: 4px;
+    bottom: -5px;
+    left: auto;
   }
 
   .slider.std.noUi-vertical.mirrored .noUi-tooltip {

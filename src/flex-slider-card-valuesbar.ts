@@ -39,6 +39,12 @@ export class FlexSliderCardValuesBar extends LitElement {
       font-size: var(--flex-slider-card-barvalues-font-size);
       /* outline: 1px solid green; /* Debugging border */
     }
+    .valuesbar.large-text {
+      font-size: calc(var(--flex-slider-card-barvalues-font-size) + var(--flex-slider-card-barvalues-font-size));
+    }
+    .valuesbar.reference {
+      color: var(--secondary-text-color);
+    }
     .valuesbar.single-handle {
       justify-content: center;
     }
@@ -62,8 +68,17 @@ export class FlexSliderCardValuesBar extends LitElement {
       return nothing;
     }
 
-    if (!this.config.hasValuesBar) {
+    if (!this.config.hasValuesBar && !this.config.hasReferenceValuesBar) {
       return nothing;
+    }
+
+    if (this.config.hasReferenceValuesBar) {
+      const valuesBarClass = `valuesbar single-handle reference${this.config.hasReferenceValuesBarTextLarge ? " large-text" : ""}`;
+      return html`
+        <div class=${valuesBarClass}>
+          <span>${this._getReferenceValue()}</span>
+        </div>
+      `;
     }
 
     const handlesToDisplay = Array.from(
@@ -150,6 +165,19 @@ export class FlexSliderCardValuesBar extends LitElement {
       this.config.nbdigitsValuesBar,
       this.config.unitValuesBar,
       this.config.showTextValuesBar,
+    );
+  }
+
+  private _getReferenceValue(): string {
+    if (!this.config) {
+      throw new Error("Config not initialized");
+    }
+
+    return this.config.referenceEntity.toText(
+      this.config.referenceEntity.sliderValue,
+      this.config.nbdigitsValuesBar,
+      this.config.referenceUnit,
+      true,
     );
   }
 

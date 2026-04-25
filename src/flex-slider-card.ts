@@ -150,10 +150,12 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (this._config.isVertical) {
       return this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
     }
+    const hasReferenceBubble = this._config.hasReferenceBubble;
+    const valuesBarSize = this._getValuesBarSize();
     const size = 1 +
       (this._config.hasTitle ? 1 : 0) +
-      (this._config.hasValuesBar ? 1 : 0) +
-      (this._config.hasBubbles ? 1 : 0)
+      valuesBarSize +
+      ((this._config.hasBubbles || hasReferenceBubble) ? 1 : 0)
       + (this._config.hasTicks ? 1 : 0);
 
     if (this._config.isStd) {
@@ -190,10 +192,12 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
         };
       }
     } else {
+      const hasReferenceBubble = this._config.hasReferenceBubble;
+      const valuesBarSize = this._getValuesBarSize();
       const size = 1 +
         (this._config.hasTitle ? 1 : 0) +
-        (this._config.hasValuesBar ? 1 : 0) +
-        (this._config.hasBubbles ? 1 : 0) +
+        valuesBarSize +
+        ((this._config.hasBubbles || hasReferenceBubble) ? 1 : 0) +
         (this._config.hasTicks ? 1 : 0);
 
       if (this._config.isStd) {
@@ -310,27 +314,35 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return html`<ha-card><div class="card-content">Entities not found</div></ha-card>`;
     }
 
-    const hasValuesBar = this._config.hasValuesBar;
+    const hasValuesBar = this._config.hasValuesBar || this._config.hasReferenceValuesBar;
     const hasTitle = this._config.hasTitle;
     const hasBubbles = this._config.hasBubbles;
+    const hasReferenceBubble = this._config.hasReferenceBubble;
     const hasTicks = this._config.hasTicks;
     const name = this._config.title;
     const isStd = this._config.isStd;
     const isVertical = this._config.isVertical;
+    const reservesBubbleSpace = hasBubbles || hasReferenceBubble;
     const containerClass =
       `${isStd ? "std" : "compact"} ` +
       `${hasTitle ? "" : "no-title"} ` +
       `${hasValuesBar ? "" : "no-values"} ` +
-      `${hasBubbles ? "has-bubbles " : ""}` +
+      `${reservesBubbleSpace ? "has-bubbles " : ""}` +
       `${hasTicks ? "has-ticks " : ""}` +
       `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
-    const values = this._config.entities.map((entity) => entity.sliderValue);
+    const values = this._config.hasReference
+      ? [
+          ...this._config.entities.map((entity) => entity.sliderValue),
+          this._config.max,
+          this._config.referenceEntity.sliderValue,
+        ]
+      : this._config.entities.map((entity) => entity.sliderValue);
     const horizontalWidth = isVertical ? "" : `--flex-slider-width: ${this._config.sliderHorizontalWidth}%`;
     const verticalSliderContainerStyle =
-      isVertical && hasBubbles !== hasTicks
+      isVertical && reservesBubbleSpace !== hasTicks
         ? `width: 100%; justify-content: ${
-            hasBubbles
+            reservesBubbleSpace
               ? (this._config.verticalLayout === 'mirrored' ? 'flex-start' : 'flex-end')
               : (this._config.verticalLayout === 'mirrored' ? 'flex-end' : 'flex-start')
           };`
@@ -377,6 +389,14 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!event.detail.isUserUpdating && this._hasDeferredEntityUpdate) {
       this.requestUpdate();
     }
+  }
+
+  private _getValuesBarSize(): number {
+    if (!this._config?.hasValuesBar && !this._config?.hasReferenceValuesBar) {
+      return 0;
+    }
+
+    return this._config.hasReferenceValuesBarTextLarge ? 2 : 1;
   }
 
   private _applyCardMod(): void {

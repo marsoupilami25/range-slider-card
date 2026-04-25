@@ -2,6 +2,18 @@ type: sections
 sections:
   - type: grid
     cards:
+      - type: entities
+        entities:
+          - input_number.inputnumbertest1
+          - input_number.inputnumbertest2
+          - input_number.inputnumbertest3
+          - input_number.inputnumbertest4
+          - input_number.inputnumbertestref
+        show_header_toggle: true
+        state_color: false
+        grid_options:
+          columns: full
+          rows: auto
       - type: tile
         entity: input_number.inputnumbertest1
         vertical: false
@@ -27,7 +39,23 @@ sections:
           - entity: input_number.inputnumbertest1
           - entity: input_number.inputnumbertest2
         step: 10
-        name: inum | r1
+        name: inum | r1 | Ref
+        referenceactive: true
+        reference:
+          entity: input_number.inputnumbertestref
+          text: Ref
+        grid_options:
+          columns: 9
+          rows: 1
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 18
+        max: 30
+        step: 0.5
+        name: inum | CEnd | r1
+        connectend: true
         grid_options:
           columns: 9
           rows: 1
@@ -98,6 +126,26 @@ sections:
           columns: 9
           rows: 2
         direction: rtl
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 18
+        max: 30
+        step: 0.5
+        name: inum | RefVB
+        referenceactive: true
+        reference:
+          entity: input_number.inputnumbertestref
+          text: Ref
+          valuesbar: true
+          unit: C
+        valuesbar:
+          digits: manual
+          nbdigits: 1
+        grid_options:
+          columns: 9
+          rows: 2
       - type: heading
         icon: ""
         heading: Std | no tit. | g off | d1
@@ -172,11 +220,28 @@ sections:
         min: 18
         max: 30
         step: 0.25
-        name: inum | g off
+        name: inum | g off | Ref
         format: compact
+        referenceactive: true
+        reference:
+          entity: input_number.inputnumbertestref
+          text: Ref
         grid_options:
           columns: null
           rows: null
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 18
+        max: 30
+        step: 0.5
+        name: inum | CEnd | r1
+        format: compact
+        connectend: true
+        grid_options:
+          columns: 12
+          rows: 1
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax

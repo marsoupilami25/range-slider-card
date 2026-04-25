@@ -2,13 +2,32 @@ type: sections
 sections:
   - type: grid
     cards:
+      - type: entities
+        entities:
+          - input_number.inputnumbertest1
+          - input_number.inputnumbertest2
+          - input_number.inputnumbertest3
+          - input_number.inputnumbertest4
+          - input_number.inputnumbertestref
+        show_header_toggle: true
+        state_color: false
+        grid_options:
+          columns: full
+          rows: auto
       - type: custom:flex-slider-card
         entities:
           - entity: input_number.inputnumbertest1
+        bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
-        name: inum | hA | rA
+        name: inum | 6/2 | rA
+        ticks:
+          digits: manual
+          nbdigits: 3
+          majorticks: 6
+          minorticks: 2
         orientation: vertical
         grid_options:
           columns: 6
@@ -18,8 +37,13 @@ sections:
         entities:
           - entity: input_number.inputnumbertest1
           - entity: input_number.inputnumbertest2
+        bubblesactive: true
+        ticksactive: true
         step: 10
-        name: inum | hA | r3
+        name: inum | d1 | r3
+        ticks:
+          digits: manual
+          nbdigits: 1
         orientation: vertical
         grid_options:
           columns: 6
@@ -37,6 +61,8 @@ sections:
           - entity: input_number.inputnumbertest1
           - entity: input_number.inputnumbertest2
           - entity: input_number.inputnumbertest3
+        bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
@@ -47,7 +73,7 @@ sections:
         valuesbaractive: false
       - type: heading
         icon: ""
-        heading: Std | no tit. | h2 | r3
+        heading: Std | no tit. | 4/1 | h2 | r3
         heading_style: subtitle
         grid_options:
           columns: 6
@@ -55,45 +81,58 @@ sections:
       - type: custom:flex-slider-card
         entities:
           - entity: input_number.inputnumbertest1
+            text: ""
           - entity: input_number.inputnumbertest2
+            text: ""
           - entity: input_number.inputnumbertest3
+            text: ""
           - entity: input_number.inputnumbertest4
+            text: ""
+        bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
+        ticks:
+          majorticks: 4
+          minorticks: 1
         orientation: vertical
         grid_options:
           columns: 6
           rows: 3
         verticalheight: 2
         valuesbaractive: false
-      - type: tile
-        entity: input_number.inputnumbertest1
-        vertical: false
-        features_position: bottom
-        grid_options:
-          columns: 6
-          rows: 1
+        direction: rtl
   - type: grid
     cards:
       - type: custom:flex-slider-card
         entities:
           - entity: input_number.inputnumbertest1
+            text: ""
+        bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.25
-        name: inum | hA | rA
+        name: inum | 6/3 | rA
         format: compact
+        ticks:
+          majorticks: 6
+          minorticks: 3
         orientation: vertical
         grid_options:
           columns: 6
         valuesbaractive: false
+        direction: rtl
       - type: custom:flex-slider-card
         entity_min: input_datetime.inputheuretestmin
         entity_max: input_datetime.inputheuretestmax
+        bubblesactive: true
+        ticksactive: true
         step: 10
-        name: time | hA | r1
+        name: time | RTL | r1
         format: compact
+        direction: rtl
         orientation: vertical
         grid_options:
           columns: 6
@@ -112,6 +151,8 @@ sections:
         entities:
           - entity: input_number.inputnumbertest1
           - entity: input_number.inputnumbertest2
+        bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
@@ -124,7 +165,7 @@ sections:
     cards:
       - type: heading
         icon: ""
-        heading: Cmp | no tit. | h1 | r2
+        heading: Cmp | no tit. | 4/2 | h1 | r2
         heading_style: subtitle
         grid_options:
           columns: 6
@@ -134,10 +175,15 @@ sections:
           - entity: input_number.inputnumbertest1
           - entity: input_number.inputnumbertest2
           - entity: input_number.inputnumbertest3
+        bubblesactive: true
+        ticksactive: true
         min: 18
         max: 30
         step: 0.5
         format: compact
+        ticks:
+          majorticks: 4
+          minorticks: 2
         orientation: vertical
         grid_options:
           columns: 3
@@ -145,6 +191,6 @@ sections:
         verticalheight: 1
         valuesbaractive: false
 max_columns: 4
-theme: Caule Light Green
+theme: Caule Light Gray
 cards: []
-title: Basic
+title: Bubbles & Ticks
