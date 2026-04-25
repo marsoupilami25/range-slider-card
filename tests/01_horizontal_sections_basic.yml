@@ -27,7 +27,11 @@ sections:
           - entity: input_number.inputnumbertest1
           - entity: input_number.inputnumbertest2
         step: 10
-        name: inum | r1
+        name: inum | r1 | Ref
+        referenceactive: true
+        reference:
+          entity: input_number.inputnumbertestref
+          text: Ref
         grid_options:
           columns: 9
           rows: 1
@@ -98,6 +102,26 @@ sections:
           columns: 9
           rows: 2
         direction: rtl
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 18
+        max: 30
+        step: 0.5
+        name: inum | RefVB
+        referenceactive: true
+        reference:
+          entity: input_number.inputnumbertestref
+          text: Ref
+          valuesbar: true
+          unit: C
+        valuesbar:
+          digits: manual
+          nbdigits: 1
+        grid_options:
+          columns: 9
+          rows: 2
       - type: heading
         icon: ""
         heading: Std | no tit. | g off | d1
@@ -172,8 +196,12 @@ sections:
         min: 18
         max: 30
         step: 0.25
-        name: inum | g off
+        name: inum | g off | Ref
         format: compact
+        referenceactive: true
+        reference:
+          entity: input_number.inputnumbertestref
+          text: Ref
         grid_options:
           columns: null
           rows: null

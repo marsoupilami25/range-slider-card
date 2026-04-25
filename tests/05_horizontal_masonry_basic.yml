@@ -7,6 +7,7 @@ cards:
       - input_number.inputnumbertest2
       - input_number.inputnumbertest3
       - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
     show_header_toggle: true
     state_color: false
   - type: custom:flex-slider-card
@@ -22,6 +23,36 @@ cards:
       unit: °C
       mintext: Inf
       maxtext: Sup
+  - type: custom:flex-slider-card
+    entities:
+      - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | Ref
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+  - type: custom:flex-slider-card
+    entities:
+      - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | RefVB2
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+      valuesbar: true
+      valuesbartextlarge: true
+      unit: C
+    valuesbar:
+      digits: manual
+      nbdigits: 1
   - type: custom:flex-slider-card
     entities:
       - entity: input_number.inputnumbertest1
@@ -90,6 +121,25 @@ cards:
       mintext: Min
       maxtext: Max
     direction: rtl
+  - type: custom:flex-slider-card
+    entities:
+      - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
+    min: 10
+    max: 40
+    step: 1
+    name: Cmp | RefVB2
+    format: compact
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+      valuesbar: true
+      valuesbartextlarge: true
+      unit: C
+    valuesbar:
+      digits: manual
+      nbdigits: 2
   - type: vertical-stack
     cards:
       - type: heading

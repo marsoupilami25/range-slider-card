@@ -7,6 +7,7 @@ cards:
       - input_number.inputnumbertest2
       - input_number.inputnumbertest3
       - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
     show_header_toggle: true
     state_color: false
   - type: heading
@@ -50,6 +51,36 @@ cards:
       mintext: Start
       maxtext: End
       dragonly: true
+  - type: custom:flex-slider-card
+    entities:
+      - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | Ref tip | on
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+      bubble: true
+      unit: C
+  - type: custom:flex-slider-card
+    entities:
+      - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
+    min: 18
+    max: 30
+    step: 0.5
+    name: Std | Ref tip | drag
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+      bubble: true
+      unit: C
+    bubbles:
+      dragonly: true
   - type: heading
     icon: ""
     heading: Cmp | Bul vis.
@@ -73,13 +104,38 @@ cards:
       - entity: input_number.inputnumbertest1
       - entity: input_number.inputnumbertest2
       - entity: input_number.inputnumbertest3
+    min: 10
+    max: 40
+    step: 1
+    name: Cmp | Bul+Ref tip | on
+    format: compact
+    bubblesactive: true
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+      bubble: true
+      unit: C
+    bubbles:
+      unit: "%"
+  - type: custom:flex-slider-card
+    entities:
+      - entity: input_number.inputnumbertest1
+      - entity: input_number.inputnumbertest2
+      - entity: input_number.inputnumbertest3
       - entity: input_number.inputnumbertest4
     min: 10
     max: 40
     step: 1
-    name: Cmp | drag | RTL
+    name: Cmp | Bul+Ref tip | drag | RTL
     format: compact
     bubblesactive: true
+    referenceactive: true
+    reference:
+      entity: input_number.inputnumbertestref
+      text: Ref
+      bubble: true
+      unit: C
     direction: rtl
     bubbles:
       unit: "%"

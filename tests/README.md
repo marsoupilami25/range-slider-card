@@ -5,6 +5,7 @@ You need to create the following entities:
 - `input_number.inputnumbertest2`
 - `input_number.inputnumbertest3`
 - `input_number.inputnumbertest4`
+- `input_number.inputnumbertestref`
 - `input_datetime.inputheuretestmin`
 - `input_datetime.inputheuretestmax`
 
@@ -28,9 +29,13 @@ Abbreviation legend:
 - `VB`: values bar enabled
 - no `VB` or `VB2` label: values bar disabled
 - `VB2`: values bar with `digits: manual` and `nbdigits: 2`
+- `Ref`: reference entity enabled
+- `RefVB`: reference entity displayed in the values bar
+- `RefVB2`: reference entity displayed in a large values bar with `valuesbartextlarge: true`
 - `Bul`: bubbles enabled
 - `Bul+Tk`: bubbles and ticks enabled
 - `Bul vis.`: bubble visibility test
+- `Ref tip`: reference entity bubble tooltip enabled
 - `Tk`: ticks enabled
 - `4/1`, `5/2`, `6/3`, etc.: `majorticks` / `minorticks`
 - `inum`: `input_number` case
