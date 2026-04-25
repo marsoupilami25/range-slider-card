@@ -32,6 +32,7 @@ Abbreviation legend:
 - `Ref`: reference entity enabled
 - `RefVB`: reference entity displayed in the values bar
 - `RefVB2`: reference entity displayed in a large values bar with `valuesbartextlarge: true`
+- `CEnd`: `connectend` enabled
 - `Bul`: bubbles enabled
 - `Bul+Tk`: bubbles and ticks enabled
 - `Bul vis.`: bubble visibility test

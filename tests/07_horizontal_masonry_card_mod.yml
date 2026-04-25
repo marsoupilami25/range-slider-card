@@ -7,6 +7,7 @@ cards:
       - input_number.inputnumbertest2
       - input_number.inputnumbertest3
       - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
     show_header_toggle: true
     state_color: false
   - type: custom:flex-slider-card
