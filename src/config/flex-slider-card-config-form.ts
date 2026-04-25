@@ -388,6 +388,17 @@ const referenceSchema = memoizeOne((
           },
         ],
       }] : []),
+      ...(hasReferenceValuesBar ? [{
+        type: "grid",
+        name: "",
+        schema: [
+          {
+            name: "valuesbartextlarge",
+            required: false,
+            selector: { boolean: {} },
+          },
+        ],
+      }] : []),
     ],
   }];
 });

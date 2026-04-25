@@ -151,10 +151,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
     }
     const hasReferenceBubble = this._config.hasReferenceBubble;
-    const hasValuesBar = this._config.hasValuesBar || this._config.hasReferenceValuesBar;
+    const valuesBarSize = this._getValuesBarSize();
     const size = 1 +
       (this._config.hasTitle ? 1 : 0) +
-      (hasValuesBar ? 1 : 0) +
+      valuesBarSize +
       ((this._config.hasBubbles || hasReferenceBubble) ? 1 : 0)
       + (this._config.hasTicks ? 1 : 0);
 
@@ -193,10 +193,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       }
     } else {
       const hasReferenceBubble = this._config.hasReferenceBubble;
-      const hasValuesBar = this._config.hasValuesBar || this._config.hasReferenceValuesBar;
+      const valuesBarSize = this._getValuesBarSize();
       const size = 1 +
         (this._config.hasTitle ? 1 : 0) +
-        (hasValuesBar ? 1 : 0) +
+        valuesBarSize +
         ((this._config.hasBubbles || hasReferenceBubble) ? 1 : 0) +
         (this._config.hasTicks ? 1 : 0);
 
@@ -389,6 +389,14 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     if (!event.detail.isUserUpdating && this._hasDeferredEntityUpdate) {
       this.requestUpdate();
     }
+  }
+
+  private _getValuesBarSize(): number {
+    if (!this._config?.hasValuesBar && !this._config?.hasReferenceValuesBar) {
+      return 0;
+    }
+
+    return this._config.hasReferenceValuesBarTextLarge ? 2 : 1;
   }
 
   private _applyCardMod(): void {

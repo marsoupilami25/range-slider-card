@@ -380,7 +380,10 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       nextConfig.valuesbaractive = false;
       if (nextConfig.reference) {
         nextConfig.reference.valuesbar = false;
+        nextConfig.reference.valuesbartextlarge = false;
       }
+    } else if (nextConfig.reference && nextConfig.reference.valuesbar !== true) {
+      nextConfig.reference.valuesbartextlarge = false;
     }
     this._applyConfig(nextConfig);
   };
@@ -465,6 +468,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       unit: reference.unit ?? "",
       bubble: reference.bubble ?? false,
       valuesbar: reference.valuesbar ?? false,
+      valuesbartextlarge: reference.valuesbartextlarge ?? false,
     };
   }
 

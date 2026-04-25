@@ -15,6 +15,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   handlesbehavior: "Handle behavior",
   unit: "Unit", 
   valuesbar: "Show values bar",
+  valuesbartextlarge: "Values bar large text",
   showtext: "Show text",
   digits: "Digits Mode",
   nbdigits: "Number of Digits (Manual only)",

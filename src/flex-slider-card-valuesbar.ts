@@ -39,6 +39,12 @@ export class FlexSliderCardValuesBar extends LitElement {
       font-size: var(--flex-slider-card-barvalues-font-size);
       /* outline: 1px solid green; /* Debugging border */
     }
+    .valuesbar.large-text {
+      font-size: calc(var(--flex-slider-card-barvalues-font-size) + var(--flex-slider-card-barvalues-font-size));
+    }
+    .valuesbar.reference {
+      color: var(--secondary-text-color);
+    }
     .valuesbar.single-handle {
       justify-content: center;
     }
@@ -67,8 +73,9 @@ export class FlexSliderCardValuesBar extends LitElement {
     }
 
     if (this.config.hasReferenceValuesBar) {
+      const valuesBarClass = `valuesbar single-handle reference${this.config.hasReferenceValuesBarTextLarge ? " large-text" : ""}`;
       return html`
-        <div class="valuesbar single-handle">
+        <div class=${valuesBarClass}>
           <span>${this._getReferenceValue()}</span>
         </div>
       `;

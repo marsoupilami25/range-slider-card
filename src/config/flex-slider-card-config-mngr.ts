@@ -373,6 +373,7 @@ export class FlexSliderCardConfigMngr {
     assertOptionalString(this._config.reference.unit, "reference.unit");
     assertOptionalBoolean(this._config.reference.bubble, "reference.bubble");
     assertOptionalBoolean(this._config.reference.valuesbar, "reference.valuesbar");
+    assertOptionalBoolean(this._config.reference.valuesbartextlarge, "reference.valuesbartextlarge");
     if (this._config.reference.unit == null) {
       this._config.reference.unit = undefined;
     }
@@ -383,6 +384,11 @@ export class FlexSliderCardConfigMngr {
       this._config.reference.valuesbar = false;
     } else if (this._config.reference.valuesbar == null) {
       this._config.reference.valuesbar = false;
+    }
+    if (this._config.reference.valuesbar !== true) {
+      this._config.reference.valuesbartextlarge = false;
+    } else if (this._config.reference.valuesbartextlarge == null) {
+      this._config.reference.valuesbartextlarge = false;
     }
     if (this._config.valuesbaractive === true && this._config.reference.valuesbar === true) {
       throw new Error("Cannot use both entity values bar and reference values bar");
@@ -422,6 +428,10 @@ export class FlexSliderCardConfigMngr {
 
   public get hasReferenceValuesBar(): boolean {
     return this.hasReference && this._config.reference?.valuesbar === true;
+  }
+
+  public get hasReferenceValuesBarTextLarge(): boolean {
+    return this.hasReferenceValuesBar && this._config.reference?.valuesbartextlarge === true;
   }
 
   public get referenceUnit(): string {
