@@ -126,12 +126,14 @@ export type FlexSliderCardReferenceConfig = {
   entity?: string;
   text?: string;
   bubble?: boolean;
+  valuesbar?: boolean;
   unit?: string;
 };
 export const flexSliderCardReferenceConfigStruct = object({
   entity: optional(string()),
   text: optional(string()),
   bubble: optional(boolean()),
+  valuesbar: optional(boolean()),
   unit: optional(string()),
 });
 

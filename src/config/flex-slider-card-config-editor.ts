@@ -196,6 +196,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       this._config.ticksactive === true,
       this._config.referenceactive === true,
       this._config.reference?.bubble === true,
+      this._config.reference?.valuesbar === true,
       this._config.valuesbar?.digits ?? "",
       this._config.bubbles?.digits ?? "",
       this._config.ticks?.digits ?? "",
@@ -377,6 +378,9 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     const nextConfig = structuredClone(ev.detail.value as FlexSliderCardConfig);
     if (nextConfig.orientation === "vertical") {
       nextConfig.valuesbaractive = false;
+      if (nextConfig.reference) {
+        nextConfig.reference.valuesbar = false;
+      }
     }
     this._applyConfig(nextConfig);
   };
@@ -460,6 +464,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       text: reference.text ?? "",
       unit: reference.unit ?? "",
       bubble: reference.bubble ?? false,
+      valuesbar: reference.valuesbar ?? false,
     };
   }
 

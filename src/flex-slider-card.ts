@@ -151,9 +151,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return this._config.sliderVerticalHeight ?? this._config.sliderVerticalHeightDefault;
     }
     const hasReferenceBubble = this._config.hasReferenceBubble;
+    const hasValuesBar = this._config.hasValuesBar || this._config.hasReferenceValuesBar;
     const size = 1 +
       (this._config.hasTitle ? 1 : 0) +
-      (this._config.hasValuesBar ? 1 : 0) +
+      (hasValuesBar ? 1 : 0) +
       ((this._config.hasBubbles || hasReferenceBubble) ? 1 : 0)
       + (this._config.hasTicks ? 1 : 0);
 
@@ -192,9 +193,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       }
     } else {
       const hasReferenceBubble = this._config.hasReferenceBubble;
+      const hasValuesBar = this._config.hasValuesBar || this._config.hasReferenceValuesBar;
       const size = 1 +
         (this._config.hasTitle ? 1 : 0) +
-        (this._config.hasValuesBar ? 1 : 0) +
+        (hasValuesBar ? 1 : 0) +
         ((this._config.hasBubbles || hasReferenceBubble) ? 1 : 0) +
         (this._config.hasTicks ? 1 : 0);
 
@@ -312,7 +314,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return html`<ha-card><div class="card-content">Entities not found</div></ha-card>`;
     }
 
-    const hasValuesBar = this._config.hasValuesBar;
+    const hasValuesBar = this._config.hasValuesBar || this._config.hasReferenceValuesBar;
     const hasTitle = this._config.hasTitle;
     const hasBubbles = this._config.hasBubbles;
     const hasReferenceBubble = this._config.hasReferenceBubble;

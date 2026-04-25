@@ -10,6 +10,7 @@ const baseSchema = memoizeOne((
   isVertical: boolean,
   isCompact: boolean,
   showVerticalLayout: boolean,
+  hasReferenceValuesBar: boolean,
 ): HaFormSchema[] => [
   {
     name: "name",
@@ -79,7 +80,7 @@ const baseSchema = memoizeOne((
         name: "valuesbaractive",
         selector: { boolean: {} },
         required: false,
-        disabled: isVertical,
+        disabled: isVertical || hasReferenceValuesBar,
       },
       {
         name: "bubblesactive",
@@ -329,6 +330,9 @@ const ticksSchema = memoizeOne((digitsTicks: string): HaFormSchema[] => [
 const referenceSchema = memoizeOne((
   selectedEntityType?: FlexSliderCardEntityType,
   hasReferenceBubble = false,
+  hasReferenceValuesBar = false,
+  hasValuesBar = false,
+  isVertical = false,
 ): HaFormSchema[] => {
   const domains = selectedEntityType === FlexSliderCardEntityType.TIME
     ? ["input_datetime"]
@@ -360,9 +364,15 @@ const referenceSchema = memoizeOne((
             required: false,
             selector: { boolean: {} },
           },
+          {
+            name: "valuesbar",
+            required: false,
+            selector: { boolean: {} },
+            disabled: isVertical || hasValuesBar,
+          },
         ],
       },
-      ...(hasReferenceBubble ? [{
+      ...(hasReferenceBubble || hasReferenceValuesBar ? [{
         type: "grid",
         name: "",
         schema: [
@@ -442,6 +452,7 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasTicks: boolean,
   hasReference: boolean,
   hasReferenceBubble: boolean,
+  hasReferenceValuesBar: boolean,
   digitsValuesBar: string,
   digitsBubbles: string,
   digitsTicks: string,
@@ -451,10 +462,16 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   selectedEntityType?: FlexSliderCardEntityType): HaFormSchema[] => {
   const showVerticalLayout = isVertical && (hasBubbles || hasTicks);
 
-  const schema = [...baseSchema(isNumber, isVertical, isCompact, showVerticalLayout)];
+  const schema = [...baseSchema(isNumber, isVertical, isCompact, showVerticalLayout, hasReferenceValuesBar)];
   if (hasValuesBar) schema.push(...valuesBarSchema(digitsValuesBar));
   if (hasBubbles) schema.push(...bubblesSchema(digitsBubbles));
   if (hasTicks) schema.push(...ticksSchema(digitsTicks));
-  if (hasReference) schema.push(...referenceSchema(selectedEntityType, hasReferenceBubble));
+  if (hasReference) schema.push(...referenceSchema(
+    selectedEntityType,
+    hasReferenceBubble,
+    hasReferenceValuesBar,
+    hasValuesBar,
+    isVertical,
+  ));
   return schema;
 });

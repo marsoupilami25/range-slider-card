@@ -62,8 +62,16 @@ export class FlexSliderCardValuesBar extends LitElement {
       return nothing;
     }
 
-    if (!this.config.hasValuesBar) {
+    if (!this.config.hasValuesBar && !this.config.hasReferenceValuesBar) {
       return nothing;
+    }
+
+    if (this.config.hasReferenceValuesBar) {
+      return html`
+        <div class="valuesbar single-handle">
+          <span>${this._getReferenceValue()}</span>
+        </div>
+      `;
     }
 
     const handlesToDisplay = Array.from(
@@ -150,6 +158,19 @@ export class FlexSliderCardValuesBar extends LitElement {
       this.config.nbdigitsValuesBar,
       this.config.unitValuesBar,
       this.config.showTextValuesBar,
+    );
+  }
+
+  private _getReferenceValue(): string {
+    if (!this.config) {
+      throw new Error("Config not initialized");
+    }
+
+    return this.config.referenceEntity.toText(
+      this.config.referenceEntity.sliderValue,
+      this.config.nbdigitsValuesBar,
+      this.config.referenceUnit,
+      true,
     );
   }
 

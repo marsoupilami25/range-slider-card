@@ -372,11 +372,20 @@ export class FlexSliderCardConfigMngr {
     assertOptionalString(this._config.reference.text, "reference.text");
     assertOptionalString(this._config.reference.unit, "reference.unit");
     assertOptionalBoolean(this._config.reference.bubble, "reference.bubble");
+    assertOptionalBoolean(this._config.reference.valuesbar, "reference.valuesbar");
     if (this._config.reference.unit == null) {
       this._config.reference.unit = undefined;
     }
     if (this._config.reference.bubble == null) {
       this._config.reference.bubble = false;
+    }
+    if (this._config.orientation === "vertical") {
+      this._config.reference.valuesbar = false;
+    } else if (this._config.reference.valuesbar == null) {
+      this._config.reference.valuesbar = false;
+    }
+    if (this._config.valuesbaractive === true && this._config.reference.valuesbar === true) {
+      throw new Error("Cannot use both entity values bar and reference values bar");
     }
     if (!this._config.reference.entity) {
       return;
@@ -411,7 +420,11 @@ export class FlexSliderCardConfigMngr {
     return this.hasReference && this._config.reference?.bubble === true;
   }
 
-  public get unitReferenceBubble(): string {
+  public get hasReferenceValuesBar(): boolean {
+    return this.hasReference && this._config.reference?.valuesbar === true;
+  }
+
+  public get referenceUnit(): string {
     return this._config.reference?.unit ?? "";
   }
 

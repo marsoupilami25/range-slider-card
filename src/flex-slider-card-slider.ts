@@ -448,7 +448,7 @@ export class FlexSliderCardSlider extends LitElement {
     return this.config.referenceEntity.toText(
       value,
       this.config.nbdigitsBubbles,
-      this.config.unitReferenceBubble,
+      this.config.referenceUnit,
       true,
     );
   }
