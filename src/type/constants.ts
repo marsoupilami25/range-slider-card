@@ -8,3 +8,5 @@ export const COMPACT_VERTICAL_CONTAINER_PADDING = 7;
 
 export const CARD_HEIGHT_BASE = 56;
 export const INTER_CARD = 8;
+
+export const PRESS_CONFIRM_DELAY_MS = 180;
