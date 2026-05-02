@@ -78,6 +78,18 @@ export class FlexSliderCardSlider extends LitElement {
       width: 100%;
     }
 
+    .slider.noUi-horizontal,
+    .slider.noUi-horizontal * {
+      -ms-touch-action: pan-y;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .slider.noUi-vertical,
+    .slider.noUi-vertical * {
+      -ms-touch-action: pan-x;
+      touch-action: pan-x pinch-zoom;
+    }
+
     /* noUiSlider writes inline z-index values; keep the reference handle and bubble above editable handles. */
     .slider .noUi-origin.display-reference-origin {
       z-index: 1000 !important;
