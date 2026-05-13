@@ -5,6 +5,16 @@ export enum FlexSliderCardEntityType {
 
 export type FlexSliderEntityDomain = "number" | "input_number" | "input_datetime";
 
+export function isValidEntityId(entity: unknown): entity is string {
+  if (typeof entity !== "string") {
+    return false;
+  }
+
+  const entityRegex = /^[a-z0-9_]+\.[a-z0-9_]+$/;
+
+  return entityRegex.test(entity);
+}
+
 export function getEntityDomain(entityid: string): FlexSliderEntityDomain {
   const domain: string = entityid.split(".")[0];
   return domain as FlexSliderEntityDomain;

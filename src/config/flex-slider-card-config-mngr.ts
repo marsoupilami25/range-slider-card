@@ -18,7 +18,7 @@ import {
   assertOptionalNumber,
   assertOptionalBoolean
 } from "../utils/utils";
-import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
+import { FlexSliderCardEntityType, getEntityType, isValidEntityId } from "../utils/entity-management";
 import {
   clearLegacyEntityTexts,
   getLegacyHandleText,
@@ -397,7 +397,7 @@ export class FlexSliderCardConfigMngr {
       return;
     }
 
-    if (!this._isValidEntityId(this._config.reference.entity)) {
+    if (!isValidEntityId(this._config.reference.entity)) {
       throw new Error("Invalid format for reference entity. Expected domain.object_id");
     }
 
@@ -592,16 +592,6 @@ export class FlexSliderCardConfigMngr {
   /* entities                                         */
   /****************************************************/
 
-  protected _isValidEntityId(entity: string): boolean {
-    if (typeof entity !== "string") {
-      return false;
-    }
-
-    const entityRegex = /^[a-z0-9_]+\.[a-z0-9_]+$/;
-
-    return entityRegex.test(entity);
-  }
-
   protected _checkEntities(): void {
     if (hasLegacyValuesBarTextConfig(this._config)) {
       const valuesbar = this._config.valuesbar;
@@ -695,7 +685,7 @@ export class FlexSliderCardConfigMngr {
       if (handleConfig.connectprevious == null) {
         handleConfig.connectprevious = entityCount <= 1 ? true : index > 0;
       }
-      if (!this._isValidEntityId(handleConfig.entity)) {
+      if (!isValidEntityId(handleConfig.entity)) {
         throw new Error(`Invalid format for ${entityLabel}. Expected domain.object_id`);
       }
       return new FlexSliderCardEntity(handleConfig.entity, handleConfig.text ?? "");
