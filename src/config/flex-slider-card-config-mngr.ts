@@ -49,6 +49,7 @@ export class FlexSliderCardConfigMngr {
     this._checkBubbles();
     this._checkTicks();
     this._checkReference();
+    this._checkAdaptiveState();
   }
 
   public update(hass: HomeAssistant): void {
@@ -60,6 +61,7 @@ export class FlexSliderCardConfigMngr {
     this._updateBubbles(hass);
     this._updateTicks(hass);
     this._updateReference(hass);
+    this._updateAdaptiveState(hass);
   }
 
   public reset(): void {
@@ -71,6 +73,7 @@ export class FlexSliderCardConfigMngr {
     this._resetBubbles();
     this._resetTicks();
     this._resetReference();
+    this._resetAdaptiveState();
   }
 
   public get config() : FlexSliderCardConfig {
@@ -436,6 +439,44 @@ export class FlexSliderCardConfigMngr {
 
   public get referenceUnit(): string {
     return this._config.reference?.unit ?? "";
+  }
+
+  /****************************************************/
+  /* adaptive state                                   */
+  /****************************************************/
+
+  protected _checkAdaptiveState(): void {
+    assertOptionalBoolean(this._config.adaptivestateactive, "adaptivestateactive");
+    if (this._config.adaptivestateactive == null) {
+      this._config.adaptivestateactive = false;
+    }
+
+    if (this._config.adaptivestate == null) {
+      this._config.adaptivestate = {};
+    }
+
+    assertOptionalBoolean(
+      this._config.adaptivestate.editablewhenlinkedinactive,
+      "adaptivestate.editablewhenlinkedinactive",
+    );
+    if (this._config.adaptivestate.editablewhenlinkedinactive == null) {
+      this._config.adaptivestate.editablewhenlinkedinactive = false;
+    }
+  }
+
+  protected _updateAdaptiveState(hass: HomeAssistant): void { }
+
+  protected _resetAdaptiveState(): void { }
+
+  public get isAdaptative(): boolean {
+    return this._config.adaptivestateactive === true;
+  }
+
+  public get isEditableWhenLinkedInactive(): boolean {
+    if (this._config.adaptivestate?.editablewhenlinkedinactive == null) {
+      throw new Error("Editable when linked inactive state is not defined in config");
+    }
+    return this._config.adaptivestate.editablewhenlinkedinactive;
   }
 
   /****************************************************/

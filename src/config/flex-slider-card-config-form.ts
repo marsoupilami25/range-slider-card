@@ -97,6 +97,11 @@ const baseSchema = memoizeOne((
         selector: { boolean: {} },
         required: false,
       },
+      {
+        name: "adaptivestateactive",
+        selector: { boolean: {} },
+        required: false,
+      },
       ...(showVerticalLayout ? [{
         name: "verticallayout",
         selector: {
@@ -403,6 +408,28 @@ const referenceSchema = memoizeOne((
   }];
 });
 
+const adaptiveStateSchema = memoizeOne((): HaFormSchema[] => [
+  {
+    type: "expandable",
+    name: "adaptivestate",
+    title: "Adaptative State",
+    icon: "mdi:state-machine",
+    schema: [
+      {
+        type: "grid",
+        schema: [
+          {
+            name: "editablewhenlinkedinactive",
+            selector: { boolean: {} },
+            required: false,
+            default: false,
+          },
+        ],
+      },
+    ],
+  }
+]);
+
 export const handleSchema: HaFormSchema[] = [
   {
     name: "entity",
@@ -462,6 +489,7 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
   hasBubbles: boolean,
   hasTicks: boolean,
   hasReference: boolean,
+  isAdaptative: boolean,
   hasReferenceBubble: boolean,
   hasReferenceValuesBar: boolean,
   digitsValuesBar: string,
@@ -484,5 +512,6 @@ export const computeSchema = memoizeOne((hasValuesBar: boolean,
     hasValuesBar,
     isVertical,
   ));
+  if (isAdaptative) schema.push(...adaptiveStateSchema());
   return schema;
 });
