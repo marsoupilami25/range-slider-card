@@ -1,52 +1,235 @@
 import type { HomeAssistant } from "custom-card-helpers";
-import { css, html, LitElement, type TemplateResult } from "lit";
+import { css, html, LitElement, nothing, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import type { WeekdayShort } from "../frontend/datetime/weekday";
-import type {
-  AndCondition,
-  Condition,
-  NotCondition,
-  NumericStateCondition,
-  OrCondition,
-  ScreenCondition,
-  StateCondition,
-  TimeCondition,
-  ViewColumnsCondition,
+import type { HaFormSchema } from "../type/ha";
+import {
+  checkConditionsMet,
+  validateConditionalConfig,
+  type AndCondition,
+  type Condition,
+  type NotCondition,
+  type NumericStateCondition,
+  type OrCondition,
+  type ScreenCondition,
+  type StateCondition,
+  type TimeCondition,
+  type ViewColumnsCondition,
 } from "./flex-slider-card-validate-condition";
 
 type EditableConditionType = Condition["condition"];
 type ConditionPath = number[];
-type ConditionsChangedEvent = CustomEvent<{ value?: Condition[]; conditions?: Condition[] }>;
-type ConditionalCardConstructor = CustomElementConstructor & {
-  getConfigElement?: () => Promise<unknown> | unknown;
-};
-type LovelaceCardHelpers = {
-  createCardElement?: (config: Record<string, unknown>) => HTMLElement;
-};
-type HomeAssistantWindow = Window & {
-  loadCardHelpers?: () => Promise<LovelaceCardHelpers>;
-};
 
 const CONDITION_TYPE_OPTIONS: Array<{ value: EditableConditionType; label: string; icon: string }> = [
-  { value: "state", label: "State", icon: "mdi:toggle-switch-outline" },
+  { value: "state", label: "State", icon: "mdi:state-machine" },
   { value: "numeric_state", label: "Numeric state", icon: "mdi:numeric" },
-  { value: "time", label: "Time", icon: "mdi:clock-outline" },
-  { value: "screen", label: "Screen", icon: "mdi:monitor" },
+  { value: "time", label: "Time", icon: "mdi:calendar-clock" },
+  { value: "screen", label: "Screen", icon: "mdi:responsive" },
   { value: "view_columns", label: "View columns", icon: "mdi:view-column-outline" },
-  { value: "and", label: "All conditions", icon: "mdi:call-merge" },
-  { value: "or", label: "Any condition", icon: "mdi:call-split" },
-  { value: "not", label: "Not", icon: "mdi:close-circle-outline" },
+  { value: "and", label: "AND", icon: "mdi:ampersand" },
+  { value: "or", label: "OR", icon: "mdi:gate-or" },
+  { value: "not", label: "Not", icon: "mdi:not-equal-variant" },
 ];
 
-const WEEKDAY_OPTIONS = [
-  { value: "mon", label: "Mon" },
-  { value: "tue", label: "Tue" },
-  { value: "wed", label: "Wed" },
-  { value: "thu", label: "Thu" },
-  { value: "fri", label: "Fri" },
-  { value: "sat", label: "Sat" },
-  { value: "sun", label: "Sun" },
-] as const;
+const WEEKDAYS_SHORT = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const WEEKDAY_LABELS: Record<string, string> = {
+  mon: "Monday",
+  tue: "Tuesday",
+  wed: "Wednesday",
+  thu: "Thursday",
+  fri: "Friday",
+  sat: "Saturday",
+  sun: "Sunday",
+};
+const BREAKPOINT_VALUES = [0, 768, 1024, 1280, Infinity] as const;
+const BREAKPOINTS = ["mobile", "tablet", "desktop", "wide"] as const;
+
+type Breakpoint = (typeof BREAKPOINTS)[number];
+type BreakpointSize = [number, number];
+type StateConditionFormData = Omit<StateCondition, "state" | "state_not"> & {
+  invert: "false" | "true";
+  state?: StateCondition["state"];
+};
+type ScreenConditionFormData = {
+  breakpoints: Breakpoint[];
+};
+
+const STATE_CONDITION_SCHEMA: HaFormSchema[] = [
+  { name: "entity", selector: { entity: {} } },
+  {
+    name: "attribute",
+    selector: { attribute: {} },
+    context: { filter_entity: "entity" },
+  },
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      {
+        name: "invert",
+        required: true,
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "false", label: "State is" },
+              { value: "true", label: "State is not" },
+            ],
+          },
+        },
+      },
+      {
+        name: "state",
+        selector: { state: {} },
+        context: {
+          filter_entity: "entity",
+          filter_attribute: "attribute",
+        },
+      },
+    ],
+  },
+];
+
+const NUMERIC_STATE_CONDITION_SCHEMA: HaFormSchema[] = [
+  { name: "entity", selector: { entity: {} } },
+  {
+    name: "attribute",
+    selector: { attribute: {} },
+    context: { filter_entity: "entity" },
+  },
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      { name: "above", selector: { number: { step: "any", mode: "box" } } },
+      { name: "below", selector: { number: { step: "any", mode: "box" } } },
+    ],
+  },
+];
+
+const TIME_CONDITION_SCHEMA: HaFormSchema[] = [
+  { name: "after", selector: { time: { no_second: true } } },
+  { name: "before", selector: { time: { no_second: true } } },
+  {
+    name: "weekdays",
+    selector: {
+      select: {
+        mode: "list",
+        multiple: true,
+        options: WEEKDAYS_SHORT.map((day) => ({
+          value: day,
+          label: WEEKDAY_LABELS[day],
+        })),
+      },
+    },
+  },
+];
+
+const SCREEN_CONDITION_SCHEMA: HaFormSchema[] = [
+  {
+    name: "breakpoints",
+    selector: {
+      select: {
+        mode: "list",
+        multiple: true,
+        options: BREAKPOINTS.map((breakpoint) => {
+          const value = BREAKPOINT_VALUES[BREAKPOINTS.indexOf(breakpoint)];
+          return {
+            value: breakpoint,
+            label: value === 0 ? "Mobile" : `${capitalize(breakpoint)} (${value}px and up)`,
+          };
+        }),
+      },
+    },
+  },
+];
+
+const VIEW_COLUMNS_CONDITION_SCHEMA: HaFormSchema[] = [
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      { name: "min", selector: { number: { mode: "box", min: 1 } } },
+      { name: "max", selector: { number: { mode: "box", min: 1 } } },
+    ],
+  },
+];
+
+function capitalize(value: string): string {
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+}
+
+function getBreakpointCombinations(): Breakpoint[][] {
+  return BREAKPOINTS.reduce<Breakpoint[][]>(
+    (combinations, breakpoint) => [
+      ...combinations,
+      ...combinations.map((combination) => [...combination, breakpoint]),
+    ],
+    [[]],
+  ).filter((combination) => combination.length > 0);
+}
+
+function mergeConsecutiveRanges(ranges: BreakpointSize[]): BreakpointSize[] {
+  if (ranges.length === 0) {
+    return [];
+  }
+
+  const sortedRanges = [...ranges].sort((a, b) => a[0] - b[0]);
+  const mergedRanges: BreakpointSize[] = [sortedRanges[0]];
+
+  for (let index = 1; index < sortedRanges.length; index += 1) {
+    const currentRange = sortedRanges[index];
+    const previousRange = mergedRanges[mergedRanges.length - 1];
+
+    if (currentRange[0] <= previousRange[1] + 1) {
+      previousRange[1] = currentRange[1];
+    } else {
+      mergedRanges.push(currentRange);
+    }
+  }
+
+  return mergedRanges;
+}
+
+function buildMediaQuery(size: BreakpointSize): string {
+  const [min, max] = size;
+  const query: string[] = [];
+  if (min != null) {
+    query.push(`(min-width: ${min}px)`);
+  }
+  if (max != null && max !== Infinity) {
+    query.push(`(max-width: ${max - 1}px)`);
+  }
+  return query.join(" and ");
+}
+
+function computeBreakpointsKey(breakpoints: Breakpoint[]): string {
+  return [...breakpoints].sort().join("_");
+}
+
+function computeBreakpointsMediaQuery(breakpoints: Breakpoint[]): string {
+  const sizes = breakpoints.map<BreakpointSize>((breakpoint) => {
+    const index = BREAKPOINTS.indexOf(breakpoint);
+    return [BREAKPOINT_VALUES[index], BREAKPOINT_VALUES[index + 1] || Infinity];
+  });
+
+  return mergeConsecutiveRanges(sizes)
+    .map((size) => buildMediaQuery(size))
+    .filter((query) => query !== "")
+    .join(", ");
+}
+
+const MEDIA_QUERY_MAP = new Map(
+  getBreakpointCombinations().map((breakpoints) => [
+    computeBreakpointsKey(breakpoints),
+    computeBreakpointsMediaQuery(breakpoints),
+  ]),
+);
+const MEDIA_QUERY_REVERSE_MAP = new Map(
+  [...MEDIA_QUERY_MAP.entries()].map(([key, value]) => [
+    value,
+    key.split("_").filter(Boolean) as Breakpoint[],
+  ]),
+);
 
 @customElement("flex-slider-card-condition-editor")
 export class FlexSliderCardConditionEditor extends LitElement {
@@ -62,7 +245,18 @@ export class FlexSliderCardConditionEditor extends LitElement {
   public hass?: HomeAssistant;
 
   @state()
-  private _hasHaConditionsEditor = customElements.get("ha-card-conditions-editor") !== undefined;
+  private _openActionMenuPath?: string;
+
+  @state()
+  private _openConditionPaths?: string[];
+
+  @state()
+  private _clipboard?: Condition;
+
+  @state()
+  private _testingResults: Record<string, boolean> = {};
+
+  private _testingTimeouts = new Map<string, number>();
 
   /****************************************************/
   /* CSS                                              */
@@ -77,21 +271,6 @@ export class FlexSliderCardConditionEditor extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 4px;
-    }
-
-    .conditions-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .conditions-title {
-      margin: 0;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--primary-text-color);
     }
 
     .section-description {
@@ -104,52 +283,103 @@ export class FlexSliderCardConditionEditor extends LitElement {
     .conditions-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-    }
-
-    .condition-card {
-      display: flex;
-      flex-direction: column;
       gap: 12px;
-      border: 1px solid var(--divider-color);
-      border-radius: 8px;
-      padding: 12px;
-      background: var(--secondary-background-color);
     }
 
-    .condition-card.nested {
+    .condition-panel {
+      position: relative;
+      border: 1px solid var(--divider-color);
+      border-radius: var(--ha-card-border-radius, 12px);
       background: var(--card-background-color, var(--ha-card-background, white));
     }
 
-    .condition-row {
+    .condition-panel.nested {
+      border-radius: 8px;
+    }
+
+    .testing {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 1;
+      overflow: hidden;
+      max-height: 100px;
+      border-top-right-radius: calc(var(--ha-card-border-radius, 12px) - 1px);
+      border-top-left-radius: calc(var(--ha-card-border-radius, 12px) - 1px);
+      padding: 4px 8px;
+      background: var(--divider-color);
+      color: var(--text-primary-color);
+      font-size: var(--ha-font-size-m, 14px);
+      font-weight: var(--ha-font-weight-bold, 700);
+      line-height: 20px;
+      text-align: center;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .testing.pass {
+      background: var(--success-color);
+    }
+
+    .testing.error {
+      background: var(--accent-color);
+    }
+
+    .condition-summary {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: 10px;
+      grid-template-columns: 32px minmax(0, 1fr) auto;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 4px 0 8px;
+      color: var(--primary-text-color);
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .condition-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .condition-chevron {
+      color: var(--secondary-text-color);
+      transition: transform 120ms ease;
+    }
+
+    .condition-panel[open] > .condition-summary .condition-chevron {
+      transform: rotate(90deg);
+    }
+
+    .condition-leading-icon {
+      display: none;
+      color: var(--secondary-text-color);
+      opacity: 0.9;
+    }
+
+    .condition-title {
+      min-width: 0;
+      margin: 0;
+      font: inherit;
+      font-weight: inherit;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .condition-content {
+      padding: 12px;
     }
 
     .condition-fields {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-    }
-
-    .condition-type {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: end;
-      gap: 8px;
-    }
-
-    .condition-icon {
-      color: var(--secondary-text-color);
-      padding-bottom: 8px;
+      gap: 12px;
     }
 
     .condition-field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       min-width: 0;
     }
 
@@ -163,10 +393,10 @@ export class FlexSliderCardConditionEditor extends LitElement {
     .condition-field select {
       box-sizing: border-box;
       width: 100%;
-      min-height: 36px;
+      min-height: 40px;
       border: 1px solid var(--divider-color);
-      border-radius: 6px;
-      padding: 6px 8px;
+      border-radius: 4px;
+      padding: 8px;
       background: var(--card-background-color, var(--ha-card-background, white));
       color: var(--primary-text-color);
       font: inherit;
@@ -191,35 +421,125 @@ export class FlexSliderCardConditionEditor extends LitElement {
     .nested-conditions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding-left: 12px;
-      border-left: 2px solid var(--divider-color);
+      gap: 12px;
     }
 
-    .action-button {
-      border: 1px solid var(--divider-color);
-      border-radius: 999px;
-      padding: 8px 14px;
-      background: transparent;
-      color: var(--primary-text-color);
-      font: inherit;
-      cursor: pointer;
+    .condition-actions {
+      position: relative;
+      display: inline-flex;
+      justify-content: flex-end;
     }
 
-    .icon-button {
-      width: 28px;
-      height: 28px;
+    .icon-action-button {
+      width: 40px;
+      height: 40px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      border: none;
+      border-radius: 50%;
       padding: 0;
-      font-size: 18px;
-      line-height: 1;
+      background: transparent;
+      color: var(--secondary-text-color);
+      cursor: pointer;
     }
 
-    .condition-button {
+    .icon-action-button:hover {
+      background: var(--secondary-background-color);
+    }
+
+    .action-menu {
+      position: absolute;
+      top: 40px;
+      right: 4px;
+      z-index: 10;
+      min-width: 160px;
+      padding: 0;
+      border: 1px solid var(--divider-color);
+      border-radius: 8px;
+      background: var(--card-background-color, var(--ha-card-background, white));
+      box-shadow: var(--ha-card-box-shadow, 0 2px 4px 0 rgba(0, 0, 0, 0.16));
+      overflow: hidden;
+    }
+
+    .action-menu button,
+    .add-menu-item {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      border: none;
+      padding: 12px 16px;
+      background: transparent;
+      color: var(--primary-text-color);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .action-menu button:hover,
+    .add-menu-item:hover {
+      background: var(--secondary-background-color);
+    }
+
+    .action-menu button.danger {
+      color: var(--error-color);
+    }
+
+    .add-menu {
+      position: relative;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .add-menu summary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      box-sizing: border-box;
+      border: none;
       border-radius: 6px;
-      padding: 8px 12px;
+      padding: 0 16px;
+      background: var(--primary-color);
+      color: var(--text-primary-color);
+      font: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .add-menu summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .add-menu-panel {
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 4px);
+      z-index: 20;
+      min-width: 220px;
+      border: 1px solid var(--divider-color);
+      border-radius: 8px;
+      background: var(--card-background-color, var(--ha-card-background, white));
+      box-shadow: var(--ha-card-box-shadow, 0 2px 4px 0 rgba(0, 0, 0, 0.16));
+      overflow: hidden;
+    }
+
+    .nested-conditions .add-menu-panel {
+      top: calc(100% + 4px);
+      bottom: auto;
+    }
+
+    @media (min-width: 870px) {
+      .condition-summary {
+        grid-template-columns: 32px 32px minmax(0, 1fr) auto;
+      }
+
+      .condition-leading-icon {
+        display: inline-flex;
+      }
     }
   `;
 
@@ -227,35 +547,24 @@ export class FlexSliderCardConditionEditor extends LitElement {
   /* Public methods - Lit Element                     */
   /****************************************************/
 
-  public override connectedCallback(): void {
-    super.connectedCallback();
-    this._loadHaConditionsEditor();
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._clearTestingResults();
   }
 
   protected override render(): TemplateResult {
-    const conditions = this.conditions ?? [];
-
-    if (this._hasHaConditionsEditor) {
-      return this._renderHaConditionsEditor(conditions);
+    if (!this.hass) {
+      return html``;
     }
+
+    const conditions = this.conditions ?? [];
 
     return html`
       <div class="conditions-editor">
-        <div class="conditions-header">
-          <p class="conditions-title">External conditions</p>
-          <button
-            class="action-button condition-button"
-            type="button"
-            @click=${() => this._addCondition([])}
-          >
-            Add condition
-          </button>
-        </div>
         <div class="conditions-list">
-          ${conditions.length === 0
-            ? html`<p class="section-description">No condition configured.</p>`
-            : conditions.map((condition, index) => this._renderCondition(condition, [index], false))}
+          ${conditions.map((condition, index) => this._renderCondition(condition, [index], false))}
         </div>
+        ${this._renderAddConditionMenu([], "Add condition")}
       </div>
     `;
   }
@@ -264,48 +573,73 @@ export class FlexSliderCardConditionEditor extends LitElement {
   /* Private methods - rendering                      */
   /****************************************************/
 
-  private _renderHaConditionsEditor(conditions: Condition[]): TemplateResult {
-    return html`
-      <ha-card-conditions-editor
-        .hass=${this.hass}
-        .conditions=${conditions}
-        @value-changed=${this._handleHaConditionsChanged}
-        @conditions-changed=${this._handleHaConditionsChanged}
-      ></ha-card-conditions-editor>
-    `;
-  }
-
   private _renderCondition(condition: Condition, path: ConditionPath, nested: boolean): TemplateResult {
     const option = this._getConditionTypeOption(condition.condition);
+    const pathKey = this._getPathKey(path);
+    const isActionMenuOpen = this._openActionMenuPath === pathKey;
+    const isOpen = this._openConditionPaths === undefined
+      ? !nested && (this.conditions?.length ?? 0) === 1
+      : this._openConditionPaths.includes(pathKey);
+    const testingResult = this._testingResults[pathKey];
 
     return html`
-      <div class="condition-card ${nested ? "nested" : ""}">
-        <div class="condition-row">
-          <div class="condition-type">
-            <ha-icon class="condition-icon" .icon=${option.icon}></ha-icon>
-            <div class="condition-field">
-              <label>Condition type</label>
-              <select
-                .value=${condition.condition}
-                @change=${(ev: Event) => this._changeConditionType(path, (ev.target as HTMLSelectElement).value as EditableConditionType)}
-              >
-                ${CONDITION_TYPE_OPTIONS.map((conditionOption) => html`
-                  <option value=${conditionOption.value}>${conditionOption.label}</option>
-                `)}
-              </select>
-            </div>
-          </div>
-          <button
-            class="action-button icon-button"
-            type="button"
-            aria-label="Remove condition"
-            @click=${() => this._removeCondition(path)}
-          >
-            -
-          </button>
+      <details
+        class="condition-panel ${nested ? "nested" : ""}"
+        ?open=${isOpen}
+        @toggle=${(ev: Event) => this._handleConditionToggle(ev, path)}
+      >
+        ${testingResult === undefined
+          ? nothing
+          : html`
+              <div class="testing ${testingResult ? "pass" : "error"}">
+                ${testingResult ? "Condition passes" : "Condition does not pass"}
+              </div>
+            `}
+        <summary class="condition-summary">
+          <ha-icon class="condition-chevron" icon="mdi:chevron-right"></ha-icon>
+          <ha-icon class="condition-leading-icon" .icon=${option.icon}></ha-icon>
+          <h3 class="condition-title">${option.label}</h3>
+          <span class="condition-actions" @click=${this._stopPropagation}>
+            <button
+              class="icon-action-button"
+              type="button"
+              aria-label="Condition actions"
+              @click=${(ev: Event) => this._toggleActionMenu(ev, path)}
+            >
+              <ha-icon icon="mdi:dots-vertical"></ha-icon>
+            </button>
+            ${isActionMenuOpen
+              ? html`
+                  <div class="action-menu">
+                    <button type="button" @click=${() => this._testCondition(path)}>
+                      <ha-icon icon="mdi:flask"></ha-icon>
+                      <span>Test</span>
+                    </button>
+                    <button type="button" @click=${() => this._duplicateCondition(path)}>
+                      <ha-icon icon="mdi:content-duplicate"></ha-icon>
+                      <span>Duplicate</span>
+                    </button>
+                    <button type="button" @click=${() => this._copyCondition(path)}>
+                      <ha-icon icon="mdi:content-copy"></ha-icon>
+                      <span>Copy</span>
+                    </button>
+                    <button type="button" @click=${() => this._cutCondition(path)}>
+                      <ha-icon icon="mdi:content-cut"></ha-icon>
+                      <span>Cut</span>
+                    </button>
+                    <button class="danger" type="button" @click=${() => this._removeCondition(path)}>
+                      <ha-icon icon="mdi:delete"></ha-icon>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                `
+              : nothing}
+          </span>
+        </summary>
+        <div class="condition-content">
+          ${this._renderConditionFields(condition, path)}
         </div>
-        ${this._renderConditionFields(condition, path)}
-      </div>
+      </details>
     `;
   }
 
@@ -329,6 +663,41 @@ export class FlexSliderCardConditionEditor extends LitElement {
     }
   }
 
+  private _renderAddConditionMenu(parentPath: ConditionPath, label: string): TemplateResult {
+    return html`
+      <details class="add-menu">
+        <summary>
+          <ha-icon icon="mdi:plus"></ha-icon>
+          <span>${label}</span>
+        </summary>
+        <div class="add-menu-panel">
+          ${this._clipboard
+            ? html`
+                <button
+                  class="add-menu-item"
+                  type="button"
+                  @click=${(ev: Event) => this._pasteConditionFromMenu(ev, parentPath)}
+                >
+                  <ha-icon icon="mdi:content-paste"></ha-icon>
+                  <span>Paste</span>
+                </button>
+              `
+            : nothing}
+          ${CONDITION_TYPE_OPTIONS.map((option) => html`
+            <button
+              class="add-menu-item"
+              type="button"
+              @click=${(ev: Event) => this._addConditionFromMenu(ev, parentPath, option.value)}
+            >
+              <ha-icon .icon=${option.icon}></ha-icon>
+              <span>${option.label}</span>
+            </button>
+          `)}
+        </div>
+      </details>
+    `;
+  }
+
   /****************************************************/
   /* Private methods - condition type rendering       */
   /****************************************************/
@@ -336,77 +705,74 @@ export class FlexSliderCardConditionEditor extends LitElement {
   private _renderStateCondition(condition: StateCondition, path: ConditionPath): TemplateResult {
     const mode = condition.state_not != null ? "state_not" : "state";
     const value = mode === "state_not" ? condition.state_not : condition.state;
+    const data: StateConditionFormData = {
+      condition: "state",
+      entity: condition.entity,
+      attribute: condition.attribute,
+      invert: mode === "state_not" ? "true" : "false",
+      state: value,
+    };
 
     return html`
-      <div class="condition-fields">
-        ${this._renderTextField("Entity", condition.entity ?? "", (value) => this._updateCondition(path, { entity: value || undefined }))}
-        ${this._renderTextField("Attribute", condition.attribute ?? "", (value) => this._updateCondition(path, { attribute: value || undefined }))}
-        <div class="condition-field">
-          <label>Match mode</label>
-          <select
-            .value=${mode}
-            @change=${(ev: Event) => this._changeStateMode(path, (ev.target as HTMLSelectElement).value as "state" | "state_not")}
-          >
-            <option value="state">State is</option>
-            <option value="state_not">State is not</option>
-          </select>
-        </div>
-        ${this._renderTextField("State", this._conditionValueToText(value), (nextValue) => this._updateStateValue(path, mode, nextValue))}
-      </div>
+      <ha-form
+        .hass=${this.hass}
+        .data=${data}
+        .schema=${STATE_CONDITION_SCHEMA}
+        .computeLabel=${this._computeStateLabel}
+        @value-changed=${(ev: CustomEvent) => this._handleStateConditionChanged(ev, path)}
+      ></ha-form>
     `;
   }
 
   private _renderNumericStateCondition(condition: NumericStateCondition, path: ConditionPath): TemplateResult {
     return html`
-      <div class="condition-fields">
-        ${this._renderTextField("Entity", condition.entity ?? "", (value) => this._updateCondition(path, { entity: value || undefined }))}
-        ${this._renderTextField("Attribute", condition.attribute ?? "", (value) => this._updateCondition(path, { attribute: value || undefined }))}
-        ${this._renderNumberField("Above", condition.above, (value) => this._updateCondition(path, { above: value }))}
-        ${this._renderNumberField("Below", condition.below, (value) => this._updateCondition(path, { below: value }))}
-      </div>
+      <ha-form
+        .hass=${this.hass}
+        .data=${condition}
+        .schema=${NUMERIC_STATE_CONDITION_SCHEMA}
+        .computeLabel=${this._computeNumericStateLabel}
+        @value-changed=${(ev: CustomEvent) => this._handleNumericStateConditionChanged(ev, path)}
+      ></ha-form>
     `;
   }
 
   private _renderTimeCondition(condition: TimeCondition, path: ConditionPath): TemplateResult {
-    const weekdays = condition.weekdays ?? [];
-
     return html`
-      <div class="condition-fields">
-        ${this._renderTextField("After", condition.after ?? "", (value) => this._updateCondition(path, { after: value || undefined }), "time")}
-        ${this._renderTextField("Before", condition.before ?? "", (value) => this._updateCondition(path, { before: value || undefined }), "time")}
-        <div class="condition-field">
-          <label>Weekdays</label>
-          <div class="weekdays">
-            ${WEEKDAY_OPTIONS.map((weekday) => html`
-              <label class="weekday">
-                <input
-                  type="checkbox"
-                  .checked=${weekdays.includes(weekday.value)}
-                  @change=${(ev: Event) => this._toggleWeekday(path, weekday.value, (ev.target as HTMLInputElement).checked)}
-                >
-                ${weekday.label}
-              </label>
-            `)}
-          </div>
-        </div>
-      </div>
+      <ha-form
+        .hass=${this.hass}
+        .data=${condition}
+        .schema=${TIME_CONDITION_SCHEMA}
+        .computeLabel=${this._computeTimeLabel}
+        @value-changed=${(ev: CustomEvent) => this._handleTimeConditionChanged(ev, path)}
+      ></ha-form>
     `;
   }
 
   private _renderScreenCondition(condition: ScreenCondition, path: ConditionPath): TemplateResult {
+    const data: ScreenConditionFormData = {
+      breakpoints: this._getBreakpointsFromMediaQuery(condition.media_query),
+    };
+
     return html`
-      <div class="condition-fields">
-        ${this._renderTextField("Media query", condition.media_query ?? "", (value) => this._updateCondition(path, { media_query: value || undefined }))}
-      </div>
+      <ha-form
+        .hass=${this.hass}
+        .data=${data}
+        .schema=${SCREEN_CONDITION_SCHEMA}
+        .computeLabel=${this._computeScreenLabel}
+        @value-changed=${(ev: CustomEvent) => this._handleScreenConditionChanged(ev, path)}
+      ></ha-form>
     `;
   }
 
   private _renderViewColumnsCondition(condition: ViewColumnsCondition, path: ConditionPath): TemplateResult {
     return html`
-      <div class="condition-fields">
-        ${this._renderNumberField("Minimum columns", condition.min, (value) => this._updateCondition(path, { min: value }))}
-        ${this._renderNumberField("Maximum columns", condition.max, (value) => this._updateCondition(path, { max: value }))}
-      </div>
+      <ha-form
+        .hass=${this.hass}
+        .data=${condition}
+        .schema=${VIEW_COLUMNS_CONDITION_SCHEMA}
+        .computeLabel=${this._computeViewColumnsLabel}
+        @value-changed=${(ev: CustomEvent) => this._handleViewColumnsConditionChanged(ev, path)}
+      ></ha-form>
     `;
   }
 
@@ -418,69 +784,189 @@ export class FlexSliderCardConditionEditor extends LitElement {
         ${conditions.length === 0
           ? html`<p class="section-description">No nested condition configured.</p>`
           : conditions.map((nestedCondition, index) => this._renderCondition(nestedCondition, [...path, index], true))}
-        <button
-          class="action-button condition-button"
-          type="button"
-          @click=${() => this._addCondition(path)}
-        >
-          Add nested condition
-        </button>
+        ${this._renderAddConditionMenu(path, "Add nested condition")}
       </div>
     `;
   }
 
   /****************************************************/
-  /* Private methods - field rendering                */
+  /* Private methods - form updates                   */
   /****************************************************/
 
-  private _renderTextField(
-    label: string,
-    value: string,
-    onChange: (value: string) => void,
-    type = "text",
-  ): TemplateResult {
-    return html`
-      <div class="condition-field">
-        <label>${label}</label>
-        <input
-          type=${type}
-          .value=${value}
-          @input=${(ev: Event) => onChange((ev.target as HTMLInputElement).value)}
-        >
-      </div>
-    `;
+  private _handleStateConditionChanged(ev: CustomEvent, path: ConditionPath): void {
+    ev.stopPropagation();
+    const data = ev.detail.value as StateConditionFormData;
+    const stateValue = data.state;
+    const nextCondition: StateCondition = {
+      condition: "state",
+      entity: this._emptyToUndefined(data.entity),
+      attribute: this._emptyToUndefined(data.attribute),
+      state: data.invert === "false" ? stateValue ?? "" : undefined,
+      state_not: data.invert === "true" ? stateValue ?? "" : undefined,
+    };
+
+    this._replaceCondition(path, this._cleanStateCondition(nextCondition));
   }
 
-  private _renderNumberField(
-    label: string,
-    value: string | number | undefined,
-    onChange: (value: number | undefined) => void,
-  ): TemplateResult {
-    return html`
-      <div class="condition-field">
-        <label>${label}</label>
-        <input
-          type="number"
-          step="any"
-          .value=${value == null ? "" : String(value)}
-          @input=${(ev: Event) => {
-            const inputValue = (ev.target as HTMLInputElement).value;
-            onChange(inputValue === "" ? undefined : Number(inputValue));
-          }}
-        >
-      </div>
-    `;
+  private _handleNumericStateConditionChanged(ev: CustomEvent, path: ConditionPath): void {
+    ev.stopPropagation();
+    const data = ev.detail.value as NumericStateCondition;
+    this._replaceCondition(path, this._cleanNumericStateCondition({
+      ...data,
+      condition: "numeric_state",
+    }));
   }
+
+  private _handleTimeConditionChanged(ev: CustomEvent, path: ConditionPath): void {
+    ev.stopPropagation();
+    const data = ev.detail.value as TimeCondition;
+    this._replaceCondition(path, this._cleanTimeCondition({
+      ...data,
+      condition: "time",
+    }));
+  }
+
+  private _handleScreenConditionChanged(ev: CustomEvent, path: ConditionPath): void {
+    ev.stopPropagation();
+    const data = ev.detail.value as ScreenConditionFormData;
+    this._replaceCondition(path, {
+      condition: "screen",
+      media_query: this._getMediaQueryFromBreakpoints(data.breakpoints ?? []),
+    });
+  }
+
+  private _handleViewColumnsConditionChanged(ev: CustomEvent, path: ConditionPath): void {
+    ev.stopPropagation();
+    const data = ev.detail.value as ViewColumnsCondition;
+    this._replaceCondition(path, this._cleanViewColumnsCondition({
+      ...data,
+      condition: "view_columns",
+    }));
+  }
+
+  private _computeStateLabel = (schema: HaFormSchema): string => {
+    switch (schema.name) {
+      case "entity":
+        return "Entity";
+      case "attribute":
+        return "Attribute";
+      case "invert":
+        return "";
+      case "state":
+        return "State";
+      default:
+        return "";
+    }
+  };
+
+  private _computeNumericStateLabel = (schema: HaFormSchema): string => {
+    switch (schema.name) {
+      case "entity":
+        return "Entity";
+      case "attribute":
+        return "Attribute";
+      case "above":
+        return "Above";
+      case "below":
+        return "Below";
+      default:
+        return "";
+    }
+  };
+
+  private _computeTimeLabel = (schema: HaFormSchema): string => {
+    switch (schema.name) {
+      case "after":
+        return "After";
+      case "before":
+        return "Before";
+      case "weekdays":
+        return "Weekdays";
+      default:
+        return "";
+    }
+  };
+
+  private _computeScreenLabel = (schema: HaFormSchema): string => {
+    return schema.name === "breakpoints" ? "Breakpoints" : "";
+  };
+
+  private _computeViewColumnsLabel = (schema: HaFormSchema): string => {
+    switch (schema.name) {
+      case "min":
+        return "Minimum columns";
+      case "max":
+        return "Maximum columns";
+      default:
+        return "";
+    }
+  };
 
   /****************************************************/
   /* Private methods - conditions management          */
   /****************************************************/
 
-  private _addCondition(parentPath: ConditionPath): void {
+  private _testCondition(path: ConditionPath): void {
+    if (!this.hass) {
+      return;
+    }
+
     const conditions = this._cloneConditions();
+    const condition = this._getConditionAtPath(conditions, path);
+    const pathKey = this._getPathKey(path);
+    const testingResult = validateConditionalConfig([condition])
+      ? checkConditionsMet([condition], this.hass, {})
+      : false;
+
+    const existingTimeout = this._testingTimeouts.get(pathKey);
+    if (existingTimeout !== undefined) {
+      window.clearTimeout(existingTimeout);
+    }
+
+    this._testingResults = {
+      ...this._testingResults,
+      [pathKey]: testingResult,
+    };
+    this._openActionMenuPath = undefined;
+
+    const timeout = window.setTimeout(() => {
+      const { [pathKey]: _testingResult, ...nextTestingResults } = this._testingResults;
+      this._testingResults = nextTestingResults;
+      this._testingTimeouts.delete(pathKey);
+    }, 2500);
+    this._testingTimeouts.set(pathKey, timeout);
+  }
+
+  private _addConditionFromMenu(ev: Event, parentPath: ConditionPath, type: EditableConditionType): void {
+    const menu = (ev.currentTarget as HTMLElement).closest("details");
+    if (menu) {
+      menu.open = false;
+    }
+    this._addCondition(parentPath, type);
+  }
+
+  private _pasteConditionFromMenu(ev: Event, parentPath: ConditionPath): void {
+    const menu = (ev.currentTarget as HTMLElement).closest("details");
+    if (menu) {
+      menu.open = false;
+    }
+    if (!this._clipboard) {
+      return;
+    }
+    this._insertCondition(parentPath, structuredClone(this._clipboard));
+  }
+
+  private _addCondition(parentPath: ConditionPath, type: EditableConditionType): void {
+    this._insertCondition(parentPath, this._createDefaultCondition(type));
+  }
+
+  private _insertCondition(parentPath: ConditionPath, condition: Condition): void {
+    const conditions = this._cloneConditions();
+    let newConditionPath: ConditionPath;
 
     if (parentPath.length === 0) {
-      conditions.push(this._createDefaultCondition("state"));
+      conditions.push(condition);
+      newConditionPath = [conditions.length - 1];
     } else {
       const parentCondition = this._getConditionAtPath(conditions, parentPath);
       if (!this._isLogicalCondition(parentCondition)) {
@@ -488,10 +974,38 @@ export class FlexSliderCardConditionEditor extends LitElement {
       }
       parentCondition.conditions = [
         ...(parentCondition.conditions ?? []),
-        this._createDefaultCondition("state"),
+        condition,
       ];
+      newConditionPath = [...parentPath, parentCondition.conditions.length - 1];
     }
 
+    this._openConditionPaths = this._getPathKeysWithAncestors(newConditionPath);
+    this._openActionMenuPath = undefined;
+    this._emitConditionsChanged(conditions);
+  }
+
+  private _duplicateCondition(path: ConditionPath): void {
+    const conditions = this._cloneConditions();
+    const condition = structuredClone(this._getConditionAtPath(conditions, path));
+    const parentConditions = this._getParentConditionsAtPath(conditions, path);
+    parentConditions.splice(path[path.length - 1] + 1, 0, condition);
+    this._openActionMenuPath = undefined;
+    this._emitConditionsChanged(conditions);
+  }
+
+  private _copyCondition(path: ConditionPath): void {
+    const conditions = this._cloneConditions();
+    this._clipboard = structuredClone(this._getConditionAtPath(conditions, path));
+    this._openActionMenuPath = undefined;
+  }
+
+  private _cutCondition(path: ConditionPath): void {
+    const conditions = this._cloneConditions();
+    this._clipboard = structuredClone(this._getConditionAtPath(conditions, path));
+    const parentConditions = this._getParentConditionsAtPath(conditions, path);
+    parentConditions.splice(path[path.length - 1], 1);
+    this._openActionMenuPath = undefined;
+    this._openConditionPaths = undefined;
     this._emitConditionsChanged(conditions);
   }
 
@@ -499,6 +1013,7 @@ export class FlexSliderCardConditionEditor extends LitElement {
     const conditions = this._cloneConditions();
     const parentConditions = this._getParentConditionsAtPath(conditions, path);
     parentConditions.splice(path[path.length - 1], 1);
+    this._openActionMenuPath = undefined;
     this._emitConditionsChanged(conditions);
   }
 
@@ -513,44 +1028,10 @@ export class FlexSliderCardConditionEditor extends LitElement {
     this._emitConditionsChanged(conditions);
   }
 
-  private _updateCondition(path: ConditionPath, patch: Partial<Condition>): void {
+  private _replaceCondition(path: ConditionPath, nextCondition: Condition): void {
     const conditions = this._cloneConditions();
-    const condition = this._getConditionAtPath(conditions, path);
-    Object.assign(condition, patch);
-    this._emitConditionsChanged(conditions);
-  }
-
-  private _changeStateMode(path: ConditionPath, mode: "state" | "state_not"): void {
-    const conditions = this._cloneConditions();
-    const condition = this._getConditionAtPath(conditions, path) as StateCondition;
-    const currentValue = condition.state ?? condition.state_not ?? "";
-
-    delete condition.state;
-    delete condition.state_not;
-    condition[mode] = currentValue;
-
-    this._emitConditionsChanged(conditions);
-  }
-
-  private _updateStateValue(path: ConditionPath, mode: "state" | "state_not", value: string): void {
-    const parsedValue = value.includes(",")
-      ? value.split(",").map((item) => item.trim()).filter((item) => item !== "")
-      : value || undefined;
-    this._updateCondition(path, { [mode]: parsedValue } as Partial<StateCondition>);
-  }
-
-  private _toggleWeekday(path: ConditionPath, weekday: WeekdayShort, checked: boolean): void {
-    const conditions = this._cloneConditions();
-    const condition = this._getConditionAtPath(conditions, path) as TimeCondition;
-    const weekdays = new Set(condition.weekdays ?? []);
-
-    if (checked) {
-      weekdays.add(weekday);
-    } else {
-      weekdays.delete(weekday);
-    }
-
-    condition.weekdays = weekdays.size > 0 ? Array.from(weekdays) : undefined;
+    const parentConditions = this._getParentConditionsAtPath(conditions, path);
+    parentConditions[path[path.length - 1]] = nextCondition;
     this._emitConditionsChanged(conditions);
   }
 
@@ -558,46 +1039,32 @@ export class FlexSliderCardConditionEditor extends LitElement {
   /* Private methods - event management               */
   /****************************************************/
 
-  private _handleHaConditionsChanged = (ev: ConditionsChangedEvent): void => {
+  private _toggleActionMenu(ev: Event, path: ConditionPath): void {
     ev.stopPropagation();
-    this._emitConditionsChanged(ev.detail.value ?? ev.detail.conditions ?? []);
-  };
+    const pathKey = this._getPathKey(path);
+    this._openActionMenuPath = this._openActionMenuPath === pathKey ? undefined : pathKey;
+  }
 
-  private async _loadHaConditionsEditor(): Promise<void> {
-    if (customElements.get("ha-card-conditions-editor")) {
-      this._hasHaConditionsEditor = true;
+  private _handleConditionToggle(ev: Event, path: ConditionPath): void {
+    if (ev.target !== ev.currentTarget) {
       return;
     }
 
-    try {
-      const conditionalCard = await this._loadConditionalCardConstructor();
-      await conditionalCard?.getConfigElement?.();
-    } catch {
-      // Keep the local fallback editor if Home Assistant cannot load its internal editor.
-    }
+    const details = ev.currentTarget as HTMLDetailsElement;
+    const pathKey = this._getPathKey(path);
 
-    this._hasHaConditionsEditor = customElements.get("ha-card-conditions-editor") !== undefined;
+    if (details.open) {
+      this._openConditionPaths = this._getPathKeysWithAncestors(path);
+      this._openActionMenuPath = undefined;
+    } else if (this._openConditionPaths?.includes(pathKey)) {
+      this._openConditionPaths = this._openConditionPaths.filter((openPathKey) =>
+        openPathKey !== pathKey && !openPathKey.startsWith(`${pathKey}.`)
+      );
+    }
   }
 
-  private async _loadConditionalCardConstructor(): Promise<ConditionalCardConstructor | undefined> {
-    const conditionalCard = customElements.get("hui-conditional-card") as ConditionalCardConstructor | undefined;
-    if (conditionalCard) {
-      return conditionalCard;
-    }
-
-    const loadCardHelpers = (window as HomeAssistantWindow).loadCardHelpers;
-    if (!loadCardHelpers) {
-      return undefined;
-    }
-
-    const helpers = await loadCardHelpers();
-    helpers.createCardElement?.({
-      type: "conditional",
-      conditions: [],
-      card: { type: "entities", entities: [] },
-    });
-    await customElements.whenDefined("hui-conditional-card");
-    return customElements.get("hui-conditional-card") as ConditionalCardConstructor | undefined;
+  private _stopPropagation(ev: Event): void {
+    ev.stopPropagation();
   }
 
   private _cloneConditions(): Condition[] {
@@ -605,6 +1072,7 @@ export class FlexSliderCardConditionEditor extends LitElement {
   }
 
   private _emitConditionsChanged(conditions: Condition[]): void {
+    this._clearTestingResults();
     this.dispatchEvent(new CustomEvent("conditions-changed", {
       bubbles: true,
       composed: true,
@@ -612,9 +1080,25 @@ export class FlexSliderCardConditionEditor extends LitElement {
     }));
   }
 
+  private _clearTestingResults(): void {
+    for (const timeout of this._testingTimeouts.values()) {
+      window.clearTimeout(timeout);
+    }
+    this._testingTimeouts.clear();
+    this._testingResults = {};
+  }
+
   /****************************************************/
   /* Private methods - conditions path management     */
   /****************************************************/
+
+  private _getPathKey(path: ConditionPath): string {
+    return path.join(".");
+  }
+
+  private _getPathKeysWithAncestors(path: ConditionPath): string[] {
+    return path.map((_, index) => this._getPathKey(path.slice(0, index + 1)));
+  }
 
   private _getConditionAtPath(conditions: Condition[], path: ConditionPath): Condition {
     let currentConditions = conditions;
@@ -681,7 +1165,101 @@ export class FlexSliderCardConditionEditor extends LitElement {
     return CONDITION_TYPE_OPTIONS.find((option) => option.value === type) ?? CONDITION_TYPE_OPTIONS[0];
   }
 
-  private _conditionValueToText(value: StateCondition["state"] | StateCondition["state_not"]): string {
-    return Array.isArray(value) ? value.join(", ") : value ?? "";
+  private _emptyToUndefined(value: string | undefined): string | undefined {
+    return value === "" ? undefined : value;
+  }
+
+  private _cleanStateCondition(condition: StateCondition): StateCondition {
+    const nextCondition: StateCondition = { ...condition };
+
+    if (!nextCondition.entity) {
+      delete nextCondition.entity;
+    }
+    if (!nextCondition.attribute) {
+      delete nextCondition.attribute;
+    }
+    if (nextCondition.state === undefined) {
+      delete nextCondition.state;
+    }
+    if (nextCondition.state_not === undefined) {
+      delete nextCondition.state_not;
+    }
+
+    return nextCondition;
+  }
+
+  private _cleanNumericStateCondition(condition: NumericStateCondition): NumericStateCondition {
+    const nextCondition: NumericStateCondition = {
+      ...condition,
+      entity: this._emptyToUndefined(condition.entity),
+      attribute: this._emptyToUndefined(condition.attribute),
+      above: this._emptyNumberToUndefined(condition.above),
+      below: this._emptyNumberToUndefined(condition.below),
+    };
+
+    if (!nextCondition.entity) {
+      delete nextCondition.entity;
+    }
+    if (!nextCondition.attribute) {
+      delete nextCondition.attribute;
+    }
+    if (nextCondition.above === undefined) {
+      delete nextCondition.above;
+    }
+    if (nextCondition.below === undefined) {
+      delete nextCondition.below;
+    }
+
+    return nextCondition;
+  }
+
+  private _cleanTimeCondition(condition: TimeCondition): TimeCondition {
+    const nextCondition: TimeCondition = {
+      ...condition,
+      after: this._emptyToUndefined(condition.after),
+      before: this._emptyToUndefined(condition.before),
+      weekdays: condition.weekdays?.length ? condition.weekdays : undefined,
+    };
+
+    if (nextCondition.after === undefined) {
+      delete nextCondition.after;
+    }
+    if (nextCondition.before === undefined) {
+      delete nextCondition.before;
+    }
+    if (nextCondition.weekdays === undefined) {
+      delete nextCondition.weekdays;
+    }
+
+    return nextCondition;
+  }
+
+  private _cleanViewColumnsCondition(condition: ViewColumnsCondition): ViewColumnsCondition {
+    const nextCondition: ViewColumnsCondition = {
+      ...condition,
+      min: this._emptyNumberToUndefined(condition.min),
+      max: this._emptyNumberToUndefined(condition.max),
+    };
+
+    if (nextCondition.min === undefined) {
+      delete nextCondition.min;
+    }
+    if (nextCondition.max === undefined) {
+      delete nextCondition.max;
+    }
+
+    return nextCondition;
+  }
+
+  private _emptyNumberToUndefined<T extends string | number | undefined>(value: T): T | undefined {
+    return value === "" ? undefined : value;
+  }
+
+  private _getBreakpointsFromMediaQuery(mediaQuery: string | undefined): Breakpoint[] {
+    return mediaQuery ? MEDIA_QUERY_REVERSE_MAP.get(mediaQuery) ?? [] : [];
+  }
+
+  private _getMediaQueryFromBreakpoints(breakpoints: Breakpoint[]): string {
+    return MEDIA_QUERY_MAP.get(computeBreakpointsKey(breakpoints)) ?? "";
   }
 }

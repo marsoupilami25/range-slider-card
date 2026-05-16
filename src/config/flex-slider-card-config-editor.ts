@@ -143,7 +143,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       border: 1px solid var(--divider-color);
       border-radius: 8px;
       margin-top: 13px;
-      overflow: hidden;
+      overflow: visible;
       background: var(--card-background-color, var(--ha-card-background, white));
     }
 
