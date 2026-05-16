@@ -4,6 +4,7 @@ import { stdFlexSliderCardCss } from "./css/std-flex-slider-css"
 import { compactFlexSliderCardCss } from "./css/compact-flex-slider-css"
 import { FlexSliderCardConfigMngr } from "./config/flex-slider-card-config-mngr";
 import { FlexSliderCardConfig, flexSliderCardConfigStruct } from "./config/flex-slider-card-config-type";
+import { checkConditionsMet } from "./conditional/flex-slider-card-validate-condition";
 import { debuglog } from "./utils/utils";
 import { HomeAssistant, LovelaceCard, LovelaceCardEditor } from "custom-card-helpers";
 import "./flex-slider-card-valuesbar";
@@ -72,6 +73,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
   private _config?: FlexSliderCardConfigMngr;        // reference to the card configuration
   private _dashboardType?: 'masonry' | 'sections'; // deduced from which sizing method HA calls
   private _hasDeferredEntityUpdate: boolean = false;
+  private _lastAdaptiveStateConditionResult?: boolean;
 
   static override styles = css`
     * {
@@ -79,6 +81,30 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     }
     ha-card {
       height: 100%;
+      position: relative;
+    }
+    .adaptive-state-led {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid var(--divider-color);
+      background: var(--disabled-text-color);
+      box-shadow: 0 0 0 1px var(--card-background-color, var(--ha-card-background));
+      pointer-events: none;
+      z-index: 1;
+    }
+    .adaptive-state-led.is-on {
+      border-color: var(--success-color);
+      background: var(--success-color);
+      box-shadow:
+        0 0 0 1px var(--card-background-color, var(--ha-card-background)),
+        0 0 8px var(--success-color);
+    }
+    .adaptive-state-led.is-off {
+      opacity: 0.7;
     }
     ${unsafeCSS(stdFlexSliderCardCss)}
     ${unsafeCSS(compactFlexSliderCardCss)}
@@ -103,6 +129,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     try {
       assert(config, flexSliderCardConfigStruct);
       this._config = new FlexSliderCardConfigMngr(config);
+      this._lastAdaptiveStateConditionResult = undefined;
       this._error = undefined;
       if (this._config.isStd) {
         this.toggleAttribute("std", true);
@@ -237,7 +264,16 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       return true;
     }
 
+    const adaptiveStateConditionResult = this._getAdaptiveStateConditionResult();
+    const adaptiveStateConditionChanged =
+      adaptiveStateConditionResult !== this._lastAdaptiveStateConditionResult;
+    this._lastAdaptiveStateConditionResult = adaptiveStateConditionResult;
+
     if (!this._config.entitiesExist()) {
+      return true;
+    }
+
+    if (adaptiveStateConditionChanged) {
       return true;
     }
 
@@ -322,6 +358,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const name = this._config.title;
     const isStd = this._config.isStd;
     const isVertical = this._config.isVertical;
+    const adaptiveStateConditionResult = this._getAdaptiveStateConditionResult();
     const reservesBubbleSpace = hasBubbles || hasReferenceBubble;
     const containerClass =
       `${isStd ? "std" : "compact"} ` +
@@ -350,6 +387,9 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
 
     return html`
       <ha-card>
+        ${this._config.isAdaptative
+          ? this._renderAdaptiveStateLed(adaptiveStateConditionResult === true)
+          : nothing}
         <div class="container ${containerClass}">
           ${hasTitle ? html`<div class="title">${name}</div>` : nothing}
           <div class="slider-with-values" style="${horizontalWidth}">
@@ -383,12 +423,35 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     this._dashboardType = undefined;
     this._hasDeferredEntityUpdate = false;
     this._runtimeError = undefined;
+    this._lastAdaptiveStateConditionResult = undefined;
   }
 
   private _handleUserUpdateStateChanged(event: CustomEvent<{ isUserUpdating: boolean }>): void {
     if (!event.detail.isUserUpdating && this._hasDeferredEntityUpdate) {
       this.requestUpdate();
     }
+  }
+
+  private _renderAdaptiveStateLed(isOn: boolean) {
+    return html`
+      <span
+        class="adaptive-state-led ${isOn ? "is-on" : "is-off"}"
+        title=${isOn ? "Adaptive state condition is true" : "Adaptive state condition is false"}
+        aria-hidden="true"
+      ></span>
+    `;
+  }
+
+  private _getAdaptiveStateConditionResult(): boolean | undefined {
+    if (!this._config?.isAdaptative || !this.hass) {
+      return undefined;
+    }
+
+    return checkConditionsMet(
+      this._config.adaptiveStateConditions,
+      this.hass,
+      { entity_id: this._config.entities[0]?.entityId },
+    );
   }
 
   private _getValuesBarSize(): number {
