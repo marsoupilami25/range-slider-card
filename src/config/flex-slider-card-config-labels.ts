@@ -5,6 +5,7 @@ export const flexSliderCardConfigLabels: Record<string, string> = {
   bubblesactive: "Enable bubbles",
   referenceactive: "Enable reference entity",
   adaptivestateactive: "Enable Adaptative State",
+  conditions: "External condition",
   editablewhenlinkedinactive: "Editable when linked inactive state",
   entity: "Entity",
   text: "Text",

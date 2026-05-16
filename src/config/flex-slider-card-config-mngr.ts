@@ -27,6 +27,7 @@ import {
   hasLegacyValuesBarTextConfig,
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
+import { validateConditionalConfig, type Condition } from "../conditional/flex-slider-card-validate-condition";
 
 export class FlexSliderCardConfigMngr {
 
@@ -455,6 +456,16 @@ export class FlexSliderCardConfigMngr {
       this._config.adaptivestate = {};
     }
 
+    if (this._config.adaptivestate.conditions == null) {
+      this._config.adaptivestate.conditions = [];
+    }
+    if (!Array.isArray(this._config.adaptivestate.conditions)) {
+      throw new Error("adaptivestate.conditions must be an array");
+    }
+    if (!validateConditionalConfig(this._config.adaptivestate.conditions)) {
+      throw new Error("Invalid adaptive state conditions");
+    }
+
     assertOptionalBoolean(
       this._config.adaptivestate.editablewhenlinkedinactive,
       "adaptivestate.editablewhenlinkedinactive",
@@ -470,6 +481,13 @@ export class FlexSliderCardConfigMngr {
 
   public get isAdaptative(): boolean {
     return this._config.adaptivestateactive === true;
+  }
+
+  public get adaptiveStateConditions(): Condition[] {
+    if (this._config.adaptivestate?.conditions == null) {
+      throw new Error("Adaptive state conditions are not defined in config");
+    }
+    return this._config.adaptivestate.conditions;
   }
 
   public get isEditableWhenLinkedInactive(): boolean {

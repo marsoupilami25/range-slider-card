@@ -1,5 +1,5 @@
 import { fireEvent, HomeAssistant, LovelaceCardEditor } from "custom-card-helpers";
-import { css, html, LitElement, nothing } from "lit";
+import { css, html, LitElement, nothing, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import {
   FlexSliderCardConfig,
@@ -16,9 +16,17 @@ import {
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
 import { HaFormSchema } from "../type/ha";
-import { computeSchema, connectEndSchema, handleSchema, handlesBehaviorSchema } from "./flex-slider-card-config-form";
+import {
+  adaptiveStateOptionsSchema,
+  computeSchema,
+  connectEndSchema,
+  handleSchema,
+  handlesBehaviorSchema,
+} from "./flex-slider-card-config-form";
 import { flexSliderCardConfigLabels } from "./flex-slider-card-config-labels";
 import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
+import "../conditional/flex-slider-card-condition-editor";
+import type { Condition } from "../conditional/flex-slider-card-validate-condition";
 
 @customElement("flex-slider-card-config-editor")
 export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCardEditor {
@@ -129,6 +137,54 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    .custom-expandable {
+      border: 1px solid var(--divider-color);
+      border-radius: 8px;
+      margin-top: 13px;
+      overflow: hidden;
+      background: var(--card-background-color, var(--ha-card-background, white));
+    }
+
+    .custom-expandable summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      cursor: pointer;
+      color: var(--primary-text-color);
+      font-weight: 500;
+      list-style: none;
+    }
+
+    .custom-expandable summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .custom-expandable-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .custom-expandable-arrow {
+      color: var(--secondary-text-color);
+      margin-right: -4px;
+      transition: transform 120ms ease;
+    }
+
+    .custom-expandable[open] .custom-expandable-arrow {
+      transform: rotate(180deg);
+    }
+
+    .custom-expandable-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 12px 12px;
     }
 
     .handle-card {
@@ -243,6 +299,9 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
                     .computeLabel=${this._computeLabel}
                     @value-changed=${this._handleConfigChanged}
                   ></ha-form>
+                  ${this._config.adaptivestateactive === true
+                    ? this._renderAdaptiveStateEditor()
+                    : nothing}
                 </section>
               `
             : html`
@@ -366,6 +425,34 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     this._activeTab = tab;
   }
 
+  private _renderAdaptiveStateEditor(): TemplateResult {
+    return html`
+      <details class="custom-expandable">
+        <summary>
+          <span class="custom-expandable-title">
+            <ha-icon icon="mdi:state-machine"></ha-icon>
+            <span>Adaptative State</span>
+          </span>
+          <ha-icon class="custom-expandable-arrow" icon="mdi:chevron-down"></ha-icon>
+        </summary>
+        <div class="custom-expandable-content">
+          <ha-form
+            .hass=${this.hass}
+            .data=${this._config.adaptivestate ?? {}}
+            .schema=${adaptiveStateOptionsSchema}
+            .computeLabel=${this._computeLabel}
+            @value-changed=${this._handleAdaptiveStateChanged}
+          ></ha-form>
+          <flex-slider-card-condition-editor
+            .hass=${this.hass}
+            .conditions=${this._config.adaptivestate?.conditions ?? []}
+            @conditions-changed=${this._handleAdaptiveStateConditionsChanged}
+          ></flex-slider-card-condition-editor>
+        </div>
+      </details>
+    `;
+  }
+
   /****************************************************/
   /* Private methods - config in rendering            */
   /****************************************************/
@@ -401,6 +488,36 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
     nextConfig.entities = entities;
     this._applyConfig(nextConfig);
   }
+
+  private _handleAdaptiveStateChanged = (ev: CustomEvent): void => {
+    ev.stopPropagation();
+    if (!this._config) {
+      return;
+    }
+
+    const nextConfig = this._cloneConfig();
+    const nextAdaptiveState = ev.detail.value as FlexSliderCardConfig["adaptivestate"];
+    nextConfig.adaptivestate = {
+      ...(nextConfig.adaptivestate ?? {}),
+      ...(nextAdaptiveState ?? {}),
+      conditions: nextConfig.adaptivestate?.conditions ?? [],
+    };
+    this._applyConfig(nextConfig);
+  };
+
+  private _handleAdaptiveStateConditionsChanged = (ev: CustomEvent<{ conditions: Condition[] }>): void => {
+    ev.stopPropagation();
+    if (!this._config) {
+      return;
+    }
+
+    const nextConfig = this._cloneConfig();
+    nextConfig.adaptivestate = {
+      ...(nextConfig.adaptivestate ?? {}),
+      conditions: ev.detail.conditions,
+    };
+    this._applyConfig(nextConfig);
+  };
 
   private _addHandle = (): void => {
     if (!this._config) {
@@ -470,6 +587,19 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       bubble: reference.bubble ?? false,
       valuesbar: reference.valuesbar ?? false,
       valuesbartextlarge: reference.valuesbartextlarge ?? false,
+    };
+  }
+
+  private _normalizeAdaptiveState(adaptiveState?: FlexSliderCardConfig["adaptivestate"]): FlexSliderCardConfig["adaptivestate"] {
+    if (adaptiveState == null) {
+      return undefined;
+    }
+
+    return {
+      conditions: Array.isArray(adaptiveState.conditions)
+        ? structuredClone(adaptiveState.conditions)
+        : [],
+      editablewhenlinkedinactive: adaptiveState.editablewhenlinkedinactive ?? false,
     };
   }
 
@@ -624,6 +754,7 @@ export class FlexSliderCardConfigEditor extends LitElement implements LovelaceCa
       ...rest,
       entities,
       reference: this._normalizeReference(config?.reference),
+      adaptivestate: this._normalizeAdaptiveState(config?.adaptivestate),
     };
 
     if (hasLegacyValuesBarTextConfig(config)) {

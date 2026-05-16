@@ -3,7 +3,7 @@ import { isBefore, isAfter, isWithinInterval } from "date-fns";
 import type { HomeAssistant } from "custom-card-helpers";
 import { TimeZone } from "../translation";
 import { WEEKDAY_MAP, type WeekdayIndex } from "./weekday";
-import type { TimeCondition } from "../../conditionnal/validate-conditions";
+import type { TimeCondition } from "../../conditional/flex-slider-card-validate-condition";
 
 type HomeAssistantWithLocaleTimeZone = HomeAssistant & {
   locale: HomeAssistant["locale"] & {
