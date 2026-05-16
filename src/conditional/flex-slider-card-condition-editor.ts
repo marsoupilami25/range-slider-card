@@ -42,6 +42,7 @@ const WEEKDAY_LABELS: Record<string, string> = {
 };
 const BREAKPOINT_VALUES = [0, 768, 1024, 1280, Infinity] as const;
 const BREAKPOINTS = ["mobile", "tablet", "desktop", "wide"] as const;
+const HIDDEN_CONDITION_ATTRIBUTES = new Set(["editable", "friendly_name"]);
 
 type Breakpoint = (typeof BREAKPOINTS)[number];
 type BreakpointSize = [number, number];
@@ -53,58 +54,101 @@ type ScreenConditionFormData = {
   breakpoints: Breakpoint[];
 };
 
-const STATE_CONDITION_SCHEMA: HaFormSchema[] = [
-  { name: "entity", selector: { entity: {} } },
-  {
-    name: "attribute",
-    selector: { attribute: {} },
-    context: { filter_entity: "entity" },
-  },
-  {
-    type: "grid",
-    name: "",
-    schema: [
-      {
-        name: "invert",
-        required: true,
-        selector: {
-          select: {
-            mode: "dropdown",
-            options: [
-              { value: "false", label: "State is" },
-              { value: "true", label: "State is not" },
-            ],
-          },
+const ENTITY_SCHEMA: HaFormSchema = { name: "entity", selector: { entity: {} } };
+const STATE_VALUE_SCHEMA: HaFormSchema = {
+  type: "grid",
+  name: "",
+  schema: [
+    {
+      name: "invert",
+      required: true,
+      selector: {
+        select: {
+          mode: "dropdown",
+          options: [
+            { value: "false", label: "State is" },
+            { value: "true", label: "State is not" },
+          ],
         },
       },
-      {
-        name: "state",
-        selector: { state: {} },
-        context: {
-          filter_entity: "entity",
-          filter_attribute: "attribute",
-        },
+    },
+    {
+      name: "state",
+      selector: { state: {} },
+      context: {
+        filter_entity: "entity",
+        filter_attribute: "attribute",
       },
-    ],
-  },
-];
+    },
+  ],
+};
+const NUMERIC_STATE_THRESHOLD_SCHEMA: HaFormSchema = {
+  type: "grid",
+  name: "",
+  schema: [
+    { name: "above", selector: { number: { step: "any", mode: "box" } } },
+    { name: "below", selector: { number: { step: "any", mode: "box" } } },
+  ],
+};
 
-const NUMERIC_STATE_CONDITION_SCHEMA: HaFormSchema[] = [
-  { name: "entity", selector: { entity: {} } },
-  {
+function getConditionAttributeSchema(entityId: string | undefined, hass?: HomeAssistant): HaFormSchema {
+  const attributeOptions = entityId
+    ? Object.keys(hass?.states[entityId]?.attributes ?? {})
+      .filter((attribute) => !HIDDEN_CONDITION_ATTRIBUTES.has(attribute))
+      .map((attribute) => ({
+        value: attribute,
+        label: getAttributeLabel(attribute, entityId, hass),
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+    : [];
+
+  return {
     name: "attribute",
-    selector: { attribute: {} },
-    context: { filter_entity: "entity" },
-  },
-  {
-    type: "grid",
-    name: "",
-    schema: [
-      { name: "above", selector: { number: { step: "any", mode: "box" } } },
-      { name: "below", selector: { number: { step: "any", mode: "box" } } },
-    ],
-  },
-];
+    selector: {
+      select: {
+        mode: "dropdown",
+        custom_value: true,
+        options: attributeOptions,
+      },
+    },
+  };
+}
+
+function getAttributeLabel(attribute: string, entityId: string, hass?: HomeAssistant): string {
+  const domain = entityId.split(".")[0];
+  const localizeKeys = [
+    `component.${domain}.entity_component._.state_attributes.${attribute}.name`,
+    `component.${domain}.state_attributes.${attribute}.name`,
+    `component.homeassistant.entity_component._.state_attributes.${attribute}.name`,
+  ];
+
+  for (const key of localizeKeys) {
+    const label = hass?.localize(key);
+    if (label) {
+      return label;
+    }
+  }
+
+  return attribute
+    .replaceAll("_", " ")
+    .replace(/^\w/, (letter) => letter.toUpperCase());
+}
+
+function getStateConditionSchema(entityId: string | undefined, hass?: HomeAssistant): HaFormSchema[] {
+  return [
+    ENTITY_SCHEMA,
+    getConditionAttributeSchema(entityId, hass),
+    STATE_VALUE_SCHEMA,
+  ];
+}
+
+function getNumericStateConditionSchema(entityId: string | undefined, hass?: HomeAssistant): HaFormSchema[] {
+  return [
+    ENTITY_SCHEMA,
+    getConditionAttributeSchema(entityId, hass),
+    NUMERIC_STATE_THRESHOLD_SCHEMA,
+  ];
+}
 
 const TIME_CONDITION_SCHEMA: HaFormSchema[] = [
   { name: "after", selector: { time: { no_second: true } } },
@@ -717,7 +761,7 @@ export class FlexSliderCardConditionEditor extends LitElement {
       <ha-form
         .hass=${this.hass}
         .data=${data}
-        .schema=${STATE_CONDITION_SCHEMA}
+        .schema=${getStateConditionSchema(condition.entity, this.hass)}
         .computeLabel=${this._computeStateLabel}
         @value-changed=${(ev: CustomEvent) => this._handleStateConditionChanged(ev, path)}
       ></ha-form>
@@ -729,7 +773,7 @@ export class FlexSliderCardConditionEditor extends LitElement {
       <ha-form
         .hass=${this.hass}
         .data=${condition}
-        .schema=${NUMERIC_STATE_CONDITION_SCHEMA}
+        .schema=${getNumericStateConditionSchema(condition.entity, this.hass)}
         .computeLabel=${this._computeNumericStateLabel}
         @value-changed=${(ev: CustomEvent) => this._handleNumericStateConditionChanged(ev, path)}
       ></ha-form>
