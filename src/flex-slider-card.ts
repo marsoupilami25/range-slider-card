@@ -106,6 +106,9 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     .adaptive-state-led.is-off {
       opacity: 0.7;
     }
+    .container.adaptive-state-inactive .title {
+      color: var(--disabled-text-color);
+    }
     ${unsafeCSS(stdFlexSliderCardCss)}
     ${unsafeCSS(compactFlexSliderCardCss)}
   `;
@@ -359,6 +362,10 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
     const isStd = this._config.isStd;
     const isVertical = this._config.isVertical;
     const adaptiveStateConditionResult = this._getAdaptiveStateConditionResult();
+    const isAdaptiveStateInactive =
+      this._config.isAdaptative && adaptiveStateConditionResult === false;
+    const isSliderDisabled =
+      isAdaptiveStateInactive && !this._config.isEditableWhenLinkedInactive;
     const reservesBubbleSpace = hasBubbles || hasReferenceBubble;
     const containerClass =
       `${isStd ? "std" : "compact"} ` +
@@ -366,6 +373,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
       `${hasValuesBar ? "" : "no-values"} ` +
       `${reservesBubbleSpace ? "has-bubbles " : ""}` +
       `${hasTicks ? "has-ticks " : ""}` +
+      `${isAdaptiveStateInactive ? "adaptive-state-inactive " : ""}` +
       `${isVertical ? "vertical" : ""}`;
     const sliderClass = `${isStd ? "std" : "compact"}`;
     const values = this._config.hasReference
@@ -386,7 +394,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
         : "";
 
     return html`
-      <ha-card>
+      <ha-card aria-disabled=${isSliderDisabled ? "true" : "false"}>
         ${this._config.isAdaptative
           ? this._renderAdaptiveStateLed(adaptiveStateConditionResult === true)
           : nothing}
@@ -399,6 +407,8 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
                 .values=${values}
                 .sliderClass=${sliderClass}
                 .forceHeight=${this._shallForceHeight()}
+                .inactive=${isAdaptiveStateInactive}
+                .disabled=${isSliderDisabled}
                 @user-update-state-changed=${this._handleUserUpdateStateChanged}
               ></flex-slider-card-slider>
             </div>
@@ -406,6 +416,7 @@ export class FlexSliderCard extends LitElement implements LovelaceCard {
                 <flex-slider-card-valuesbar
                   .config=${this._config}
                   .values=${values}
+                  .inactive=${isAdaptiveStateInactive}
                 ></flex-slider-card-valuesbar>
               ` : nothing}
           </div>
