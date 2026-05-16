@@ -52,6 +52,10 @@ Abbreviation legend:
 - `W40`, `W50`, `W90`, `W100`: horizontal width percentage
 - `RTL`: right-to-left direction
 - `HB`: handles behavior test
+- `AS`: adaptive state enabled
+- `AS ctx`: adaptive state condition without an explicit `entity`; it is evaluated against the first configured slider entity
+- `disabled`: adaptive state condition is false and the slider is not editable
+- `editable`: adaptive state condition is false but `editablewhenlinkedinactive` allows slider edits
 - `vlay`: vertical layout
 - `std`: standard vertical layout
 - `mir`: mirrored vertical layout
@@ -68,6 +72,7 @@ Focused views are also available for specific options:
 - `12_horizontal_masonry_handlesbehavior.yml`
 - `18_vertical_masonry_verticallayout.yml`
 - `22_vertical_masonry_handlesbehavior.yml`
+- `23_adaptive_state.yml`
 
 `07_horizontal_masonry_card_mod.yml` requires `card-mod` to be installed in the test environment.
 
