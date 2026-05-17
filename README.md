@@ -30,6 +30,9 @@ A Home Assistant custom card that controls one or more entities from a single sl
 ![With ticks mark](/assets/ticks.png)   
 - Optional reference entity   
 ![With optional reference entity](/assets/reference.png)   
+- Optional adaptive state based on Home Assistant-style conditions   
+![With adaptative state active and true condition](/assets/adaptativestate_active.png)   
+![With adaptative state active and false condition](/assets/adaptativestate_inactive.png)   
 - Left-to-right or right-to-left direction   
 ![Reversed direction](/assets/direction.png)   
 - Uses the active Home Assistant theme   
@@ -170,6 +173,32 @@ reference:
 The reference entity is displayed as a read-only handle on the same slider scale.
 It must use a domain compatible with the slider entities.
 
+### Adaptive State Example
+
+```yaml
+type: custom:flex-slider-card
+name: Heating window
+entities:
+  - entity: input_number.heating_min
+    text: Min
+  - entity: input_number.heating_max
+    text: Max
+min: 18
+max: 24
+step: 0.5
+valuesbaractive: true
+adaptivestateactive: true
+adaptivestate:
+  conditions:
+    - condition: numeric_state
+      entity: sensor.current_temperature
+      below: 22
+  editablewhenlinkedinactive: false
+```
+
+When the adaptive state conditions are true, the card behaves normally.
+When they are false, the card is shown as inactive and the slider is disabled unless `editablewhenlinkedinactive: true` is set.
+
 ### Vertical Example
 
 ```yaml
@@ -211,6 +240,7 @@ ticks:
 | `bubblesactive` | boolean | No | `false` | Shows value bubbles on handles |
 | `ticksactive` | boolean | No | `false` | Shows tick marks |
 | `referenceactive` | boolean | No | `false` | Shows a non-editable reference entity on the slider |
+| `adaptivestateactive` | boolean | No | `false` | Enables adaptive state conditions |
 | `verticallayout` | `standard` \| `mirrored` | No | `standard` | In vertical mode, moves bubbles and tick labels to the default side or the mirrored side |
 
 ### Slider Behavior
@@ -282,6 +312,31 @@ Rules:
 - The reference entity must use the same supported domain family as the slider entities.
 - `reference.valuesbar: true` cannot be combined with `valuesbaractive: true`.
 - `reference.valuesbar` is automatically disabled in vertical mode.
+
+### `adaptivestate` Options
+
+Available when `adaptivestateactive: true`.
+
+| Option | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `conditions` | array | No | `[]` | Conditions that control the adaptive state |
+| `editablewhenlinkedinactive` | boolean | No | `false` | Allows slider edits even when the adaptive state conditions are false |
+
+Supported condition types:
+- `state`: checks an entity state, or `state_not` for the inverse. Supports optional `attribute`
+- `numeric_state`: checks whether an entity or attribute is above and/or below a value
+- `time`: checks `after`, `before`, and/or `weekdays`
+- `screen`: checks a CSS `media_query`
+- `view_columns`: checks the dashboard column count with `min` and/or `max`
+- `and`, `or`, `not`: groups nested conditions
+
+Rules:
+- The card shows a small status indicator when adaptive state is enabled.
+- If all conditions pass, the card is active.
+- If any condition fails, the card is visually inactive.
+- When inactive, the slider is disabled by default.
+- Set `editablewhenlinkedinactive: true` to keep the slider editable while still showing the inactive visual state.
+- For `state` and `numeric_state` conditions, if `entity` is omitted, the condition is evaluated against the first configured slider entity.
 
 ### Entities
 
