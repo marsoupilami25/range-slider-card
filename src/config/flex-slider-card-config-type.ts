@@ -1,6 +1,7 @@
 import { LovelaceCardConfig } from "custom-card-helpers";
 import { assign, union, literal, number, object, optional, string, boolean, any, array } from "superstruct";
 import { lovelaceCardConfigStruct } from "../type/ha";
+import type { Condition } from "../conditional/flex-slider-card-validate-condition";
 
 export type FlexSliderCardFormat = "std" | "compact";
 export function assertFlexSliderCardFormat(value: any): asserts value is FlexSliderCardFormat {
@@ -139,6 +140,15 @@ export const flexSliderCardReferenceConfigStruct = object({
   unit: optional(string()),
 });
 
+export type FlexSliderCardAdaptiveStateConfig = {
+  conditions?: Condition[];
+  editablewhenlinkedinactive?: boolean;
+};
+export const flexSliderCardAdaptiveStateConfigStruct = object({
+  conditions: optional(array(any())),
+  editablewhenlinkedinactive: optional(boolean()),
+});
+
 export type FlexSliderCardHandleConfig = {
   entity: string;
   text?: string;
@@ -162,6 +172,7 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
   bubblesactive?: boolean;
   ticksactive?: boolean;
   referenceactive?: boolean;
+  adaptivestateactive?: boolean;
   verticallayout?: FlexSliderCardVerticalLayout;
 
   /* behavioral */
@@ -181,6 +192,9 @@ export type FlexSliderCardConfig = LovelaceCardConfig &
 
   /* reference */
   reference?: FlexSliderCardReferenceConfig;
+
+  /* adaptive state */
+  adaptivestate?: FlexSliderCardAdaptiveStateConfig;
 
   /* entities */
   handlesbehavior?: FlexSliderCardHandlesBehavior;
@@ -208,6 +222,7 @@ export const flexSliderCardConfigStruct = assign(
     bubblesactive: optional(boolean()),
     ticksactive: optional(boolean()),
     referenceactive: optional(boolean()),
+    adaptivestateactive: optional(boolean()),
     verticallayout: optional(flexSliderCardVerticalLayoutStruct),
 
     /* behavioral */
@@ -227,6 +242,9 @@ export const flexSliderCardConfigStruct = assign(
 
     /* reference */
     reference: optional(flexSliderCardReferenceConfigStruct),
+
+    /* adaptive state */
+    adaptivestate: optional(flexSliderCardAdaptiveStateConfigStruct),
 
     /* entities */
     handlesbehavior: optional(flexSliderCardHandlesBehaviorStruct),

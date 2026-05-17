@@ -22,6 +22,8 @@ export class FlexSliderCardValuesBar extends LitElement {
   public config?: FlexSliderCardConfigMngr;
   @property({ attribute: false })
   public values: number[] = [0, 100];
+  @property({ type: Boolean, reflect: true })
+  public inactive = false;
 
   private _mode: FlexSliderCardValuesBarMode = FlexSliderCardValuesBarMode.DEFAULT;   // mode of the values bar, either "default" or "userupdate"
   private _handle: number | null = null;                                                      // index of the handle currently being updated by the user, null if no handle is being updated
@@ -54,6 +56,11 @@ export class FlexSliderCardValuesBar extends LitElement {
     .editing {
       color: var(--primary-color);
       font-style: italic;
+    }
+    :host([inactive]) .valuesbar,
+    :host([inactive]) .valuesbar.reference,
+    :host([inactive]) .editing {
+      color: var(--disabled-text-color);
     }
   `;
 

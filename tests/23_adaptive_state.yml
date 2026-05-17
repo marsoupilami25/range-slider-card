@@ -1,0 +1,228 @@
+type: masonry
+path: ""
+cards:
+  - type: entities
+    entities:
+      - input_number.inputnumbertest1
+      - input_number.inputnumbertest2
+      - input_number.inputnumbertest3
+      - input_number.inputnumbertest4
+      - input_number.inputnumbertestref
+    show_header_toggle: true
+    state_color: false
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Std | AS
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 10
+        max: 40
+        step: 1
+        name: Ref>10 -> on | VB+Tk
+        valuesbaractive: true
+        ticksactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              above: 10
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+            text: ""
+          - entity: input_number.inputnumbertest2
+            text: ""
+        min: 10
+        max: 40
+        step: 1
+        name: Ref>90 -> on | disabled | VB+Bul
+        valuesbaractive: true
+        bubblesactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              above: 90
+          editablewhenlinkedinactive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+            text: ""
+          - entity: input_number.inputnumbertest2
+            text: ""
+        min: 10
+        max: 40
+        step: 1
+        name: Ref>90 -> on | editable | Bul+Tk
+        bubblesactive: true
+        ticksactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              above: 90
+          editablewhenlinkedinactive: true
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 10
+        max: 40
+        step: 1
+        name: Ctx>10 -> on | VB
+        valuesbaractive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              above: 10
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Cmp | AS
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+          - entity: input_number.inputnumbertest3
+        min: 10
+        max: 40
+        step: 1
+        name: 10<Ref<90 -> on | VB
+        format: compact
+        valuesbaractive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: and
+              conditions:
+                - condition: numeric_state
+                  entity: input_number.inputnumbertestref
+                  above: 10
+                - condition: numeric_state
+                  entity: input_number.inputnumbertestref
+                  below: 90
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+            text: ""
+          - entity: input_number.inputnumbertest2
+            text: ""
+          - entity: input_number.inputnumbertest3
+            text: ""
+        min: 10
+        max: 40
+        step: 1
+        name: Not Ref>10 -> on | disabled | Bul
+        format: compact
+        bubblesactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: not
+              conditions:
+                - condition: numeric_state
+                  entity: input_number.inputnumbertestref
+                  above: 10
+          editablewhenlinkedinactive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+            text: ""
+          - entity: input_number.inputnumbertest2
+            text: ""
+          - entity: input_number.inputnumbertest3
+            text: ""
+        min: 10
+        max: 40
+        step: 1
+        name: Ref<10 -> on | editable | VB
+        format: compact
+        valuesbaractive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              below: 10
+          editablewhenlinkedinactive: true
+  - type: vertical-stack
+    cards:
+      - type: heading
+        icon: ""
+        heading: Vertical | AS
+        heading_style: title
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+          - entity: input_number.inputnumbertest2
+        min: 10
+        max: 40
+        step: 1
+        name: Std | Ref>10 -> on | Bul | h3
+        orientation: vertical
+        verticalheight: 3
+        bubblesactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              above: 10
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+            text: ""
+          - entity: input_number.inputnumbertest2
+            text: ""
+        min: 10
+        max: 40
+        step: 1
+        name: Std | Ref>90 -> on | Tk | h3
+        orientation: vertical
+        verticalheight: 3
+        ticksactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              above: 90
+          editablewhenlinkedinactive: false
+        valuesbaractive: false
+      - type: custom:flex-slider-card
+        entities:
+          - entity: input_number.inputnumbertest1
+            text: ""
+          - entity: input_number.inputnumbertest2
+            text: ""
+          - entity: input_number.inputnumbertest3
+            text: ""
+        min: 10
+        max: 40
+        step: 1
+        name: Cmp | Ref<10 -> on editable | Bul+Tk | h3
+        format: compact
+        orientation: vertical
+        verticalheight: 3
+        bubblesactive: true
+        ticksactive: true
+        adaptivestateactive: true
+        adaptivestate:
+          conditions:
+            - condition: numeric_state
+              entity: input_number.inputnumbertestref
+              below: 10
+          editablewhenlinkedinactive: true
+        valuesbaractive: false
+title: Adaptive state

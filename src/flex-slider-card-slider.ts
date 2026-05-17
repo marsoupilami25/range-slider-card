@@ -42,6 +42,10 @@ export class FlexSliderCardSlider extends LitElement {
 
   @property({ attribute: false })
   public values: number[] = [0, 100];
+  @property({ type: Boolean, reflect: true })
+  public inactive = false;
+  @property({ type: Boolean, reflect: true })
+  public disabled = false;
 
   private _slider!: NoUiSliderAPI;                   // reference to the noUiSlider instance
   private _userIsUpdating: boolean = false;                 // true when user is currently dragging the slider, false otherwise
@@ -77,6 +81,55 @@ export class FlexSliderCardSlider extends LitElement {
     /* noUiSlider writes inline z-index values; keep the reference handle and bubble above editable handles. */
     .slider .noUi-origin.display-reference-origin {
       z-index: 1000 !important;
+    }
+
+    :host([inactive]) .slider.std.noUi-target,
+    :host([inactive]) .slider.compact.noUi-target,
+    :host([inactive]) .slider.std.noUi-vertical.noUi-target,
+    :host([inactive]) .slider.compact.noUi-vertical.noUi-target {
+      background: color-mix(in srgb, var(--disabled-color) 24%, transparent);
+    }
+
+    :host([inactive]) .slider.std .noUi-connect,
+    :host([inactive]) .slider.compact .noUi-connect,
+    :host([inactive]) .slider.std.noUi-vertical .noUi-connect,
+    :host([inactive]) .slider.compact.noUi-vertical .noUi-connect {
+      background: color-mix(in srgb, var(--disabled-text-color) 35%, transparent);
+    }
+
+    :host([inactive]) .slider.std.noUi-horizontal .noUi-handle,
+    :host([inactive]) .slider.std.noUi-vertical .noUi-handle,
+    :host([inactive]) .slider.compact.noUi-horizontal .noUi-handle,
+    :host([inactive]) .slider.compact.noUi-vertical .noUi-handle {
+      background: var(--disabled-text-color);
+      border-color: var(--disabled-color);
+    }
+
+    :host([inactive]) .slider.std .noUi-tooltip,
+    :host([inactive]) .slider.compact .noUi-tooltip {
+      background: var(--ha-card-background, var(--card-background-color, var(--primary-background-color)));
+      color: var(--disabled-text-color);
+      border-color: var(--divider-color);
+    }
+
+    :host([inactive]) .slider.std.noUi-horizontal .noUi-marker-large,
+    :host([inactive]) .slider.compact.noUi-horizontal .noUi-marker-large,
+    :host([inactive]) .slider.std.noUi-vertical .noUi-marker-large,
+    :host([inactive]) .slider.compact.noUi-vertical .noUi-marker-large,
+    :host([inactive]) .slider.std.noUi-horizontal .noUi-marker-normal,
+    :host([inactive]) .slider.compact.noUi-horizontal .noUi-marker-normal,
+    :host([inactive]) .slider.std.noUi-vertical .noUi-marker-normal,
+    :host([inactive]) .slider.compact.noUi-vertical .noUi-marker-normal {
+      background: var(--divider-color);
+    }
+
+    :host([inactive]) .slider.std.noUi-horizontal .noUi-value-large,
+    :host([inactive]) .slider.compact.noUi-horizontal .noUi-value-large,
+    :host([inactive]) .slider.std.noUi-vertical .noUi-value-large,
+    :host([inactive]) .slider.compact.noUi-vertical .noUi-value-large,
+    :host([inactive]) .slider.std.noUi-vertical .noUi-pips-vertical,
+    :host([inactive]) .slider.compact.noUi-vertical .noUi-pips-vertical {
+      color: var(--disabled-text-color);
     }
     
     /* noUiSlider overrides */
@@ -127,9 +180,9 @@ export class FlexSliderCardSlider extends LitElement {
       const origins = this._slider.getOrigins();
       origins[this.config.entityCount]?.classList.add("ghost-max-origin");
       origins[this.values.length - 1]?.classList.add("display-reference-origin");
-      this._slider.disable(this.config.entityCount);
-      this._slider.disable(this.values.length - 1);
     }
+
+    this._syncDisabledState();
 
     this._slider.on("start", (_values: (number | string)[], handle: number) => {
       this._onStart(handle);
@@ -149,7 +202,13 @@ export class FlexSliderCardSlider extends LitElement {
   }
 
   protected override updated(changedProps: Map<string, unknown>): void {
-    if (!this._slider || this._userIsUpdating || this._isSyncing) return;
+    if (!this._slider) return;
+
+    if (changedProps.has("disabled")) {
+      this._syncDisabledState();
+    }
+
+    if (this._userIsUpdating || this._isSyncing) return;
 
     if (changedProps.has("values")) {
       this._slider.set(this.values, false);
@@ -246,6 +305,10 @@ export class FlexSliderCardSlider extends LitElement {
   /****************************************************/
 
   private _onStart(handle: number): void {
+    if (this.disabled) {
+      return;
+    }
+
     if (handle >= this.config.entityCount) {
       return;
     }
@@ -258,6 +321,11 @@ export class FlexSliderCardSlider extends LitElement {
 
   private async _onChange(values: (number | string)[]): Promise<void> {
     debuglog("slider change");
+
+    if (this.disabled) {
+      this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
+      return;
+    }
 
     const nextValues = values.map(Number).slice(0, this.config.entityCount);
     const currentValues = this.config.entities.map((entity) => entity.sliderValue);
@@ -401,6 +469,28 @@ export class FlexSliderCardSlider extends LitElement {
     }
 
     return nextValues;
+  }
+
+  private _syncDisabledState(): void {
+    if (!this._slider) {
+      return;
+    }
+
+    if (this.disabled) {
+      if (this._userIsUpdating) {
+        this._userIsUpdating = false;
+        this._emitUserUpdateStateChanged(false);
+        this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
+      }
+      this._slider.disable();
+      return;
+    }
+
+    this._slider.enable();
+    if (this.config.hasReference) {
+      this._slider.disable(this.config.entityCount);
+      this._slider.disable(this.values.length - 1);
+    }
   }
 
   private _buildTooltips(): false | ({ to: (value: number) => string } | false)[] {

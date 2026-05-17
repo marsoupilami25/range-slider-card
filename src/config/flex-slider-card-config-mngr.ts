@@ -18,7 +18,7 @@ import {
   assertOptionalNumber,
   assertOptionalBoolean
 } from "../utils/utils";
-import { FlexSliderCardEntityType, getEntityType } from "../utils/entity-management";
+import { FlexSliderCardEntityType, getEntityType, isValidEntityId } from "../utils/entity-management";
 import {
   clearLegacyEntityTexts,
   getLegacyHandleText,
@@ -27,6 +27,7 @@ import {
   hasLegacyValuesBarTextConfig,
   setLegacyHandle,
 } from "../utils/config-legacy-helpers";
+import { validateConditionalConfig, type Condition } from "../conditional/flex-slider-card-validate-condition";
 
 export class FlexSliderCardConfigMngr {
 
@@ -49,6 +50,7 @@ export class FlexSliderCardConfigMngr {
     this._checkBubbles();
     this._checkTicks();
     this._checkReference();
+    this._checkAdaptiveState();
   }
 
   public update(hass: HomeAssistant): void {
@@ -60,6 +62,7 @@ export class FlexSliderCardConfigMngr {
     this._updateBubbles(hass);
     this._updateTicks(hass);
     this._updateReference(hass);
+    this._updateAdaptiveState(hass);
   }
 
   public reset(): void {
@@ -71,6 +74,7 @@ export class FlexSliderCardConfigMngr {
     this._resetBubbles();
     this._resetTicks();
     this._resetReference();
+    this._resetAdaptiveState();
   }
 
   public get config() : FlexSliderCardConfig {
@@ -397,7 +401,7 @@ export class FlexSliderCardConfigMngr {
       return;
     }
 
-    if (!this._isValidEntityId(this._config.reference.entity)) {
+    if (!isValidEntityId(this._config.reference.entity)) {
       throw new Error("Invalid format for reference entity. Expected domain.object_id");
     }
 
@@ -436,6 +440,61 @@ export class FlexSliderCardConfigMngr {
 
   public get referenceUnit(): string {
     return this._config.reference?.unit ?? "";
+  }
+
+  /****************************************************/
+  /* adaptive state                                   */
+  /****************************************************/
+
+  protected _checkAdaptiveState(): void {
+    assertOptionalBoolean(this._config.adaptivestateactive, "adaptivestateactive");
+    if (this._config.adaptivestateactive == null) {
+      this._config.adaptivestateactive = false;
+    }
+
+    if (this._config.adaptivestate == null) {
+      this._config.adaptivestate = {};
+    }
+
+    if (this._config.adaptivestate.conditions == null) {
+      this._config.adaptivestate.conditions = [];
+    }
+    if (!Array.isArray(this._config.adaptivestate.conditions)) {
+      throw new Error("adaptivestate.conditions must be an array");
+    }
+    if (!validateConditionalConfig(this._config.adaptivestate.conditions)) {
+      throw new Error("Invalid adaptive state conditions");
+    }
+
+    assertOptionalBoolean(
+      this._config.adaptivestate.editablewhenlinkedinactive,
+      "adaptivestate.editablewhenlinkedinactive",
+    );
+    if (this._config.adaptivestate.editablewhenlinkedinactive == null) {
+      this._config.adaptivestate.editablewhenlinkedinactive = false;
+    }
+  }
+
+  protected _updateAdaptiveState(hass: HomeAssistant): void { }
+
+  protected _resetAdaptiveState(): void { }
+
+  public get isAdaptative(): boolean {
+    return this._config.adaptivestateactive === true;
+  }
+
+  public get adaptiveStateConditions(): Condition[] {
+    if (this._config.adaptivestate?.conditions == null) {
+      throw new Error("Adaptive state conditions are not defined in config");
+    }
+    return this._config.adaptivestate.conditions;
+  }
+
+  public get isEditableWhenLinkedInactive(): boolean {
+    if (this._config.adaptivestate?.editablewhenlinkedinactive == null) {
+      throw new Error("Editable when linked inactive state is not defined in config");
+    }
+    return this._config.adaptivestate.editablewhenlinkedinactive;
   }
 
   /****************************************************/
@@ -592,16 +651,6 @@ export class FlexSliderCardConfigMngr {
   /* entities                                         */
   /****************************************************/
 
-  protected _isValidEntityId(entity: string): boolean {
-    if (typeof entity !== "string") {
-      return false;
-    }
-
-    const entityRegex = /^[a-z0-9_]+\.[a-z0-9_]+$/;
-
-    return entityRegex.test(entity);
-  }
-
   protected _checkEntities(): void {
     if (hasLegacyValuesBarTextConfig(this._config)) {
       const valuesbar = this._config.valuesbar;
@@ -695,7 +744,7 @@ export class FlexSliderCardConfigMngr {
       if (handleConfig.connectprevious == null) {
         handleConfig.connectprevious = entityCount <= 1 ? true : index > 0;
       }
-      if (!this._isValidEntityId(handleConfig.entity)) {
+      if (!isValidEntityId(handleConfig.entity)) {
         throw new Error(`Invalid format for ${entityLabel}. Expected domain.object_id`);
       }
       return new FlexSliderCardEntity(handleConfig.entity, handleConfig.text ?? "");
