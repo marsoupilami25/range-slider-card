@@ -199,6 +199,8 @@ adaptivestate:
 When the adaptive state conditions are true, the card behaves normally.
 When they are false, the card is shown as inactive and the slider is disabled unless `editablewhenlinkedinactive: true` is set.
 
+Warning: depending on the layout and enabled slider decorations, the adaptive state LED can overlap the slider.
+
 ### Vertical Example
 
 ```yaml
@@ -332,6 +334,7 @@ Supported condition types:
 
 Rules:
 - The card shows a small status indicator when adaptive state is enabled.
+- Depending on the layout and enabled slider decorations, this indicator can overlap the slider. Different configuration options can beused to avoid it.
 - If all conditions pass, the card is active.
 - If any condition fails, the card is visually inactive.
 - When inactive, the slider is disabled by default.
