@@ -15,6 +15,7 @@ import {
   INTER_CARD,
   COMPACT_TITLE_HEIGHT,
   COMPACT_VERTICAL_CONTAINER_PADDING,
+  PRESS_CONFIRM_DELAY_MS,
   STD_TITLE_HEIGHT,
   STD_VERTICAL_CONTAINER_PADDING,
 } from "./type/constants";
@@ -53,6 +54,8 @@ export class FlexSliderCardSlider extends LitElement {
   private _isAdjustingHandles: boolean = false;
   private _valuesBarSetMode: FlexSliderCardValuesBarSetModeCallback | null = null;
   private _valuesBarSetValue: FlexSliderCardValuesBarSetValueCallback | null = null;
+  private _pressStartTime = 0;
+  private _startValues: number[] | null = null;
 
   private _emitUserUpdateStateChanged(isUserUpdating: boolean): void {
     this.dispatchEvent(new CustomEvent("user-update-state-changed", {
@@ -76,6 +79,18 @@ export class FlexSliderCardSlider extends LitElement {
     
     .slider {
       width: 100%;
+    }
+
+    .slider.noUi-horizontal,
+    .slider.noUi-horizontal * {
+      -ms-touch-action: pan-y;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .slider.noUi-vertical,
+    .slider.noUi-vertical * {
+      -ms-touch-action: pan-x;
+      touch-action: pan-x pinch-zoom;
     }
 
     /* noUiSlider writes inline z-index values; keep the reference handle and bubble above editable handles. */
@@ -314,6 +329,9 @@ export class FlexSliderCardSlider extends LitElement {
     }
 
     debuglog(`slider start ${handle}`);
+    this._startValues = this._getSliderValues();
+    this._pressStartTime = Date.now();
+
     this._userIsUpdating = true;
     this._emitUserUpdateStateChanged(true);
     this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.USERUPDATE, handle);
@@ -321,6 +339,12 @@ export class FlexSliderCardSlider extends LitElement {
 
   private async _onChange(values: (number | string)[]): Promise<void> {
     debuglog("slider change");
+    debuglog(`delay: ${Date.now() - this._pressStartTime}`);
+    if (Date.now() - this._pressStartTime < PRESS_CONFIRM_DELAY_MS) {
+      this._restoreStartValues();
+      this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
+      return;
+    }
 
     if (this.disabled) {
       this._valuesBarSetMode?.(FlexSliderCardValuesBarMode.DEFAULT);
@@ -391,6 +415,8 @@ export class FlexSliderCardSlider extends LitElement {
 
   private _onEnd(): void {
     debuglog("slider end");
+    this._pressStartTime = 0;
+    this._startValues = null;
     this._userIsUpdating = false;
     this._emitUserUpdateStateChanged(false);
     if (this._isSyncing) return;
@@ -400,6 +426,17 @@ export class FlexSliderCardSlider extends LitElement {
   /****************************************************/
   /* Private methods                                  */
   /****************************************************/
+
+  private _getSliderValues(): number[] {
+    const values = this._slider.get(true);
+    return Array.isArray(values) ? values.map(Number) : [Number(values)];
+  }
+
+  private _restoreStartValues(): void {
+    if (this._startValues) {
+      this._slider.set(this._startValues, false);
+    }
+  }
 
   private async _commitChangedValues(
     changedIndexes: number[],
